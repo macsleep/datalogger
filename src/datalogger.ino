@@ -15,6 +15,7 @@
 #include <ESPmDNS.h>
 #include <SimpleFTPServer.h>
 #include "Timer_PFC8563.h"
+#include "RESTful.h"
 
 #define LED_GREEN GPIO_NUM_3
 #define LED_YELLOW GPIO_NUM_4
@@ -26,42 +27,13 @@
 #define MAX485_RE_NEG 10
 
 RTC_PCF8563 rtc;
-Timer_PFC8563 rtc_timer;
+Timer_PFC8563 rtcTimer;
 ModbusMaster modbus;
 FtpServer ftpSrv;
 AsyncWebServer httpSrv(80);
+RESTful restApi;
 RTC_DATA_ATTR bool wifi;
 RTC_DATA_ATTR bool tick;
-
-void rtc_date(AsyncWebServerRequest *request) {
-    DateTime now;
-    String message, value;
-    unsigned long epoch = 0;
-
-    switch (request->method()) {
-     case HTTP_GET:
-         now = rtc.now();
-         epoch = now.unixtime();
-         message = String(epoch, DEC);
-         request->send(200, "text/plain", message);
-         break;
-
-     case HTTP_PUT:
-         if(!request->authenticate("http", "acme"))
-           return request->requestAuthentication();
-
-         if(request->hasParam("epoch", true)) {
-           value = request->getParam("epoch", true)->value();
-           rtc.adjust(DateTime(value.toInt()));
-         }
-         request->send(200);
-         break;
-
-     default:
-	 request->send(400);
-	 break;
-    }
-}
 
 bool fc4_T_float(uint16_t addr, float *value) {
     uint8_t result, a, b, c, d;
@@ -202,8 +174,8 @@ void setup() {
     }
 
     // timer
-    if(!rtc_timer.isEnabled()) {
-	rtc_timer.enable(1);
+    if(!rtcTimer.isEnabled()) {
+	rtcTimer.enable(1);
     }
 
     // sd card
@@ -265,7 +237,7 @@ void setup() {
 	ftpSrv.begin("ftp", "acme");
 
         // http
-        httpSrv.on("/api/rtc/date", rtc_date);
+        httpSrv.on("^\\/api\\/rtc\\/date$", std::bind(&RESTful::rtcDate, restApi, std::placeholders::_1));
         httpSrv.onNotFound([](AsyncWebServerRequest *request) {
             request->send(404, "text/plain", "Not found");
         });

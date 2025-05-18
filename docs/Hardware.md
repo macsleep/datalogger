@@ -24,7 +24,7 @@ The data logger is based on an Espressif ESP32-S3 micro controller in a DIN rail
 * 1 x Fuse 1A/63V (1206 chip fuse)
 * 1 x PCF8563 (SO8 real-time clock/timer)
 * 1 x MAX3485 (SO8 RS-485/RS-422 transceiver)
-* 1 x LT1129 (SOT-223 low dropout regulator)
+* 1 x LT1129 (SOT-223 low dropout voltage regulator)
 * 1 x SM712 (SOT-23-3 asymmetrical TVS diode array)
 * 1 x ESP32-S3-WROOM-1 (dual-core 32-bit LX7 microprocessor)
 * 1 x SD Card 16GB
@@ -42,7 +42,7 @@ The data logger is based on an Espressif ESP32-S3 micro controller in a DIN rail
 ## ESP32 M5Stack Downloader Pinout
 
 <pre>
-ESP32 M5Stack
+ESP32   M5Stack
 ---------------
 GND   <->  GND
 IO0   <->  G0

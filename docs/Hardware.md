@@ -1,5 +1,9 @@
 # Hardware
 
+The data logger is based on an Espressif ESP32-S3 micro controller in a DIN rail enclosure. The controller is equipped with an SD card, real time clock, RS485 serial line driver and a linear voltage regulator capable of DC input voltages of 5-30 Volts. 
+
+<img src="images/hardware.jpeg" width="320">
+
 ## Schematic
 
 ![schematic1](images/schematic1.png)
@@ -25,7 +29,7 @@
 * 1 x ESP32-S3-WROOM-1 (dual-core 32-bit LX7 microprocessor)
 * 1 x SD Card 16GB
 * 1 x SD Card Holder (Molex SD-47219-001)
-* 1 x Pinheader 1x6 (2.54mm)
+* 1 x Pinheader 1x6 (2.54mm pitch)
 * 1 x LED Green (Dialight 551-xx07 3mm LED)
 * 1 x LED Yellow (Dialight 551-xx07 3mm LED)
 * 1 x Quarz 32k768 (Euroquarz EQ162 12.5pF crystal)
@@ -38,18 +42,18 @@
 ## ESP32 M5Stack Downloader Pinout
 
 <pre>
-ESP32  M5Stack
---------------
-GND  <->  GND
-IO0  <->  G0
-EN   <->  EN
-RXD0 <->  TXD
-TXD0 <->  RXD
-DD33 <->  3.3V
+ESP32 M5Stack
+---------------
+GND   <->  GND
+IO0   <->  G0
+EN    <->  EN
+RXD0  <->  TXD
+TXD0  <->  RXD
+DD33  <->  3.3V
 </pre>
 
 ## PCB
 
-<img src="images/hardware.jpeg" width="320">
-
+<img src="images/pcb_top.png">
+<img src="images/pcb_bottom.png">
 

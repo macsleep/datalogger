@@ -1,7 +1,7 @@
 
 /*
- Real Time Clock PCF8563 Timer functions
-*/
+ * Real Time Clock PCF8563 Timer functions
+ */
 
 #ifndef TIMER_PFC8563_H
 #define TIMER_PFC8563_H

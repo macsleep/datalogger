@@ -1,7 +1,6 @@
 
 /*
- * modbus data logger
- * 12.11.2024 JS
+ * modbus data logger 12.11.2024 JS
  */
 
 #include <Arduino.h>
@@ -13,7 +12,6 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ESPmDNS.h>
-#include <SimpleFTPServer.h>
 #include "Timer_PFC8563.h"
 #include "RESTful.h"
 
@@ -27,10 +25,9 @@
 #define MAX485_RE_NEG 10
 
 RTC_PCF8563 rtc;
-Timer_PFC8563 rtcTimer;
+Timer_PFC8563 timer;
 ModbusMaster modbus;
-FtpServer ftpSrv;
-AsyncWebServer httpSrv(80);
+AsyncWebServer *httpd;
 RESTful restApi;
 RTC_DATA_ATTR bool wifi;
 RTC_DATA_ATTR bool tick;
@@ -174,8 +171,8 @@ void setup() {
     }
 
     // timer
-    if(!rtcTimer.isEnabled()) {
-	rtcTimer.enable(1);
+    if(!timer.isEnabled()) {
+	timer.enable(1);
     }
 
     // sd card
@@ -190,13 +187,11 @@ void setup() {
 	    Update.writeStream(firmware);
 	    firmware.close();
         }
+        SD.remove("/firmware.bin");
 	if(Update.end()) {
-            SD.remove("/firmware.bin");
 	    digitalWrite(LED_YELLOW, LOW);
 	    delay(500);
 	    ESP.restart();
-	} else {
-            SD.rename("/firmware.bin", "/firmware.nok");
         }
     }
 
@@ -233,15 +228,23 @@ void setup() {
         // mdns
         MDNS.begin("esp32");
 
-	// ftp
-	ftpSrv.begin("ftp", "acme");
-
         // http
-        httpSrv.on("^\\/api\\/rtc\\/date$", std::bind(&RESTful::rtcDate, restApi, std::placeholders::_1));
-        httpSrv.onNotFound([](AsyncWebServerRequest *request) {
+        httpd = new AsyncWebServer(80);
+        httpd->on("^\\/api\\/rtc\\/date$",
+                    std::bind(&RESTful::rtcDate, restApi, std::placeholders::_1));
+        httpd->on("^\\/api\\/logs$", HTTP_GET,
+                    std::bind(&RESTful::logsList, restApi, std::placeholders::_1));
+        httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
+                    std::bind(&RESTful::logsFile, restApi, std::placeholders::_1));
+        httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
+                    std::bind(&RESTful::firmwareUpload, restApi, std::placeholders::_1),
+                    std::bind(&RESTful::firmwareUploadChunks, restApi, std::placeholders::_1,
+                    std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+                    std::placeholders::_5, std::placeholders::_6));
+        httpd->onNotFound([](AsyncWebServerRequest * request) {
             request->send(404, "text/plain", "Not found");
         });
-        httpSrv.begin();
+        httpd->begin();
     }
 }
 
@@ -258,10 +261,7 @@ void loop() {
 	}
     }
 
-    if(wifi) {
-        // work
-	ftpSrv.handleFTP();
-    } else {
+    if(!wifi) {
 	// stop wifi
 	WiFi.softAPdisconnect(true);
 

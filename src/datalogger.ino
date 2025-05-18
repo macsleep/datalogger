@@ -131,13 +131,13 @@ void progressCallBack(size_t currSize, size_t totalSize) {
     digitalWrite(LED_YELLOW, !digitalRead(LED_YELLOW));
 }
 
-void IRAM_ATTR isr_button() {
+void IRAM_ATTR isrButton() {
     if(millis() > 500) {
 	wifi = false;
     }
 }
 
-void IRAM_ATTR isr_timer() {
+void IRAM_ATTR isrTimer() {
     tick = true;
 }
 
@@ -154,9 +154,9 @@ void setup() {
     digitalWrite(MAX485_RE_NEG, LOW);
     digitalWrite(MAX485_DE, LOW);
     pinMode(BUTTON, INPUT);
-    attachInterrupt(BUTTON, isr_button, FALLING);
+    attachInterrupt(BUTTON, isrButton, FALLING);
     pinMode(TIMER, INPUT);
-    attachInterrupt(TIMER, isr_timer, FALLING);
+    attachInterrupt(TIMER, isrTimer, FALLING);
 
     // modbus
     Serial1.begin(19200, SERIAL_8N2, SERIAL1_RX, SERIAL1_TX);

@@ -12,11 +12,10 @@
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-
-#define REST_USER "http"
-#define REST_PASSWD "acme"
+#include "Settings.h"
 
 extern RTC_PCF8563 rtc;
+extern Settings settings;
 
 class RESTful {
   public:

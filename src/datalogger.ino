@@ -14,6 +14,7 @@
 #include <ESPmDNS.h>
 #include "Timer_PFC8563.h"
 #include "RESTful.h"
+#include "Settings.h"
 
 #define LED_GREEN GPIO_NUM_3
 #define LED_YELLOW GPIO_NUM_4
@@ -29,8 +30,10 @@ Timer_PFC8563 timer;
 ModbusMaster modbus;
 AsyncWebServer *httpd;
 RESTful restApi;
-RTC_DATA_ATTR bool wifi;
-RTC_DATA_ATTR bool tick;
+Settings settings;
+
+RTC_DATA_ATTR bool enableWifi;
+RTC_DATA_ATTR bool execJob;
 
 bool fc4_T_float(uint16_t addr, float *value) {
     uint8_t result, a, b, c, d;
@@ -69,7 +72,7 @@ bool fc4_T3(uint16_t addr, int32_t *value) {
     return (true);
 }
 
-bool writeMessage() {
+bool writeLogfile() {
     int n;
     bool ok;
     int32_t e1 = 0, e2 = 0, e3 = 0, e4 = 0;
@@ -133,12 +136,12 @@ void progressCallBack(size_t currSize, size_t totalSize) {
 
 void IRAM_ATTR isrButton() {
     if(millis() > 500) {
-	wifi = false;
+	enableWifi = false;
     }
 }
 
 void IRAM_ATTR isrTimer() {
-    tick = true;
+    execJob = true;
 }
 
 void setup() {
@@ -199,12 +202,12 @@ void setup() {
     switch (esp_sleep_get_wakeup_cause()) {
      case ESP_SLEEP_WAKEUP_EXT1:
 	 bitmask = esp_sleep_get_ext1_wakeup_status();
-	 if(bitmask & (1ULL << BUTTON)) wifi = true;
-	 if(bitmask & (1ULL << TIMER)) tick = true;
+	 if(bitmask & (1ULL << BUTTON)) enableWifi = true;
+	 if(bitmask & (1ULL << TIMER)) execJob = true;
 	 break;
      default:
-	 tick = false;
-	 wifi = false;
+	 execJob = false;
+	 enableWifi = false;
 
 	 // boot blink
 	 digitalWrite(LED_GREEN, HIGH);
@@ -215,18 +218,21 @@ void setup() {
 	 break;
     }
 
-    if(wifi) {
+    // preferences
+    settings.begin();
+
+    if(enableWifi) {
 	// led
 	digitalWrite(LED_YELLOW, HIGH);
 
-	// wifi
-	WiFi.mode(WIFI_AP);
+	// start Wifi
+	WiFi.softAP(settings.wifiSSID.c_str(), settings.wifiPassword.c_str());
 	IPAddress IP = IPAddress(10, 0, 0, 1);
 	IPAddress Netmask = IPAddress(255, 255, 255, 0);
 	WiFi.softAPConfig(IP, IP, Netmask);
 
         // mdns
-        MDNS.begin("esp32");
+        MDNS.begin(NAMESPACE);
 
         // http
         httpd = new AsyncWebServer(80);
@@ -251,18 +257,17 @@ void setup() {
 void loop() {
     uint64_t bitmask;
 
-    if(tick) {
-	tick = false;
-
-	if(writeMessage()) {
+    if(execJob) {
+	execJob = false;
+	if(writeLogfile()) {
 	    digitalWrite(LED_GREEN, HIGH);
 	    delay(500);
 	    digitalWrite(LED_GREEN, LOW);
 	}
     }
 
-    if(!wifi) {
-	// stop wifi
+    if(!enableWifi) {
+	// stop Wifi
 	WiFi.softAPdisconnect(true);
 
 	// debounce button

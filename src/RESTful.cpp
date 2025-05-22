@@ -19,7 +19,7 @@ void RESTful::rtcDate(AsyncWebServerRequest *request) {
 	 break;
 
      case HTTP_PUT:
-	 if(!request->authenticate("http", "acme"))
+	 if(!request->authenticate(settings.httpUser.c_str(), settings.httpPassword.c_str()))
 	     return request->requestAuthentication();
 
 	 status = 400;
@@ -80,8 +80,8 @@ void RESTful::firmwareUpload(AsyncWebServerRequest *request) {
 }
 
 void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
-    if(!request->authenticate(REST_USER, REST_PASSWD))
-	return request->requestAuthentication();
+    if(!request->authenticate(settings.httpUser.c_str(), settings.httpPassword.c_str()))
+        return request->requestAuthentication();
 
     if(!index) {
 	request->_tempFile = SD.open("/firmware.bin", "w");
@@ -95,3 +95,4 @@ void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filena
 	request->_tempFile.close();
     }
 }
+

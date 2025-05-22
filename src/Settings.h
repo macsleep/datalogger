@@ -1,6 +1,6 @@
 
 /*
- * Settings 22.5.2025 JS
+ * Non-volatile system settings 
  */
 
 #ifndef SETTINGS_H
@@ -9,7 +9,7 @@
 #include <Arduino.h>
 #include <Preferences.h>
 
-#define NAMESPACE "datalogger"
+#define SYSTEMNAME "datalogger"
 #define RO_MODE true
 #define RW_MODE false
 
@@ -29,7 +29,7 @@ class Settings {
 
   private:
     // variables
-    Preferences preferences;
+     Preferences preferences;
 };
 
 #endif

@@ -183,19 +183,19 @@ void setup() {
 
     // firmware
     if(SD.exists("/firmware.bin")) {
-        File firmware = SD.open("/firmware.bin");
-        if(firmware) {
+	File firmware = SD.open("/firmware.bin");
+	if(firmware) {
 	    Update.onProgress(progressCallBack);
 	    Update.begin(firmware.size(), U_FLASH);
 	    Update.writeStream(firmware);
 	    firmware.close();
-        }
-        SD.remove("/firmware.bin");
+	}
+	SD.remove("/firmware.bin");
 	if(Update.end()) {
 	    digitalWrite(LED_YELLOW, LOW);
 	    delay(500);
 	    ESP.restart();
-        }
+	}
     }
 
     // wakeup
@@ -226,31 +226,32 @@ void setup() {
 	digitalWrite(LED_YELLOW, HIGH);
 
 	// start Wifi
-	WiFi.softAP(settings.wifiSSID.c_str(), settings.wifiPassword.c_str());
+	WiFi.softAP(settings.wifiSSID.c_str(),
+		    settings.wifiPassword.c_str());
 	IPAddress IP = IPAddress(10, 0, 0, 1);
 	IPAddress Netmask = IPAddress(255, 255, 255, 0);
 	WiFi.softAPConfig(IP, IP, Netmask);
 
-        // mdns
-        MDNS.begin(NAMESPACE);
+	// mdns
+	MDNS.begin(SYSTEMNAME);
 
-        // http
-        httpd = new AsyncWebServer(80);
-        httpd->on("^\\/api\\/rtc\\/date$",
-                    std::bind(&RESTful::rtcDate, restApi, std::placeholders::_1));
-        httpd->on("^\\/api\\/logs$", HTTP_GET,
-                    std::bind(&RESTful::logsList, restApi, std::placeholders::_1));
-        httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
-                    std::bind(&RESTful::logsFile, restApi, std::placeholders::_1));
-        httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
-                    std::bind(&RESTful::firmwareUpload, restApi, std::placeholders::_1),
-                    std::bind(&RESTful::firmwareUploadChunks, restApi, std::placeholders::_1,
-                    std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
-                    std::placeholders::_5, std::placeholders::_6));
-        httpd->onNotFound([](AsyncWebServerRequest * request) {
-            request->send(404, "text/plain", "Not found");
-        });
-        httpd->begin();
+	// http
+	httpd = new AsyncWebServer(80);
+	httpd->on("^\\/api\\/rtc\\/date$",
+		  std::bind(&RESTful::rtcDate, restApi, std::placeholders::_1));
+	httpd->on("^\\/api\\/logs$", HTTP_GET,
+		  std::bind(&RESTful::logsList, restApi, std::placeholders::_1));
+	httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$",
+	     HTTP_GET, std::bind(&RESTful::logsFile, restApi, std::placeholders::_1));
+	httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
+		  std::bind(&RESTful::firmwareUpload, restApi, std::placeholders::_1),
+		  std::bind(&RESTful::firmwareUploadChunks, restApi, std::placeholders::_1,
+                  std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+                  std::placeholders::_5, std::placeholders::_6));
+	httpd->onNotFound([](AsyncWebServerRequest * request) {
+			  request->send(404, "text/plain", "Not found");}
+	);
+	httpd->begin();
     }
 }
 

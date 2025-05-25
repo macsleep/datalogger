@@ -20,7 +20,8 @@ extern Settings settings;
 class RESTful {
   public:
     RESTful();
-    void rtcDate(AsyncWebServerRequest * request);
+    void createURLs(AsyncWebServer *httpd);
+    void rtcDate(AsyncWebServerRequest *request);
     void logsList(AsyncWebServerRequest *request);
     void logsFile(AsyncWebServerRequest *request);
     void firmwareUpload(AsyncWebServerRequest *request);

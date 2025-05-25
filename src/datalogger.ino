@@ -218,16 +218,12 @@ void setup() {
 	 break;
     }
 
-    // preferences
-    settings.begin();
-
     if(enableWifi) {
 	// led
 	digitalWrite(LED_YELLOW, HIGH);
 
 	// start Wifi
-	WiFi.softAP(settings.wifiSSID.c_str(),
-		    settings.wifiPassword.c_str());
+	WiFi.softAP(settings.getWifiSSID().c_str(), settings.getWifiPassword().c_str());
 	IPAddress IP = IPAddress(10, 0, 0, 1);
 	IPAddress Netmask = IPAddress(255, 255, 255, 0);
 	WiFi.softAPConfig(IP, IP, Netmask);
@@ -237,17 +233,7 @@ void setup() {
 
 	// http
 	httpd = new AsyncWebServer(80);
-	httpd->on("^\\/api\\/rtc\\/date$",
-		  std::bind(&RESTful::rtcDate, restApi, std::placeholders::_1));
-	httpd->on("^\\/api\\/logs$", HTTP_GET,
-		  std::bind(&RESTful::logsList, restApi, std::placeholders::_1));
-	httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$",
-	     HTTP_GET, std::bind(&RESTful::logsFile, restApi, std::placeholders::_1));
-	httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
-		  std::bind(&RESTful::firmwareUpload, restApi, std::placeholders::_1),
-		  std::bind(&RESTful::firmwareUploadChunks, restApi, std::placeholders::_1,
-                  std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
-                  std::placeholders::_5, std::placeholders::_6));
+        restApi.createURLs(httpd);
 	httpd->onNotFound([](AsyncWebServerRequest * request) {
 			  request->send(404, "text/plain", "Not found");}
 	);

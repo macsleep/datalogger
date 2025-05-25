@@ -4,6 +4,20 @@
 RESTful::RESTful() {
 }
 
+void RESTful::createURLs(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/rtc\\/date$",
+              std::bind(&RESTful::rtcDate, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs$", HTTP_GET,
+              std::bind(&RESTful::logsList, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$",
+         HTTP_GET, std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
+              std::bind(&RESTful::firmwareUpload, this, std::placeholders::_1),
+              std::bind(&RESTful::firmwareUploadChunks, this, std::placeholders::_1,
+              std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,
+              std::placeholders::_5, std::placeholders::_6));
+}
+
 void RESTful::rtcDate(AsyncWebServerRequest *request) {
     int status;
     DateTime now;
@@ -19,7 +33,7 @@ void RESTful::rtcDate(AsyncWebServerRequest *request) {
 	 break;
 
      case HTTP_PUT:
-	 if(!request->authenticate(settings.httpUser.c_str(), settings.httpPassword.c_str()))
+	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
 
 	 status = 400;
@@ -80,7 +94,7 @@ void RESTful::firmwareUpload(AsyncWebServerRequest *request) {
 }
 
 void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
-    if(!request->authenticate(settings.httpUser.c_str(), settings.httpPassword.c_str()))
+    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
         return request->requestAuthentication();
 
     if(!index) {

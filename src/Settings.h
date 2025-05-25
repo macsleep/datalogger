@@ -15,21 +15,19 @@
 
 class Settings {
   public:
-    // methods
     Settings();
-    void begin(void);
-    void save(void);
-    void clear(void);
 
-    // variables
-    String wifiSSID;
-    String wifiPassword;
-    String httpUser;
-    String httpPassword;
+    String getWifiSSID(void);
+    void setWifiSSID(String value);
+    String getWifiPassword(void);
+    void setWifiPassword(String value);
+    String getHttpUser(void);
+    void setHttpUser(String value);
+    String getHttpPassword(void);
+    void setHttpPassword(String value);
 
-  private:
-    // variables
-     Preferences preferences;
+ private:
+    Preferences preferences;
 };
 
 #endif

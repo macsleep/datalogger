@@ -52,7 +52,7 @@ curl -u "admin:admin" http://datalogger.local/api/system
 wifiSSID=Datalogger_5AB278&wifiPassword=&httpUser=admin&httpPassword=admin
 </pre>
 
-A PUT on one or multiple parameters changes the default settings. Remember changing the http password changes access to the REST API immediately. Changing the Wifi passwords requires rebooting the data logger (or waking it from deep sleep). Please also note a Wifi passwords needs to be at least eight characters in length. Otherwise the ESP will behave like it has no password set.
+A PUT on one or multiple parameters changes the default settings. Remember changing the http password changes access to the REST API immediately. Changing the Wifi password requires rebooting the data logger (or waking it from deep sleep). Please also note a Wifi password needs to be at least eight characters in length. Otherwise the ESP will behave like it has no password set.
 
 <pre>
 curl -u "admin:admin" -X PUT -d "wifiPassword=" http://datalogger.local/api/system

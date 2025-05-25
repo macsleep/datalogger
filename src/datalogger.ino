@@ -233,7 +233,7 @@ void setup() {
 
 	// http
 	httpd = new AsyncWebServer(80);
-        restApi.createURLs(httpd);
+        restApi.begin(httpd);
 	httpd->onNotFound([](AsyncWebServerRequest * request) {
 			  request->send(404, "text/plain", "Not found");}
 	);

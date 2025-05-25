@@ -45,7 +45,7 @@ curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmwa
 
 ## System
 
-To get and change the Wifi SSID, Wifi password, http user and http password you can use the following statements. A get returns all the configurable parameters:
+To get and change the Wifi SSID, Wifi password, http user and http password you can use the following statements. A GET returns all the configurable parameters:
 
 <pre>
 curl -u "admin:admin" http://datalogger.local/api/system

@@ -42,3 +42,18 @@ This POST uploads a firmware binary to the SD card to provide an OTA (Over The A
 <pre>
 curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmware/upload
 </pre>
+
+## System
+
+To get and change the Wifi SSID, Wifi password, http user and http password you can use the following statements. A get returns all the configurable parameters:
+
+<pre>
+curl -u "admin:admin" http://datalogger.local/api/system
+wifiSSID=Datalogger_5AB278&wifiPassword=&httpUser=admin&httpPassword=admin
+</pre>
+
+A PUT on one or multiple parameters changes the default settings. Remember changing the http password changes access to the REST API immediately. Changing the Wifi passwords requires rebooting the data logger (or waking it from deep sleep). Please also note a Wifi passwords needs to be at least eight characters in length. Otherwise the ESP will behave like it has no password set.
+
+<pre>
+curl -u "admin:admin" -X PUT -d "wifiPassword=" http://datalogger.local/api/system
+</pre>

@@ -1,7 +1,13 @@
 #!/usr/bin/perl
 
 #
-# 11.5.2025 JS read and write rtc UTC time via http REST api
+# 11.5.2025 JS
+#
+# This script can be used to read and write the RTC (Real Time Clock).
+# The datalogger time is set to UTC (Universal Time Coordinates) so
+# you don't have to adjust for summer/winter time. If you set the time
+# and date (-s option) the time and date of the computer where you run
+# the perl script will transferred to the data logger RTC.
 #
 
 use strict;

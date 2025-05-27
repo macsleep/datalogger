@@ -7,7 +7,7 @@
 # The data logger time is set to UTC (Universal Time Coordinates) so
 # you don't have to adjust for summer/winter time. If you set the time
 # and date (-s option) the time and date of the computer where you run
-# the perl script will transferred to the data logger RTC.
+# the perl script will be transferred to the data logger RTC.
 #
 
 use strict;

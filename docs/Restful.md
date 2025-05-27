@@ -14,6 +14,19 @@ And the following PUT sets the RTC:
 curl -u "admin:admin" -X PUT -d "epoch=1747931902" http://datalogger.local/api/rtc/date
 </pre>
 
+## Timer
+The timer of the PCF8563 RTC is the scheduler waking the ESP32 at regular intervals to read values via Modbus. It is an 8 bit timer clocked with 1/60 Hz which results in an interrupt every 1 to 255 minutes (4 hours and 15 minutes max). To read the interrupt interval you can issue the following GET:   
+<pre>
+curl http://datalogger.local/api/rtc/timer
+1
+</pre>
+
+A value of 1 means the ESP32 will wake up every minute and read values via Modbus. A value of 0 disables the timer. And the PUT below changes the interval to 5 minutes:
+
+<pre>
+curl -u "admin:admin" -X PUT -d "minutes=5" http://datalogger.local/api/rtc/timer
+</pre>
+
 ## Logs
 To get a list of all log files stored on the SD card the following GET returns a list of file ids and their size:
 <pre>

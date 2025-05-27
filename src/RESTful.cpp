@@ -75,7 +75,7 @@ void RESTful::rtcTimer(AsyncWebServerRequest *request) {
 	 if(request->hasParam("minutes", true)) {
 	     value = request->getParam("minutes", true)->value();
              minutes = value.toInt();
-             if(minutes > 0 && minutes < 256) {
+             if(minutes >= 0 && minutes < 256) {
                  if(timer.isEnabled()) timer.disable();
                  timer.enable(minutes);
                  settings.setTimer((uint8_t)minutes);

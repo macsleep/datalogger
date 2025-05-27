@@ -7,6 +7,8 @@ RESTful::RESTful() {
 void RESTful::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/rtc\\/date$",
 	      std::bind(&RESTful::rtcDate, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/rtc\\/timer$",
+	      std::bind(&RESTful::rtcTimer, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs$", HTTP_GET,
 	      std::bind(&RESTful::logsList, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$",
@@ -46,6 +48,40 @@ void RESTful::rtcDate(AsyncWebServerRequest *request) {
 	     rtc.adjust(DateTime(value.toInt()));
 	     status = 200;
 	 }
+	 request->send(status);
+	 break;
+
+     default:
+	 request->send(400);
+	 break;
+    }
+}
+
+void RESTful::rtcTimer(AsyncWebServerRequest *request) {
+    String value;
+    int status, minutes;
+
+    switch (request->method()) {
+     case HTTP_GET:
+         value = String(settings.getTimer(), DEC);
+	 request->send(200, "text/plain", value);
+	 break;
+
+     case HTTP_PUT:
+	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	     return request->requestAuthentication();
+
+	 status = 400;
+	 if(request->hasParam("minutes", true)) {
+	     value = request->getParam("minutes", true)->value();
+             minutes = value.toInt();
+             if(minutes > 0 && minutes < 256) {
+                 if(timer.isEnabled()) timer.disable();
+                 timer.enable(minutes);
+                 settings.setTimer((uint8_t)minutes);
+	         status = 200;
+             }
+         }
 	 request->send(status);
 	 break;
 

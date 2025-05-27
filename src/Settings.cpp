@@ -62,3 +62,16 @@ void Settings::setHttpPassword(String value) {
     preferences.end();
 }
 
+uint8_t Settings::getTimer(void) {
+    preferences.begin(SYSTEMNAME, RO_MODE);
+    uint8_t value = preferences.getUChar("timer", 1);
+    preferences.end();
+    return(value);
+}
+
+void Settings::setTimer(uint8_t value) {
+    preferences.begin(SYSTEMNAME, RW_MODE);
+    preferences.putUChar("timer", value);
+    preferences.end();
+}
+

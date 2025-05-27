@@ -175,7 +175,7 @@ void setup() {
 
     // timer
     if(!timer.isEnabled()) {
-	timer.enable(1);
+	timer.enable(settings.getTimer());
     }
 
     // sd card

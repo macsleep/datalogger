@@ -25,6 +25,8 @@ class Settings {
     void setHttpUser(String value);
     String getHttpPassword(void);
     void setHttpPassword(String value);
+    uint8_t getTimer(void);
+    void setTimer(uint8_t value);
 
  private:
     Preferences preferences;

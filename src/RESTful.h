@@ -12,9 +12,11 @@
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include "Timer_PFC8563.h"
 #include "Settings.h"
 
 extern RTC_PCF8563 rtc;
+extern Timer_PFC8563 timer;
 extern Settings settings;
 
 class RESTful {
@@ -22,6 +24,7 @@ class RESTful {
     RESTful();
     void begin(AsyncWebServer *httpd);
     void rtcDate(AsyncWebServerRequest *request);
+    void rtcTimer(AsyncWebServerRequest *request);
     void logsList(AsyncWebServerRequest *request);
     void logsFile(AsyncWebServerRequest *request);
     void firmwareUpload(AsyncWebServerRequest *request);

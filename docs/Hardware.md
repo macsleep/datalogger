@@ -1,6 +1,6 @@
 # Hardware
 
-The data logger is based on an Espressif ESP32-S3 micro controller in a DIN rail enclosure. The controller is equipped with an SD card, real time clock, RS485 serial line driver and a linear voltage regulator capable of DC input voltages of 5-30 Volts. 
+The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail enclosure. The controller is equipped with an SD card, real time clock, RS485 serial line driver and a linear voltage regulator capable of DC input voltages of 5-30 Volts. 
 
 <img src="images/hardware.jpeg" width="320">
 
@@ -57,3 +57,6 @@ DD33  <->  3.3V
 <img src="images/pcb_top.png">
 <img src="images/pcb_bottom.png">
 
+## Usage
+
+<img src="images/wiring.png">

@@ -8,4 +8,4 @@ This is a project for a DIN rail Modbus Data Logger. The idea was to record the 
 
 ## Build
 
-This software is build using [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation/index.html). Once you have installed the PIO binaries you can execute `pio run` to build the firmware and `pio run -t upload` to flash the firmware onto the ESP32 S3. Please take a look at `platformio.ini` for the additional libraries this project depends upon. On Linux/macOS feel free to use the Makefile wrapper to start the build. 
+This software is build using [PlatformIO Core](https://docs.platformio.org/en/latest/core/index.html). Once you have installed the PIO binaries you can execute `pio run` to build the firmware and `pio run -t upload` to flash the firmware onto the ESP32 S3. Please take a look at `platformio.ini` for the additional libraries this project depends upon. On Linux/macOS feel free to use the Makefile wrapper to start the build. 

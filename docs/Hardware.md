@@ -33,10 +33,11 @@ The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail
 * 1 x LED Green (Dialight 551-xx07 3mm LED)
 * 1 x LED Yellow (Dialight 551-xx07 3mm LED)
 * 1 x Quarz 32k768 (Euroquarz EQ162 12.5pF crystal)
-* 1 x 120 Ohm (0805 resistor)
-* 6 x 10k Ohm (0805 resistor)
+* 4 x 10k Ohm (0805 resistor)
 * 1 x 5k1 Ohm (0805 resistor)
+* 2 x 4k7 Ohm (0805 resistor)
 * 2 x 3k3 Ohm (0805 resistor)
+* 1 x 120 Ohm (0805 resistor)
 * 1 x Tactile Switch (NAMAE JTP 1236)
 
 ## ESP32 M5Stack Downloader Pinout

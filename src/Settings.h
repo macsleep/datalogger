@@ -13,6 +13,8 @@
 #define RO_MODE true
 #define RW_MODE false
 
+enum class FinderType { T1, T3, T_float };
+ 
 class Settings {
   public:
     Settings();
@@ -29,6 +31,15 @@ class Settings {
     void setTimer(uint8_t value);
 
  private:
+    const char* FinderTypeToString(FinderType e) {
+        switch(e) {
+            case FinderType::T1: return "T1";
+            case FinderType::T3: return "T3";
+            case FinderType::T_float: return "T_float";
+            default: return "";
+        }
+    }
+
     Preferences preferences;
 };
 

@@ -4,7 +4,6 @@
  */
 
 #include <Arduino.h>
-#include <ModbusMaster.h>
 #include <RTClib.h>
 #include <SD.h>
 #include <Update.h>
@@ -15,6 +14,7 @@
 #include "Timer_PFC8563.h"
 #include "RESTful.h"
 #include "Settings.h"
+#include "Finder.h"
 
 #define LED_GREEN GPIO_NUM_3
 #define LED_YELLOW GPIO_NUM_4
@@ -24,74 +24,39 @@
 #define SERIAL1_RX 8
 #define MAX485_DE 9
 #define MAX485_RE_NEG 10
+#define DEVICE_ADDRESS 33
 
 RTC_PCF8563 rtc;
 Timer_PFC8563 timer;
-ModbusMaster modbus;
 AsyncWebServer *httpd;
+ModbusMaster modbus;
+Finder energyMeter;
 RESTful restApi;
 Settings settings;
 
 RTC_DATA_ATTR bool enableWifi;
 RTC_DATA_ATTR bool execJob;
 
-bool fc4_T_float(uint16_t addr, float *value) {
-    uint8_t result, a, b, c, d;
-    uint16_t data[2];
-    uint32_t i;
-
-    result = modbus.readInputRegisters(addr, 2);
-    if(result != modbus.ku8MBSuccess) return (false);
-    for(i = 0; i < 2; i++) {
-	data[i] = modbus.getResponseBuffer(i);
-    }
-
-    a = (data[0] >> 8) & 0xff;
-    b = (data[0] >> 0) & 0xff;
-    c = (data[1] >> 8) & 0xff;
-    d = (data[1] >> 0) & 0xff;
-
-    i = (a << 24) | (b << 16) | (c << 8) | (d << 0);
-    memcpy(value, &i, 4);
-
-    return (true);
-}
-
-bool fc4_T3(uint16_t addr, int32_t *value) {
-    uint8_t result;
-    uint16_t data[2];
-    uint32_t i;
-
-    result = modbus.readInputRegisters(addr, 2);
-    if(result != modbus.ku8MBSuccess) return (false);
-    for(i = 0; i < 2; i++) {
-	data[i] = modbus.getResponseBuffer(i);
-    }
-    *value = (data[0] << 16) | data[1];
-
-    return (true);
-}
-
 bool writeLogfile() {
     int n;
     bool ok;
     int32_t e1 = 0, e2 = 0, e3 = 0, e4 = 0;
     float watt = 0.0;
-    char path[32];
+    char path[64];
     char message[64];
 
     // energy
-    ok = fc4_T_float(2490, &watt);
+    ok = energyMeter.functionCode4_T_float(2490, &watt);
     if(!ok) return (false);
 
     // mid counter
-    ok = fc4_T3(462, &e1);
+    ok = energyMeter.functionCode4_T3(462, &e1);
     if(!ok) return (false);
-    ok = fc4_T3(464, &e2);
+    ok = energyMeter.functionCode4_T3(464, &e2);
     if(!ok) return (false);
-    ok = fc4_T3(466, &e3);
+    ok = energyMeter.functionCode4_T3(466, &e3);
     if(!ok) return (false);
-    ok = fc4_T3(468, &e4);
+    ok = energyMeter.functionCode4_T3(468, &e4);
     if(!ok) return (false);
 
     // rtc
@@ -163,9 +128,10 @@ void setup() {
 
     // modbus
     Serial1.begin(19200, SERIAL_8N2, SERIAL1_RX, SERIAL1_TX);
-    modbus.begin(33, Serial1);
+    modbus.begin(DEVICE_ADDRESS, Serial1);
     modbus.preTransmission(preTransmission);
     modbus.postTransmission(postTransmission);
+    energyMeter.begin(&modbus);
 
     // rtc
     rtc.begin();

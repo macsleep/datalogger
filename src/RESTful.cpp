@@ -104,19 +104,18 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
 	if(entry.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
 	    directory = SD.open("/" + String(entry.name()));
 	    while(file = directory.openNextFile()) {
-		regex.Target((char *) file.name());
-		if(!file.isDirectory()
-		   && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
+                regex.Target((char *) file.name());
+		if(!file.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
 		    response->println(String(directory.name()) +
 				      String(file.name()) + " " +
 				      String(file.size()));
 		}
 		file.close();
 	    }
-	    entry.close();
 	}
-	root.close();
+        entry.close();
     }
+    root.close();
 
     request->send(response);
 }

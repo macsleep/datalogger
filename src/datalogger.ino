@@ -111,6 +111,7 @@ void IRAM_ATTR isrTimer() {
 
 void setup() {
     uint64_t bitmask;
+    timeval tv;
 
     // gpio
     pinMode(LED_GREEN, OUTPUT);
@@ -143,6 +144,10 @@ void setup() {
     if(!timer.isEnabled()) {
 	timer.enable(settings.getTimer());
     }
+
+    // system time
+    tv.tv_sec = rtc.now().unixtime();
+    settimeofday(&tv, NULL);
 
     // sd card
     SD.begin();

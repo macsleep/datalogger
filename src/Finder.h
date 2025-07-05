@@ -8,11 +8,8 @@
 
 #include <Arduino.h>
 #include <ModbusMaster.h>
-#include "Settings.h"
 
 enum class FinderType { T1, T2, T3, T_float };
-
-extern Settings settings;
 
 class Finder {
   public:
@@ -25,7 +22,7 @@ class Finder {
     bool functionCode4_T_float(uint16_t addr, float *value);
 
   private:
-     ModbusMaster* modbus;
+     ModbusMaster *modbus;
 };
 
 #endif

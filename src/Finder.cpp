@@ -9,6 +9,36 @@ void Finder::begin(ModbusMaster *modbus) {
     Finder::modbus = modbus;
 }
 
+const char* Finder::typeToString(FinderType e) {
+    switch(e) {
+        case FinderType::T1: return "T1";
+        case FinderType::T2: return "T2";
+        case FinderType::T3: return "T3";
+        case FinderType::T_float: return "T_float";
+        default: return "";
+    }
+}
+
+bool Finder::functionCode4_T2(uint16_t addr, int16_t *value) {
+    uint8_t result;
+
+    result = modbus->readInputRegisters(addr, 1);
+    if(result != modbus->ku8MBSuccess) return (false);
+    *value = modbus->getResponseBuffer(0);
+
+    return (true);
+}
+
+bool Finder::functionCode4_T1(uint16_t addr, uint16_t *value) {
+    uint8_t result;
+
+    result = modbus->readInputRegisters(addr, 1);
+    if(result != modbus->ku8MBSuccess) return (false);
+    *value = modbus->getResponseBuffer(0);
+
+    return (true);
+}
+
 bool Finder::functionCode4_T3(uint16_t addr, int32_t *value) {
     uint8_t result;
     uint16_t data[2];

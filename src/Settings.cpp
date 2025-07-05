@@ -75,3 +75,31 @@ void Settings::setTimer(uint8_t value) {
     preferences.end();
 }
 
+bool Settings::getModbusConfig(uint8_t n, modbusConfig *config) {
+    char key[16];
+
+    if(n >= MODBUS_SLOTS) return(false);
+
+    preferences.begin(SYSTEMNAME, RO_MODE);
+    snprintf(key, sizeof(key), "modbusConfig_%d", n);
+    if(preferences.getBytesLength(key) == sizeof(modbusConfig)) {
+        preferences.getBytes(key, config, sizeof(modbusConfig));
+    } else bzero(config, sizeof(modbusConfig));
+    preferences.end();
+
+    return(true);
+}
+
+bool Settings::setModbusConfig(uint8_t n, modbusConfig *config) {
+    char key[16];
+
+    if(n >= MODBUS_SLOTS) return(false);
+
+    preferences.begin(SYSTEMNAME, RW_MODE);
+    snprintf(key, sizeof(key), "modbusConfig_%d", n);
+    preferences.putBytes(key, config, sizeof(modbusConfig));
+    preferences.end();
+
+    return(true);
+}
+

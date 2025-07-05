@@ -8,13 +8,20 @@
 
 #include <Arduino.h>
 #include <Preferences.h>
+#include "Finder.h"
 
 #define SYSTEMNAME "datalogger"
 #define RO_MODE true
 #define RW_MODE false
+#define MODBUS_SLOTS 5
 
-enum class FinderType { T1, T3, T_float };
- 
+typedef struct {
+    uint16_t deviceAddress;
+    uint8_t functionCode;
+    uint16_t registerAddress;
+    FinderType valueType;
+} modbusConfig;
+
 class Settings {
   public:
     Settings();
@@ -29,17 +36,10 @@ class Settings {
     void setHttpPassword(String value);
     uint8_t getTimer(void);
     void setTimer(uint8_t value);
+    bool getModbusConfig(uint8_t n, modbusConfig *config);
+    bool setModbusConfig(uint8_t n, modbusConfig *config);
 
  private:
-    const char* FinderTypeToString(FinderType e) {
-        switch(e) {
-            case FinderType::T1: return "T1";
-            case FinderType::T3: return "T3";
-            case FinderType::T_float: return "T_float";
-            default: return "";
-        }
-    }
-
     Preferences preferences;
 };
 

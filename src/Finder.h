@@ -8,15 +8,17 @@
 
 #include <Arduino.h>
 #include <ModbusMaster.h>
-#include "Settings.h"
 
-extern Settings settings;
+enum class FinderType { T1, T2, T3, T_float };
 
 class Finder {
   public:
     Finder();
     void begin(ModbusMaster *modbus);
-    bool functionCode4_T3(uint16_t addr, int32_t * value);
+    const char *typeToString(FinderType e);
+    bool functionCode4_T1(uint16_t addr, uint16_t *value);
+    bool functionCode4_T2(uint16_t addr, int16_t *value);
+    bool functionCode4_T3(uint16_t addr, int32_t *value);
     bool functionCode4_T_float(uint16_t addr, float *value);
 
   private:

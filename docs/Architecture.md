@@ -14,7 +14,7 @@ The push button toggles Wifi on and off. The yellow LED indicates the Wifi statu
 
 ## MAX3485
 
-The MAX3485 is the RS485 differential driver used to read values off the energy counter via Modbus. It is connected to one of the three available UARTs (Universal Asynchronous Receiver Transmitter) of the ESP32.
+The MAX3485 is the RS485 differential driver used to read values off the energy counter via Modbus. It is connected to one of the three available UARTs (Universal Asynchronous Receiver Transmitter) of the ESP32 S3.
 
 ## SD Card
 

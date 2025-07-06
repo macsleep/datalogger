@@ -46,6 +46,8 @@ void RESTful::begin(AsyncWebServer *httpd) {
 	      std::bind(&RESTful::system, this, std::placeholders::_1));
     httpd->on("^\\/api\\/system\\/reset$",
 	      std::bind(&RESTful::systemReset, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus$", HTTP_GET,
+	      std::bind(&RESTful::modbus, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$",
 	      std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
 }
@@ -239,13 +241,26 @@ void RESTful::systemReset(AsyncWebServerRequest *request) {
     }
 }
 
+void RESTful::modbus(AsyncWebServerRequest *request) {
+    int i;
+    ModbusConfig config;
+    AsyncResponseStream *response;
+
+    response = request->beginResponseStream("text/html");
+
+    i = 0;
+    while(settings.getModbusConfig(i, &config)) {
+        response->println(String(i));
+        i++;
+    }
+
+    request->send(response);
+}
+
 void RESTful::modbusConfig(AsyncWebServerRequest *request) {
     int n, i;
     ModbusConfig config;
     String value = "";
-
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-	return request->requestAuthentication();
 
     n = request->pathArg(0).toInt();
 
@@ -261,6 +276,9 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 	 break;
 
      case HTTP_PUT:
+         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	     return request->requestAuthentication();
+
          if(settings.getModbusConfig(n, &config)) {
 	     for(i = 0; i < request->params(); i++) {
 	         if(String(request->getParam(i)->name()).equals("deviceAddress")) {

@@ -9,14 +9,22 @@ void Finder::begin(ModbusMaster *modbus) {
     Finder::modbus = modbus;
 }
 
-const char* Finder::typeToString(FinderType e) {
-    switch(e) {
+String Finder::typeToString(FinderType value) {
+    switch(value) {
         case FinderType::T1: return "T1";
         case FinderType::T2: return "T2";
         case FinderType::T3: return "T3";
         case FinderType::T_float: return "T_float";
-        default: return "";
+        default: return "FOO";
     }
+}
+
+FinderType Finder::stringToType(String value) {
+    if(value.equals("T1")) return FinderType::T1;
+    if(value.equals("T2")) return FinderType::T2;
+    if(value.equals("T3")) return FinderType::T3;
+    if(value.equals("T_float")) return FinderType::T_float;
+    return(FinderType::FOO);
 }
 
 bool Finder::functionCode4_T2(uint16_t addr, int16_t *value) {

@@ -4,6 +4,25 @@
 Settings::Settings() {
 }
 
+void Settings::reset(void) {
+    int i;
+    ModbusConfig config;
+
+    nvs_flash_erase();
+    nvs_flash_init();
+
+    setWifiSSID(getWifiSSID());
+    setWifiPassword(getWifiPassword());
+    setHttpUser(getHttpUser());
+    setHttpPassword(getHttpPassword());
+    setTimer(getTimer());
+
+    for(i=0; i<MODBUS_SLOTS; i++) {
+        getModbusConfig(i, &config);    
+        setModbusConfig(i, &config);    
+    }
+}
+
 String Settings::getWifiSSID(void) {
     char buffer[128] = "";
     uint64_t mac = ESP.getEfuseMac();
@@ -75,29 +94,29 @@ void Settings::setTimer(uint8_t value) {
     preferences.end();
 }
 
-bool Settings::getModbusConfig(uint8_t n, modbusConfig *config) {
+bool Settings::getModbusConfig(uint8_t n, ModbusConfig *config) {
     char key[16];
 
     if(n >= MODBUS_SLOTS) return(false);
 
     preferences.begin(SYSTEMNAME, RO_MODE);
-    snprintf(key, sizeof(key), "modbusConfig_%d", n);
-    if(preferences.getBytesLength(key) == sizeof(modbusConfig)) {
-        preferences.getBytes(key, config, sizeof(modbusConfig));
-    } else bzero(config, sizeof(modbusConfig));
+    snprintf(key, sizeof(key), "modbus_%d", n);
+    if(preferences.isKey(key) && preferences.getBytesLength(key) == sizeof(ModbusConfig)) {
+        preferences.getBytes(key, config, sizeof(ModbusConfig));
+    } else bzero(config, sizeof(ModbusConfig));
     preferences.end();
 
     return(true);
 }
 
-bool Settings::setModbusConfig(uint8_t n, modbusConfig *config) {
+bool Settings::setModbusConfig(uint8_t n, ModbusConfig *config) {
     char key[16];
 
     if(n >= MODBUS_SLOTS) return(false);
 
     preferences.begin(SYSTEMNAME, RW_MODE);
-    snprintf(key, sizeof(key), "modbusConfig_%d", n);
-    preferences.putBytes(key, config, sizeof(modbusConfig));
+    snprintf(key, sizeof(key), "modbus_%d", n);
+    preferences.putBytes(key, config, sizeof(ModbusConfig));
     preferences.end();
 
     return(true);

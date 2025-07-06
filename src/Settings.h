@@ -8,6 +8,7 @@
 
 #include <Arduino.h>
 #include <Preferences.h>
+#include <nvs_flash.h>
 #include "Finder.h"
 
 #define SYSTEMNAME "datalogger"
@@ -20,12 +21,13 @@ typedef struct {
     uint8_t functionCode;
     uint16_t registerAddress;
     FinderType valueType;
-} modbusConfig;
+} ModbusConfig;
 
 class Settings {
   public:
     Settings();
 
+    void reset(void);
     String getWifiSSID(void);
     void setWifiSSID(String value);
     String getWifiPassword(void);
@@ -36,8 +38,8 @@ class Settings {
     void setHttpPassword(String value);
     uint8_t getTimer(void);
     void setTimer(uint8_t value);
-    bool getModbusConfig(uint8_t n, modbusConfig *config);
-    bool setModbusConfig(uint8_t n, modbusConfig *config);
+    bool getModbusConfig(uint8_t n, ModbusConfig *config);
+    bool setModbusConfig(uint8_t n, ModbusConfig *config);
 
  private:
     Preferences preferences;

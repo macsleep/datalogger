@@ -17,6 +17,7 @@
 
 extern RTC_PCF8563 rtc;
 extern Timer_PFC8563 timer;
+extern Finder energyMeter;;
 extern Settings settings;
 
 class RESTful {
@@ -30,6 +31,8 @@ class RESTful {
     void firmwareUpload(AsyncWebServerRequest *request);
     void firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
     void system(AsyncWebServerRequest *request);
+    void systemReset(AsyncWebServerRequest *request);
+    void modbusConfig(AsyncWebServerRequest *request);
   private:
 };
 

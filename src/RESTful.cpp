@@ -22,6 +22,10 @@ void RESTful::begin(AsyncWebServer *httpd) {
 			std::placeholders::_5, std::placeholders::_6));
     httpd->on("^\\/api\\/system$",
 	      std::bind(&RESTful::system, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/system\\/reset$",
+	      std::bind(&RESTful::systemReset, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$",
+	      std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
 }
 
 void RESTful::rtcDate(AsyncWebServerRequest *request) {
@@ -193,3 +197,71 @@ void RESTful::system(AsyncWebServerRequest *request) {
 	 break;
     }
 }
+
+void RESTful::systemReset(AsyncWebServerRequest *request) {
+    int i;
+    String value = "";
+
+    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	return request->requestAuthentication();
+
+    switch (request->method()) {
+     case HTTP_POST:
+         settings.reset();
+	 request->send(200);
+	 break;
+
+     default:
+	 request->send(400);
+	 break;
+    }
+}
+
+void RESTful::modbusConfig(AsyncWebServerRequest *request) {
+    int n, i;
+    ModbusConfig config;
+    String value = "";
+
+    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	return request->requestAuthentication();
+
+    n = request->pathArg(0).toInt();
+
+    switch (request->method()) {
+     case HTTP_GET:
+         if(settings.getModbusConfig(n, &config)) {
+             value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
+             value = value + "functionCode=" + String(config.functionCode) + "&";
+             value = value + "registerAddress=" + String(config.registerAddress) + "&";
+             value = value + "valueType=" + energyMeter.typeToString(config.valueType);
+             request->send(200, "application/x-www-form-urlencoded", value);
+         } else request->send(400);
+	 break;
+
+     case HTTP_PUT:
+         if(settings.getModbusConfig(n, &config)) {
+	     for(i = 0; i < request->params(); i++) {
+	         if(String(request->getParam(i)->name()).equals("deviceAddress")) {
+		     config.deviceAddress = request->getParam(i)->value().toInt();
+	         }
+	         if(String(request->getParam(i)->name()).equals("functionCode")) {
+		     config.functionCode = request->getParam(i)->value().toInt();
+	         }
+	         if(String(request->getParam(i)->name()).equals("registerAddress")) {
+		     config.registerAddress = request->getParam(i)->value().toInt();
+	         }
+	         if(String(request->getParam(i)->name()).equals("valueType")) {
+		     config.valueType = energyMeter.stringToType(request->getParam(i)->value());
+	         }
+             }
+             settings.setModbusConfig(n, &config);
+	     request->send(200);
+         } else request->send(400);
+	 break;
+
+     default:
+	 request->send(400);
+	 break;
+    }
+}
+

@@ -1,4 +1,26 @@
 
+/*
+  Copyright 2025 Jan Schlieper
+
+  Permission to use, copy, modify, distribute, and sell this
+  software and its documentation for any purpose is hereby granted
+  without fee, provided that the above copyright notice appear in
+  all copies and that both that the copyright notice and this
+  permission notice and warranty disclaimer appear in supporting
+  documentation, and that the name of the author not be used in
+  advertising or publicity pertaining to distribution of the
+  software without specific, written prior permission.
+
+  The author disclaims all warranties with regard to this
+  software, including all implied warranties of merchantability
+  and fitness.  In no event shall the author be liable for any
+  special, indirect or consequential damages or any damages
+  whatsoever resulting from loss of use, data or profits, whether
+  in an action of contract, negligence or other tortious action,
+  arising out of or in connection with the use or performance of
+  this software.
+ */
+
 #include "Settings.h"
 
 Settings::Settings() {
@@ -17,9 +39,9 @@ void Settings::reset(void) {
     setHttpPassword(getHttpPassword());
     setTimer(getTimer());
 
-    for(i=0; i<MODBUS_SLOTS; i++) {
-        getModbusConfig(i, &config);    
-        setModbusConfig(i, &config);    
+    for(i = 0; i < MODBUS_SLOTS; i++) {
+	getModbusConfig(i, &config);
+	setModbusConfig(i, &config);
     }
 }
 
@@ -33,7 +55,7 @@ String Settings::getWifiSSID(void) {
     preferences.begin(SYSTEMNAME, RO_MODE);
     String value = preferences.getString("wifiSSID", ssid);
     preferences.end();
-    return(value);
+    return (value);
 }
 
 void Settings::setWifiSSID(String value) {
@@ -46,7 +68,7 @@ String Settings::getWifiPassword(void) {
     preferences.begin(SYSTEMNAME, RO_MODE);
     String value = preferences.getString("wifiPassword", "12345678");
     preferences.end();
-    return(value);
+    return (value);
 }
 
 void Settings::setWifiPassword(String value) {
@@ -59,7 +81,7 @@ String Settings::getHttpUser(void) {
     preferences.begin(SYSTEMNAME, RO_MODE);
     String value = preferences.getString("httpUser", "admin");
     preferences.end();
-    return(value);
+    return (value);
 }
 
 void Settings::setHttpUser(String value) {
@@ -72,7 +94,7 @@ String Settings::getHttpPassword(void) {
     preferences.begin(SYSTEMNAME, RO_MODE);
     String value = preferences.getString("httpPassword", "admin");
     preferences.end();
-    return(value);
+    return (value);
 }
 
 void Settings::setHttpPassword(String value) {
@@ -85,7 +107,7 @@ uint8_t Settings::getTimer(void) {
     preferences.begin(SYSTEMNAME, RO_MODE);
     uint8_t value = preferences.getUChar("timer", 1);
     preferences.end();
-    return(value);
+    return (value);
 }
 
 void Settings::setTimer(uint8_t value) {
@@ -97,28 +119,27 @@ void Settings::setTimer(uint8_t value) {
 bool Settings::getModbusConfig(uint8_t n, ModbusConfig *config) {
     char key[16];
 
-    if(n >= MODBUS_SLOTS) return(false);
+    if(n >= MODBUS_SLOTS) return (false);
 
     preferences.begin(SYSTEMNAME, RO_MODE);
     snprintf(key, sizeof(key), "modbus_%d", n);
     if(preferences.isKey(key) && preferences.getBytesLength(key) == sizeof(ModbusConfig)) {
-        preferences.getBytes(key, config, sizeof(ModbusConfig));
+	preferences.getBytes(key, config, sizeof(ModbusConfig));
     } else bzero(config, sizeof(ModbusConfig));
     preferences.end();
 
-    return(true);
+    return (true);
 }
 
 bool Settings::setModbusConfig(uint8_t n, ModbusConfig *config) {
     char key[16];
 
-    if(n >= MODBUS_SLOTS) return(false);
+    if(n >= MODBUS_SLOTS) return (false);
 
     preferences.begin(SYSTEMNAME, RW_MODE);
     snprintf(key, sizeof(key), "modbus_%d", n);
     preferences.putBytes(key, config, sizeof(ModbusConfig));
     preferences.end();
 
-    return(true);
+    return (true);
 }
-

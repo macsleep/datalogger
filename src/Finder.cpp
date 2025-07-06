@@ -1,4 +1,26 @@
 
+/*
+  Copyright 2025 Jan Schlieper
+
+  Permission to use, copy, modify, distribute, and sell this
+  software and its documentation for any purpose is hereby granted
+  without fee, provided that the above copyright notice appear in
+  all copies and that both that the copyright notice and this
+  permission notice and warranty disclaimer appear in supporting
+  documentation, and that the name of the author not be used in
+  advertising or publicity pertaining to distribution of the
+  software without specific, written prior permission.
+
+  The author disclaims all warranties with regard to this
+  software, including all implied warranties of merchantability
+  and fitness.  In no event shall the author be liable for any
+  special, indirect or consequential damages or any damages
+  whatsoever resulting from loss of use, data or profits, whether
+  in an action of contract, negligence or other tortious action,
+  arising out of or in connection with the use or performance of
+  this software.
+ */
+
 #include "Finder.h"
 
 Finder::Finder() {
@@ -10,21 +32,38 @@ void Finder::begin(ModbusMaster *modbus) {
 }
 
 String Finder::typeToString(FinderType value) {
-    switch(value) {
-        case FinderType::T1: return "T1";
-        case FinderType::T2: return "T2";
-        case FinderType::T3: return "T3";
-        case FinderType::T_float: return "T_float";
-        default: return "FOO";
+    String type;
+
+    switch (value) {
+     case FinderType::T1:
+	 type = "T1";
+	 break;
+     case FinderType::T2:
+	 type = "T2";
+	 break;
+     case FinderType::T3:
+	 type = "T3";
+	 break;
+     case FinderType::T_float:
+	 type = "T_float";
+	 break;
+     default:
+	 type = "FOO";
+	 break;
     }
+
+    return (type);
 }
 
 FinderType Finder::stringToType(String value) {
-    if(value.equals("T1")) return FinderType::T1;
-    if(value.equals("T2")) return FinderType::T2;
-    if(value.equals("T3")) return FinderType::T3;
-    if(value.equals("T_float")) return FinderType::T_float;
-    return(FinderType::FOO);
+    FinderType type = FinderType::FOO;
+
+    if(value.equals("T1")) type = FinderType::T1;
+    if(value.equals("T2")) type = FinderType::T2;
+    if(value.equals("T3")) type = FinderType::T3;
+    if(value.equals("T_float")) type = FinderType::T_float;
+
+    return (type);
 }
 
 bool Finder::functionCode4_T2(uint16_t addr, int16_t *value) {

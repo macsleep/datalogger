@@ -32,16 +32,18 @@ enum class FinderType { FOO, T1, T2, T3, T_float };
 class Finder {
   public:
     Finder();
-    void begin(ModbusMaster * modbus);
+    void begin(Stream * serial, ModbusMaster * modbus);
     String typeToString(FinderType value);
     FinderType stringToType(String value);
+    String getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType);
+
+  private:
+    Stream * serial;
+    ModbusMaster * modbus;
     bool functionCode4_T1(uint16_t addr, uint16_t * value);
     bool functionCode4_T2(uint16_t addr, int16_t * value);
     bool functionCode4_T3(uint16_t addr, int32_t * value);
-    bool functionCode4_T_float(uint16_t addr, float *value);
-
-  private:
-     ModbusMaster * modbus;
+    bool functionCode4_T_float(uint16_t addr, float * value);
 };
 
 #endif

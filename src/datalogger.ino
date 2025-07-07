@@ -38,11 +38,10 @@
 #define LED_YELLOW GPIO_NUM_4
 #define BUTTON GPIO_NUM_5
 #define TIMER GPIO_NUM_6
-#define SERIAL1_TX 7
-#define SERIAL1_RX 8
-#define MAX485_DE 9
-#define MAX485_RE_NEG 10
-#define DEVICE_ADDRESS 33
+#define SERIAL1_TX GPIO_NUM_7
+#define SERIAL1_RX GPIO_NUM_8
+#define MAX485_DE GPIO_NUM_9
+#define MAX485_RE_NEG GPIO_NUM_10
 
 RTC_PCF8563 rtc;
 Timer_PFC8563 timer;
@@ -56,47 +55,43 @@ RTC_DATA_ATTR bool enableWifi;
 RTC_DATA_ATTR bool execJob;
 
 bool writeLogfile() {
-    int n;
-    bool ok;
-    int32_t e1 = 0, e2 = 0, e3 = 0, e4 = 0;
-    float watt = 0.0;
+    int n, i;
     char path[64];
-    char message[64];
-
-    // energy
-    ok = energyMeter.functionCode4_T_float(2490, &watt);
-    if(!ok) return (false);
-
-    // mid counter
-    ok = energyMeter.functionCode4_T3(462, &e1);
-    if(!ok) return (false);
-    ok = energyMeter.functionCode4_T3(464, &e2);
-    if(!ok) return (false);
-    ok = energyMeter.functionCode4_T3(466, &e3);
-    if(!ok) return (false);
-    ok = energyMeter.functionCode4_T3(468, &e4);
-    if(!ok) return (false);
+    char buffer[64];
+    String line = "";
+    ModbusConfig config;
 
     // rtc
     DateTime now = rtc.now();
 
     // directory
-    sprintf(path, "/%4d", now.year());
-    if(!SD.exists(path)) {
-	SD.mkdir(path);
-    }
+    sprintf(path, "/%4.4d", now.year());
+    if(!SD.exists(path)) SD.mkdir(path);
 
     // file
     n = snprintf(path, sizeof(path), "/%4.4d/%2.2d%2.2d", now.year(),
 		 now.month(), now.day());
     if(n < 0) return (false);
     if(File file = SD.open(path, FILE_APPEND)) {
-	n = snprintf(message, sizeof(message),
-		     "%4.4d%2.2d%2.2d%2.2d%2.2d%2.2d %d %d %d %d %.1f\n",
+
+	// timestamp
+	n = snprintf(buffer, sizeof(buffer), "%4.4d%2.2d%2.2d%2.2d%2.2d%2.2d",
 		     now.year(), now.month(), now.day(), now.hour(),
-		     now.minute(), now.second(), e1, e2, e3, e4, watt);
+                     now.minute(), now.second());
 	if(n < 0) return (false);
-	file.print(message);
+	line += String(buffer);
+
+        // modbus
+	i = 0;
+	while(settings.getModbusConfig(i, &config)) {
+	    if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) break;
+            String value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+            if (value.length() > 0) line += " " + value;
+	    i++;
+	}
+
+        // write log
+	file.println(line.c_str());
 	file.close();
     } else return (false);
 
@@ -147,22 +142,19 @@ void setup() {
 
     // modbus
     Serial1.begin(19200, SERIAL_8N2, SERIAL1_RX, SERIAL1_TX);
-    modbus.begin(DEVICE_ADDRESS, Serial1);
     modbus.preTransmission(preTransmission);
     modbus.postTransmission(postTransmission);
-    energyMeter.begin(&modbus);
+    energyMeter.begin(&Serial1, &modbus);
 
     // rtc
     rtc.begin();
     if(rtc.lostPower()) {
 	// rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     }
-
     // timer
     if(!timer.isEnabled()) {
 	timer.enable(settings.getTimer());
     }
-
     // system time
     tv.tv_sec = rtc.now().unixtime();
     settimeofday(&tv, NULL);
@@ -186,7 +178,6 @@ void setup() {
 	    ESP.restart();
 	}
     }
-
     // wakeup
     switch (esp_sleep_get_wakeup_cause()) {
      case ESP_SLEEP_WAKEUP_EXT1:
@@ -212,7 +203,8 @@ void setup() {
 	digitalWrite(LED_YELLOW, HIGH);
 
 	// start Wifi
-	WiFi.softAP(settings.getWifiSSID().c_str(), settings.getWifiPassword().c_str());
+	WiFi.softAP(settings.getWifiSSID().c_str(),
+		    settings.getWifiPassword().c_str());
 	IPAddress IP = IPAddress(10, 0, 0, 1);
 	IPAddress Netmask = IPAddress(255, 255, 255, 0);
 	WiFi.softAPConfig(IP, IP, Netmask);
@@ -222,9 +214,10 @@ void setup() {
 
 	// http
 	httpd = new AsyncWebServer(80);
-        restApi.begin(httpd);
+	restApi.begin(httpd);
 	httpd->onNotFound([](AsyncWebServerRequest * request) {
-			  request->send(404, "text/plain", "Not found");}
+			  request->send(404, "text/plain", "Not found");
+			  }
 	);
 	httpd->begin();
     }

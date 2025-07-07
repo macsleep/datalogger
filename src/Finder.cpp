@@ -24,10 +24,12 @@
 #include "Finder.h"
 
 Finder::Finder() {
+    Finder::serial = NULL;
     Finder::modbus = NULL;
 }
 
-void Finder::begin(ModbusMaster *modbus) {
+void Finder::begin(Stream * serial, ModbusMaster * modbus) {
+    Finder::serial = serial;
     Finder::modbus = modbus;
 }
 
@@ -66,7 +68,42 @@ FinderType Finder::stringToType(String value) {
     return (type);
 }
 
-bool Finder::functionCode4_T2(uint16_t addr, int16_t *value) {
+String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType) {
+    String value = "";
+    float floatValue;
+    int32_t int32Value;
+
+    // device
+    modbus->begin(deviceAddress, *Finder::serial);
+
+    switch (functionCode) {
+     case 4:
+	 switch (valueType) {
+	  case FinderType::T3:
+	      if(functionCode4_T3(registerAddress, &int32Value)) {
+		  value = String(int32Value);
+	      }
+	      break;
+
+	  case FinderType::T_float:
+	      if(functionCode4_T_float(registerAddress, &floatValue)) {
+		  value = String(floatValue);
+	      }
+	      break;
+
+	  default:
+	      break;
+	 }
+	 break;
+
+     default:
+	 break;
+    }
+
+    return(value);
+}
+
+bool Finder::functionCode4_T1(uint16_t addr, uint16_t *value) {
     uint8_t result;
 
     result = modbus->readInputRegisters(addr, 1);
@@ -76,7 +113,7 @@ bool Finder::functionCode4_T2(uint16_t addr, int16_t *value) {
     return (true);
 }
 
-bool Finder::functionCode4_T1(uint16_t addr, uint16_t *value) {
+bool Finder::functionCode4_T2(uint16_t addr, int16_t *value) {
     uint8_t result;
 
     result = modbus->readInputRegisters(addr, 1);

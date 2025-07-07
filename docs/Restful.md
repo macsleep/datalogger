@@ -89,7 +89,7 @@ curl http://datalogger.local/api/modbus
 9
 </pre>
 
-A default configuration looks something like this. A device address of 0 and a value type name `FOO` means the configuration is not used.
+A default configuration looks something like this. A device address of 0 and a value type named `FOO` means the configuration is not used.
 
 <pre>
 curl http://datalogger.local/api/modbus/0/config

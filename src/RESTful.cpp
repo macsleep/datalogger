@@ -48,6 +48,8 @@ void RESTful::begin(AsyncWebServer *httpd) {
 	      std::bind(&RESTful::systemReset, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus$", HTTP_GET,
 	      std::bind(&RESTful::modbus, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)$",
+	      std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$",
 	      std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
 }
@@ -255,6 +257,27 @@ void RESTful::modbus(AsyncWebServerRequest *request) {
     }
 
     request->send(response);
+}
+
+void RESTful::modbusValue(AsyncWebServerRequest *request) {
+    int n;
+    ModbusConfig config;
+    String value = "";
+
+    n = request->pathArg(0).toInt();
+
+    switch (request->method()) {
+     case HTTP_GET:
+         if(settings.getModbusConfig(n, &config)) {
+             value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+             request->send(200, "text/plain", value);
+         } else request->send(400);
+	 break;
+
+     default:
+	 request->send(400);
+	 break;
+    }
 }
 
 void RESTful::modbusConfig(AsyncWebServerRequest *request) {

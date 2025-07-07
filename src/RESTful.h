@@ -51,6 +51,7 @@ class RESTful {
     void system(AsyncWebServerRequest *request);
     void systemReset(AsyncWebServerRequest *request);
     void modbus(AsyncWebServerRequest *request);
+    void modbusValue(AsyncWebServerRequest *request);
     void modbusConfig(AsyncWebServerRequest *request);
   private:
 };

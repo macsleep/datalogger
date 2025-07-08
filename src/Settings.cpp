@@ -59,9 +59,10 @@ String Settings::getWifiSSID(void) {
 }
 
 void Settings::setWifiSSID(String value) {
-    preferences.begin(SYSTEMNAME, RW_MODE);
-    preferences.putString("wifiSSID", value.c_str());
-    preferences.end();
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putString("wifiSSID", value.c_str());
+        preferences.end();
+    }
 }
 
 String Settings::getWifiPassword(void) {
@@ -72,9 +73,10 @@ String Settings::getWifiPassword(void) {
 }
 
 void Settings::setWifiPassword(String value) {
-    preferences.begin(SYSTEMNAME, RW_MODE);
-    preferences.putString("wifiPassword", value.c_str());
-    preferences.end();
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putString("wifiPassword", value.c_str());
+        preferences.end();
+    }
 }
 
 String Settings::getHttpUser(void) {
@@ -85,9 +87,10 @@ String Settings::getHttpUser(void) {
 }
 
 void Settings::setHttpUser(String value) {
-    preferences.begin(SYSTEMNAME, RW_MODE);
-    preferences.putString("httpUser", value.c_str());
-    preferences.end();
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putString("httpUser", value.c_str());
+        preferences.end();
+    }
 }
 
 String Settings::getHttpPassword(void) {
@@ -98,22 +101,24 @@ String Settings::getHttpPassword(void) {
 }
 
 void Settings::setHttpPassword(String value) {
-    preferences.begin(SYSTEMNAME, RW_MODE);
-    preferences.putString("httpPassword", value.c_str());
-    preferences.end();
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putString("httpPassword", value.c_str());
+        preferences.end();
+    }
 }
 
 uint8_t Settings::getTimer(void) {
     preferences.begin(SYSTEMNAME, RO_MODE);
-    uint8_t value = preferences.getUChar("timer", 1);
+    uint8_t value = preferences.getUChar("timer", 0);
     preferences.end();
     return (value);
 }
 
 void Settings::setTimer(uint8_t value) {
-    preferences.begin(SYSTEMNAME, RW_MODE);
-    preferences.putUChar("timer", value);
-    preferences.end();
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putUChar("timer", value);
+        preferences.end();
+    }
 }
 
 bool Settings::getModbusConfig(uint8_t n, ModbusConfig *config) {
@@ -136,10 +141,11 @@ bool Settings::setModbusConfig(uint8_t n, ModbusConfig *config) {
 
     if(n >= MODBUS_SLOTS) return (false);
 
-    preferences.begin(SYSTEMNAME, RW_MODE);
-    snprintf(key, sizeof(key), "modbus_%d", n);
-    preferences.putBytes(key, config, sizeof(ModbusConfig));
-    preferences.end();
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        snprintf(key, sizeof(key), "modbus_%d", n);
+        preferences.putBytes(key, config, sizeof(ModbusConfig));
+        preferences.end();
+    }
 
     return (true);
 }

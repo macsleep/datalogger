@@ -46,6 +46,7 @@ class RESTful {
     void rtcTimer(AsyncWebServerRequest *request);
     void logsList(AsyncWebServerRequest *request);
     void logsFile(AsyncWebServerRequest *request);
+    void logsFileChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
     void firmwareUpload(AsyncWebServerRequest *request);
     void firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
     void system(AsyncWebServerRequest *request);

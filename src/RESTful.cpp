@@ -33,8 +33,15 @@ void RESTful::begin(AsyncWebServer *httpd) {
 	      std::bind(&RESTful::rtcTimer, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs$", HTTP_GET,
 	      std::bind(&RESTful::logsList, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$",
-	 HTTP_GET, std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
+	      std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
+	      std::bind(&RESTful::logsFile, this,
+                        std::placeholders::_1),
+	      std::bind(&RESTful::logsFileChunks, this,
+			std::placeholders::_1, std::placeholders::_2,
+			std::placeholders::_3, std::placeholders::_4,
+			std::placeholders::_5, std::placeholders::_6));
     httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
 	      std::bind(&RESTful::firmwareUpload, this,
 			std::placeholders::_1),
@@ -153,9 +160,43 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
 void RESTful::logsFile(AsyncWebServerRequest *request) {
     String file;
 
-    file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-    if(SD.exists(file)) {
-	request->send(SD, file, "text/plain");
+    switch (request->method()) {
+     case HTTP_GET:
+         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+         if(SD.exists(file)) {
+	     request->send(SD, file, "text/plain");
+         }
+	 break;
+
+     case HTTP_POST:
+	 request->send(200);
+         break;
+
+     default:
+	 request->send(400);
+	 break;
+    }
+}
+
+void RESTful::logsFileChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+    String file;
+
+    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	return request->requestAuthentication();
+
+    if(!index) {
+        file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+        if(SD.exists(file)) {
+	    request->_tempFile = SD.open(file, "w");
+        }
+    }
+
+    if(len) {
+	request->_tempFile.write(data, len);
+    }
+
+    if(final) {
+	request->_tempFile.close();
     }
 }
 
@@ -163,9 +204,7 @@ void RESTful::firmwareUpload(AsyncWebServerRequest *request) {
     request->send(200);
 }
 
-void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request,
-				   String filename, size_t index,
-				   uint8_t *data, size_t len, bool final) {
+void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	return request->requestAuthentication();
 

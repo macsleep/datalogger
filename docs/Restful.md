@@ -70,3 +70,41 @@ A PUT on one or multiple parameters changes the default settings. Remember chang
 <pre>
 curl -u "admin:admin" -X PUT -d "wifiPassword=12345678" http://datalogger.local/api/system
 </pre>
+
+## Modbus
+
+The following GET will list the number of available Modbus configurations. The number can be changed in the Settings.h header file. Please remember not to configure too many slots otherwise they will not fit into the NVS partition of the ESP32.
+
+<pre>
+curl http://datalogger.local/api/modbus
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre>
+
+A default configuration looks something like this. A device address of 0 and a value type named `FOO` means the configuration is not used.
+
+<pre>
+curl http://datalogger.local/api/modbus/0/config
+deviceAddress=0&functionCode=0&registerAddress=0&valueType=FOO
+</pre>
+
+The following PUT will set a configuration:
+
+<pre>
+curl -u "admin:admin" -X PUT -d "deviceAddress=33&functionCode=4&registerAddress=462&valueType=T3" http://datalogger.local/api/modbus/0/config
+</pre>
+
+And with the following GET you can test if the configuration works. Remember to enable the scheduler (timer) once the configurations work the way you want for the values to be logged to the SD card.
+
+<pre>
+curl http://datalogger.local/api/modbus/0
+55947
+</pre>

@@ -1,4 +1,3 @@
-
 /*
   Copyright 2025 Jan Schlieper
 
@@ -69,28 +68,28 @@ bool writeLogfile() {
     if(!SD.exists(path)) SD.mkdir(path);
 
     // file
-    n = snprintf(path, sizeof(path), "/%4.4d/%2.2d%2.2d", now.year(),
-		 now.month(), now.day());
+    n = snprintf(path, sizeof(path), "/%4.4d/%2.2d%2.2d", now.year(), now.month(), now.day());
     if(n < 0) return (false);
     if(File file = SD.open(path, FILE_APPEND)) {
 
 	// timestamp
-	n = snprintf(buffer, sizeof(buffer), "%4.4d%2.2d%2.2d%2.2d%2.2d%2.2d",
-		     now.year(), now.month(), now.day(), now.hour(),
-                     now.minute(), now.second());
+	n = snprintf(buffer, sizeof(buffer), "%4.4d%2.2d%2.2d%2.2d%2.2d%2.2d", now.year(),
+                     now.month(), now.day(), now.hour(), now.minute(), now.second());
 	if(n < 0) return (false);
 	line += String(buffer);
 
-        // modbus
+	// modbus
 	i = 0;
-	while(settings.getModbusConfig(i, &config)) {
-	    if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) break;
-            String value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
-            if (value.length() > 0) line += " " + value;
-	    i++;
+	while(settings.getModbusConfig(i++, &config)) {
+	    if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) continue;
+	    String value = energyMeter.getModbus(config.deviceAddress,
+						 config.functionCode,
+						 config.registerAddress,
+						 config.valueType);
+	    if(value.length() > 0) line += " " + value;
 	}
 
-        // write log
+	// write log
 	file.println(line.c_str());
 	file.close();
     } else return (false);
@@ -151,10 +150,12 @@ void setup() {
     if(rtc.lostPower()) {
 	// rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     }
+
     // timer
     if(!timer.isEnabled()) {
 	timer.enable(settings.getTimer());
     }
+
     // system time
     tv.tv_sec = rtc.now().unixtime();
     settimeofday(&tv, NULL);
@@ -203,8 +204,7 @@ void setup() {
 	digitalWrite(LED_YELLOW, HIGH);
 
 	// start Wifi
-	WiFi.softAP(settings.getWifiSSID().c_str(),
-		    settings.getWifiPassword().c_str());
+	WiFi.softAP(settings.getWifiSSID().c_str(), settings.getWifiPassword().c_str());
 	IPAddress IP = IPAddress(10, 0, 0, 1);
 	IPAddress Netmask = IPAddress(255, 255, 255, 0);
 	WiFi.softAPConfig(IP, IP, Netmask);
@@ -216,8 +216,7 @@ void setup() {
 	httpd = new AsyncWebServer(80);
 	restApi.begin(httpd);
 	httpd->onNotFound([](AsyncWebServerRequest * request) {
-			  request->send(404, "text/plain", "Not found");
-			  }
+			  request->send(404, "text/plain", "Not found");}
 	);
 	httpd->begin();
     }

@@ -1,4 +1,3 @@
-
 /*
   Copyright 2025 Jan Schlieper
 
@@ -28,7 +27,7 @@ Finder::Finder() {
     Finder::modbus = NULL;
 }
 
-void Finder::begin(Stream * serial, ModbusMaster * modbus) {
+void Finder::begin(Stream *serial, ModbusMaster *modbus) {
     Finder::serial = serial;
     Finder::modbus = modbus;
 }
@@ -100,7 +99,7 @@ String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t r
 	 break;
     }
 
-    return(value);
+    return (value);
 }
 
 bool Finder::functionCode4_T1(uint16_t addr, uint16_t *value) {

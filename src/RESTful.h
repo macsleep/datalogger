@@ -1,4 +1,3 @@
-
 /*
   Copyright 2025 Jan Schlieper
 
@@ -54,6 +53,7 @@ class RESTful {
     void modbus(AsyncWebServerRequest *request);
     void modbusValue(AsyncWebServerRequest *request);
     void modbusConfig(AsyncWebServerRequest *request);
+
   private:
 };
 

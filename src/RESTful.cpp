@@ -1,4 +1,3 @@
-
 /*
   Copyright 2025 Jan Schlieper
 
@@ -27,38 +26,24 @@ RESTful::RESTful() {
 }
 
 void RESTful::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/rtc\\/date$",
-	      std::bind(&RESTful::rtcDate, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/rtc\\/timer$",
-	      std::bind(&RESTful::rtcTimer, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs$", HTTP_GET,
-	      std::bind(&RESTful::logsList, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/rtc\\/date$", std::bind(&RESTful::rtcDate, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/rtc\\/timer$", std::bind(&RESTful::rtcTimer, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
-	      std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+              std::bind(&RESTful::logsFile, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
-	      std::bind(&RESTful::logsFile, this,
-                        std::placeholders::_1),
-	      std::bind(&RESTful::logsFileChunks, this,
-			std::placeholders::_1, std::placeholders::_2,
-			std::placeholders::_3, std::placeholders::_4,
-			std::placeholders::_5, std::placeholders::_6));
+	      std::bind(&RESTful::logsFile, this, std::placeholders::_1),
+	      std::bind(&RESTful::logsFileChunks, this, std::placeholders::_1, std::placeholders::_2,
+			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
     httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
-	      std::bind(&RESTful::firmwareUpload, this,
-			std::placeholders::_1),
-	      std::bind(&RESTful::firmwareUploadChunks, this,
-			std::placeholders::_1, std::placeholders::_2,
-			std::placeholders::_3, std::placeholders::_4,
-			std::placeholders::_5, std::placeholders::_6));
-    httpd->on("^\\/api\\/system$",
-	      std::bind(&RESTful::system, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/system\\/reset$",
-	      std::bind(&RESTful::systemReset, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/modbus$", HTTP_GET,
-	      std::bind(&RESTful::modbus, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)$",
-	      std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$",
-	      std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
+	      std::bind(&RESTful::firmwareUpload, this, std::placeholders::_1),
+	      std::bind(&RESTful::firmwareUploadChunks, this, std::placeholders::_1, std::placeholders::_2,
+			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
+    httpd->on("^\\/api\\/system$", std::bind(&RESTful::system, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/system\\/reset$", std::bind(&RESTful::systemReset, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)$", std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
 }
 
 void RESTful::rtcDate(AsyncWebServerRequest *request) {
@@ -100,7 +85,7 @@ void RESTful::rtcTimer(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
-         value = String(settings.getTimer(), DEC);
+	 value = String(settings.getTimer(), DEC);
 	 request->send(200, "text/plain", value);
 	 break;
 
@@ -111,14 +96,14 @@ void RESTful::rtcTimer(AsyncWebServerRequest *request) {
 	 status = 400;
 	 if(request->hasParam("minutes", true)) {
 	     value = request->getParam("minutes", true)->value();
-             minutes = value.toInt();
-             if(minutes >= 0 && minutes < 256) {
-                 if(timer.isEnabled()) timer.disable();
-                 timer.enable(minutes);
-                 settings.setTimer((uint8_t)minutes);
-	         status = 200;
-             }
-         }
+	     minutes = value.toInt();
+	     if(minutes >= 0 && minutes < 256) {
+		 if(timer.isEnabled()) timer.disable();
+		 timer.enable(minutes);
+		 settings.setTimer((uint8_t) minutes);
+		 status = 200;
+	     }
+	 }
 	 request->send(status);
 	 break;
 
@@ -141,16 +126,14 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
 	if(entry.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
 	    directory = SD.open("/" + String(entry.name()));
 	    while(file = directory.openNextFile()) {
-                regex.Target((char *) file.name());
+		regex.Target((char *) file.name());
 		if(!file.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
-		    response->println(String(directory.name()) +
-				      String(file.name()) + " " +
-				      String(file.size()));
+		    response->println(String(directory.name()) + String(file.name()) + " " + String(file.size()));
 		}
 		file.close();
 	    }
 	}
-        entry.close();
+	entry.close();
     }
     root.close();
 
@@ -162,15 +145,15 @@ void RESTful::logsFile(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
+	 file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+	 if(SD.exists(file)) {
 	     request->send(SD, file, "text/plain");
-         }
+	 }
 	 break;
 
      case HTTP_POST:
 	 request->send(200);
-         break;
+	 break;
 
      default:
 	 request->send(400);
@@ -185,10 +168,10 @@ void RESTful::logsFileChunks(AsyncWebServerRequest *request, String filename, si
 	return request->requestAuthentication();
 
     if(!index) {
-        file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-        if(SD.exists(file)) {
+	file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+	if(SD.exists(file)) {
 	    request->_tempFile = SD.open(file, "w");
-        }
+	}
     }
 
     if(len) {
@@ -272,7 +255,7 @@ void RESTful::systemReset(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_POST:
-         settings.reset();
+	 settings.reset();
 	 request->send(200);
 	 break;
 
@@ -291,8 +274,8 @@ void RESTful::modbus(AsyncWebServerRequest *request) {
 
     i = 0;
     while(settings.getModbusConfig(i, &config)) {
-        response->println(String(i));
-        i++;
+	response->println(String(i));
+	i++;
     }
 
     request->send(response);
@@ -307,10 +290,10 @@ void RESTful::modbusValue(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
-         if(settings.getModbusConfig(n, &config)) {
-             value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
-             request->send(200, "text/plain", value);
-         } else request->send(400);
+	 if(settings.getModbusConfig(n, &config)) {
+	     value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+	     request->send(200, "text/plain", value);
+	 } else request->send(400);
 	 break;
 
      default:
@@ -328,37 +311,37 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
-         if(settings.getModbusConfig(n, &config)) {
-             value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
-             value = value + "functionCode=" + String(config.functionCode) + "&";
-             value = value + "registerAddress=" + String(config.registerAddress) + "&";
-             value = value + "valueType=" + energyMeter.typeToString(config.valueType);
-             request->send(200, "application/x-www-form-urlencoded", value);
-         } else request->send(400);
+	 if(settings.getModbusConfig(n, &config)) {
+	     value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
+	     value = value + "functionCode=" + String(config.functionCode) + "&";
+	     value = value + "registerAddress=" + String(config.registerAddress) + "&";
+	     value = value + "valueType=" + energyMeter.typeToString(config.valueType);
+	     request->send(200, "application/x-www-form-urlencoded", value);
+	 } else request->send(400);
 	 break;
 
      case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
 
-         if(settings.getModbusConfig(n, &config)) {
+	 if(settings.getModbusConfig(n, &config)) {
 	     for(i = 0; i < request->params(); i++) {
-	         if(String(request->getParam(i)->name()).equals("deviceAddress")) {
+		 if(String(request->getParam(i)->name()).equals("deviceAddress")) {
 		     config.deviceAddress = request->getParam(i)->value().toInt();
-	         }
-	         if(String(request->getParam(i)->name()).equals("functionCode")) {
+		 }
+		 if(String(request->getParam(i)->name()).equals("functionCode")) {
 		     config.functionCode = request->getParam(i)->value().toInt();
-	         }
-	         if(String(request->getParam(i)->name()).equals("registerAddress")) {
+		 }
+		 if(String(request->getParam(i)->name()).equals("registerAddress")) {
 		     config.registerAddress = request->getParam(i)->value().toInt();
-	         }
-	         if(String(request->getParam(i)->name()).equals("valueType")) {
+		 }
+		 if(String(request->getParam(i)->name()).equals("valueType")) {
 		     config.valueType = energyMeter.stringToType(request->getParam(i)->value());
-	         }
-             }
-             settings.setModbusConfig(n, &config);
+		 }
+	     }
+	     settings.setModbusConfig(n, &config);
 	     request->send(200);
-         } else request->send(400);
+	 } else request->send(400);
 	 break;
 
      default:
@@ -366,4 +349,3 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 	 break;
     }
 }
-

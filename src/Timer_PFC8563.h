@@ -1,4 +1,3 @@
-
 /*
   Copyright 2025 Jan Schlieper
 
@@ -39,6 +38,7 @@ class Timer_PFC8563 {
         void enable(uint8_t value);
         bool isEnabled();
         void disable();
+
     private:
 };
 

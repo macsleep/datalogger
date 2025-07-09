@@ -41,6 +41,7 @@ void RESTful::begin(AsyncWebServer *httpd) {
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
     httpd->on("^\\/api\\/system$", std::bind(&RESTful::system, this, std::placeholders::_1));
     httpd->on("^\\/api\\/system\\/reset$", std::bind(&RESTful::systemReset, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/system\\/version$", HTTP_GET, std::bind(&RESTful::systemVersion, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)$", std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
@@ -263,6 +264,15 @@ void RESTful::systemReset(AsyncWebServerRequest *request) {
 	 request->send(400);
 	 break;
     }
+}
+
+void RESTful::systemVersion(AsyncWebServerRequest *request) {
+    String value = "???";
+
+#ifdef GIT_HASH
+    value = GIT_HASH;
+#endif
+    request->send(200, "text/plain", value);
 }
 
 void RESTful::modbus(AsyncWebServerRequest *request) {

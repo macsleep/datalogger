@@ -64,16 +64,16 @@ bool writeLogfile() {
     DateTime now = rtc.now();
 
     // directory
-    sprintf(path, "/%4.4d", now.year());
+    sprintf(path, "/%04d", now.year());
     if(!SD.exists(path)) SD.mkdir(path);
 
     // file
-    n = snprintf(path, sizeof(path), "/%4.4d/%2.2d%2.2d", now.year(), now.month(), now.day());
+    n = snprintf(path, sizeof(path), "/%04d/%02d%02d", now.year(), now.month(), now.day());
     if(n < 0) return (false);
     if(File file = SD.open(path, FILE_APPEND)) {
 
 	// timestamp
-	n = snprintf(buffer, sizeof(buffer), "%4.4d%2.2d%2.2d%2.2d%2.2d%2.2d", now.year(),
+	n = snprintf(buffer, sizeof(buffer), "%04d%02d%02d%02d%02d%02d", now.year(),
                      now.month(), now.day(), now.hour(), now.minute(), now.second());
 	if(n < 0) return (false);
 	line += String(buffer);
@@ -112,6 +112,7 @@ void progressCallBack(size_t currSize, size_t totalSize) {
 }
 
 void IRAM_ATTR isrButton() {
+    // debounce button
     if(millis() > 500) {
 	enableWifi = false;
     }

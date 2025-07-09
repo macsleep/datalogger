@@ -32,8 +32,6 @@ void Settings::reset(void) {
     nvs_flash_erase();
     nvs_flash_init();
 
-    delay(500);
-
     setWifiSSID(getWifiSSID());
     setWifiPassword(getWifiPassword());
     setHttpUser(getHttpUser());

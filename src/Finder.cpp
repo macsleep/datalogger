@@ -71,32 +71,48 @@ String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t r
     String value = "";
     float floatValue;
     int32_t int32Value;
+    int16_t int16Value;
+    uint16_t uint16Value;
 
-    // device
-    modbus->begin(deviceAddress, *Finder::serial);
+    if (deviceAddress > 0 && valueType != FinderType::FOO) { 
+        // device
+        modbus->begin(deviceAddress, *Finder::serial);
 
-    switch (functionCode) {
-     case 4:
-	 switch (valueType) {
-	  case FinderType::T3:
-	      if(functionCode4_T3(registerAddress, &int32Value)) {
-		  value = String(int32Value);
-	      }
-	      break;
+        switch (functionCode) {
+         case 4:
+	     switch (valueType) {
+	      case FinderType::T1:
+	          if(functionCode4_T1(registerAddress, &uint16Value)) {
+		      value = String(uint16Value);
+	          } else value = "err";
+	          break;
 
-	  case FinderType::T_float:
-	      if(functionCode4_T_float(registerAddress, &floatValue)) {
-		  value = String(floatValue);
-	      }
-	      break;
+	      case FinderType::T2:
+	          if(functionCode4_T2(registerAddress, &int16Value)) {
+		      value = String(int16Value);
+	          } else value = "err";
+	          break;
 
-	  default:
-	      break;
-	 }
-	 break;
+	      case FinderType::T3:
+	          if(functionCode4_T3(registerAddress, &int32Value)) {
+		      value = String(int32Value);
+	          } else value = "err";
+	          break;
 
-     default:
-	 break;
+	      case FinderType::T_float:
+	          if(functionCode4_T_float(registerAddress, &floatValue)) {
+		      value = String(floatValue);
+	          } else value = "err";
+	          break;
+
+	      default:
+	          break;
+	     }
+	     break;
+
+         default:
+	     break;
+        }
     }
 
     return (value);

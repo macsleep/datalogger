@@ -85,13 +85,13 @@ A default configuration looks something like this. A device address of 0 and a v
 
 <pre>
 curl http://datalogger.local/api/modbus/0/config
-deviceAddress=0&functionCode=0&registerAddress=0&valueType=FOO
+deviceAddress=0&functionCode=0&amp;registerAddress=0&valueType=FOO
 </pre>
 
 The following PUT will set a configuration:
 
 <pre>
-curl -u "admin:admin" -X PUT -d "deviceAddress=33&functionCode=4&registerAddress=462&valueType=T3" http://datalogger.local/api/modbus/0/config
+curl -u "admin:admin" -X PUT -d "deviceAddress=33&functionCode=4&amp;registerAddress=462&valueType=T3" http://datalogger.local/api/modbus/0/config
 </pre>
 
 And with the following GET you can test if the configuration works. Remember to enable the scheduler (timer) once the configurations work the way you want for the values to be logged to the SD card.

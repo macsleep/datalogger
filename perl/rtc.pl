@@ -19,7 +19,7 @@ use LWP::UserAgent;
 
 my $user = "admin";
 my $password = "admin";
-my $url = 'http://datalogger.local/api/rtc/date';
+my $url = 'http://datalogger.local/api/rtc';
 
 my %opts;
 if(!getopts('s', \%opts)) {
@@ -35,7 +35,8 @@ sub rtc_read {
 	my $response = $ua->request($request);
 	$response->is_success or die(Dumper($response->status_line()));
 	my $data = $response->decoded_content;
-	return $data;
+	$data =~ /epoch=([0-9]+)/i;
+	return defined $1 ? $1 : $data;
 }
 
 sub rtc_write {

@@ -26,8 +26,7 @@ RESTful::RESTful() {
 }
 
 void RESTful::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/rtc\\/date$", std::bind(&RESTful::rtcDate, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/rtc\\/timer$", std::bind(&RESTful::rtcTimer, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/rtc$", std::bind(&RESTful::rtcConfig, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
               std::bind(&RESTful::logsFile, this, std::placeholders::_1));
@@ -39,7 +38,7 @@ void RESTful::begin(AsyncWebServer *httpd) {
 	      std::bind(&RESTful::firmwareUpload, this, std::placeholders::_1),
 	      std::bind(&RESTful::firmwareUploadChunks, this, std::placeholders::_1, std::placeholders::_2,
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
-    httpd->on("^\\/api\\/system$", std::bind(&RESTful::system, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/system$", std::bind(&RESTful::systemConfig, this, std::placeholders::_1));
     httpd->on("^\\/api\\/system\\/reset$", std::bind(&RESTful::systemReset, this, std::placeholders::_1));
     httpd->on("^\\/api\\/system\\/version$", HTTP_GET, std::bind(&RESTful::systemVersion, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
@@ -47,65 +46,41 @@ void RESTful::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
 }
 
-void RESTful::rtcDate(AsyncWebServerRequest *request) {
-    int status;
-    DateTime now;
-    String value;
+void RESTful::rtcConfig(AsyncWebServerRequest *request) {
+    int i, minutes;
     unsigned long epoch = 0;
-
-    switch (request->method()) {
-     case HTTP_GET:
-	 now = rtc.now();
-	 epoch = now.unixtime();
-	 value = String(epoch, DEC);
-	 request->send(200, "text/plain", value);
-	 break;
-
-     case HTTP_PUT:
-	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-	     return request->requestAuthentication();
-
-	 status = 400;
-	 if(request->hasParam("epoch", true)) {
-	     value = request->getParam("epoch", true)->value();
-	     rtc.adjust(DateTime(value.toInt()));
-	     status = 200;
-	 }
-	 request->send(status);
-	 break;
-
-     default:
-	 request->send(400);
-	 break;
-    }
-}
-
-void RESTful::rtcTimer(AsyncWebServerRequest *request) {
     String value;
-    int status, minutes;
 
     switch (request->method()) {
      case HTTP_GET:
-	 value = String(settings.getTimer(), DEC);
-	 request->send(200, "text/plain", value);
+	 epoch = rtc.now().unixtime();
+	 value = "epoch=" + String(epoch, DEC) + "&";
+	 value += "minutes=" + String(settings.getTimer(), DEC);
+	 request->send(200, "application/x-www-form-urlencoded", value);
 	 break;
 
      case HTTP_PUT:
 	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
 
-	 status = 400;
-	 if(request->hasParam("minutes", true)) {
-	     value = request->getParam("minutes", true)->value();
-	     minutes = value.toInt();
-	     if(minutes >= 0 && minutes < 256) {
-		 if(timer.isEnabled()) timer.disable();
-		 timer.enable(minutes);
-		 settings.setTimer((uint8_t) minutes);
-		 status = 200;
+	 for(i = 0; i < request->params(); i++) {
+	     if(String(request->getParam(i)->name()).equals("epoch")) {
+	         value = String(request->getParam(i)->value());
+	         rtc.adjust(DateTime(value.toInt()));
+	     }
+
+	     if(String(request->getParam(i)->name()).equals("minutes")) {
+	         value = String(request->getParam(i)->value());
+	         minutes = value.toInt();
+	         if(minutes >= 0 && minutes < 256) {
+		     if(timer.isEnabled()) timer.disable();
+		     timer.enable(minutes);
+		     settings.setTimer((uint8_t) minutes);
+	         }
 	     }
 	 }
-	 request->send(status);
+
+	 request->send(200);
 	 break;
 
      default:
@@ -205,7 +180,7 @@ void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filena
     }
 }
 
-void RESTful::system(AsyncWebServerRequest *request) {
+void RESTful::systemConfig(AsyncWebServerRequest *request) {
     int i;
     String value = "";
 

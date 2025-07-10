@@ -40,7 +40,6 @@ void RESTful::begin(AsyncWebServer *httpd) {
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
     httpd->on("^\\/api\\/system$", std::bind(&RESTful::systemConfig, this, std::placeholders::_1));
     httpd->on("^\\/api\\/system\\/reset$", std::bind(&RESTful::systemReset, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/system\\/version$", HTTP_GET, std::bind(&RESTful::systemVersion, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)$", std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
@@ -183,16 +182,22 @@ void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filena
 void RESTful::systemConfig(AsyncWebServerRequest *request) {
     int i;
     String value = "";
+    String version = "???";
 
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	return request->requestAuthentication();
+
+#ifdef GIT_HASH
+    version = GIT_HASH;
+#endif
 
     switch (request->method()) {
      case HTTP_GET:
 	 value = value + "wifiSSID=" + settings.getWifiSSID() + "&";
 	 value = value + "wifiPassword=" + settings.getWifiPassword() + "&";
 	 value = value + "httpUser=" + settings.getHttpUser() + "&";
-	 value = value + "httpPassword=" + settings.getHttpPassword();
+	 value = value + "httpPassword=" + settings.getHttpPassword() + "&";
+	 value = value + "version=" + version;
 
 	 request->send(200, "application/x-www-form-urlencoded", value);
 	 break;
@@ -239,15 +244,6 @@ void RESTful::systemReset(AsyncWebServerRequest *request) {
 	 request->send(400);
 	 break;
     }
-}
-
-void RESTful::systemVersion(AsyncWebServerRequest *request) {
-    String value = "???";
-
-#ifdef GIT_HASH
-    value = GIT_HASH;
-#endif
-    request->send(200, "text/plain", value);
 }
 
 void RESTful::modbus(AsyncWebServerRequest *request) {

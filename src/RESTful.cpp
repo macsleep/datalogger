@@ -34,11 +34,14 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // log files
     httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET, std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
+              std::bind(&RESTful::logsFile, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
 	      std::bind(&RESTful::logsFile, this, std::placeholders::_1),
 	      std::bind(&RESTful::logsFileChunks, this, std::placeholders::_1, std::placeholders::_2,
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])\\/remove$", HTTP_POST,
+              std::bind(&RESTful::logsRemove, this, std::placeholders::_1));
 
     // ota firmware
     httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
@@ -54,6 +57,9 @@ void RESTful::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)$", std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
+
+    // serial configuration
+    httpd->on("^\\/api\\/serial1$", std::bind(&RESTful::serial1Config, this, std::placeholders::_1));
 }
 
 void RESTful::rtcConfig(AsyncWebServerRequest *request) {
@@ -160,7 +166,7 @@ void RESTful::logsFile(AsyncWebServerRequest *request) {
 	 file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
 	 if(SD.exists(file)) {
 	     request->send(SD, file, "text/plain");
-	 }
+	 } else request->send(400);
 	 break;
 
      case HTTP_POST:
@@ -193,6 +199,20 @@ void RESTful::logsFileChunks(AsyncWebServerRequest *request, String filename, si
     if(final) {
 	request->_tempFile.close();
     }
+}
+
+void RESTful::logsRemove(AsyncWebServerRequest *request) {
+    int status = 400;
+
+    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	return request->requestAuthentication();
+
+    String file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+    if(SD.exists(file)) {
+        SD.remove(file);
+    }
+
+    request->send(status);
 }
 
 void RESTful::firmwareUpload(AsyncWebServerRequest *request) {
@@ -360,6 +380,26 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 	     settings.setModbusConfig(n, &config);
 	     request->send(200);
 	 } else request->send(400);
+	 break;
+
+     default:
+	 request->send(400);
+	 break;
+    }
+}
+
+
+void RESTful::serial1Config(AsyncWebServerRequest *request) {
+
+    switch (request->method()) {
+     case HTTP_GET:
+	 request->send(200);
+	 break;
+
+     case HTTP_PUT:
+         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	     return request->requestAuthentication();
+	 request->send(200);
 	 break;
 
      default:

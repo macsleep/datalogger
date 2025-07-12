@@ -57,6 +57,10 @@ class Settings {
     void setTimer(uint8_t value);
     bool getModbusConfig(uint8_t n, ModbusConfig * config);
     bool setModbusConfig(uint8_t n, ModbusConfig * config);
+    unsigned long getSerial1Baud(void);
+    void setSerial1Baud(unsigned long value);
+    uint32_t getSerial1Config(void);
+    void setSerial1Config(uint32_t value);
 
   private:
      Preferences preferences;

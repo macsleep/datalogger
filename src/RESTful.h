@@ -29,8 +29,10 @@
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <HardwareSerial.h>
 #include "Timer_PFC8563.h"
 #include "Settings.h"
+#include "Utils.h"
 
 extern RTC_PCF8563 rtc;
 extern Timer_PFC8563 timer;
@@ -57,6 +59,7 @@ class RESTful {
     void serial1Config(AsyncWebServerRequest *request);
 
   private:
+    Utils utils;
 };
 
 #endif

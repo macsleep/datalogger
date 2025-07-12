@@ -141,7 +141,7 @@ void setup() {
     attachInterrupt(TIMER, isrTimer, FALLING);
 
     // modbus
-    Serial1.begin(19200, SERIAL_8N2, SERIAL1_RX, SERIAL1_TX);
+    Serial1.begin(settings.getSerial1Baud(), settings.getSerial1Config(), SERIAL1_RX, SERIAL1_TX);
     modbus.preTransmission(preTransmission);
     modbus.postTransmission(postTransmission);
     energyMeter.begin(&Serial1, &modbus);

@@ -353,7 +353,7 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 	     value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
 	     value = value + "functionCode=" + String(config.functionCode) + "&";
 	     value = value + "registerAddress=" + String(config.registerAddress) + "&";
-	     value = value + "valueType=" + energyMeter.typeToString(config.valueType);
+	     value = value + "valueType=" + utils.typeToString(config.valueType);
 	     request->send(200, "application/x-www-form-urlencoded", value);
 	 } else request->send(400);
 	 break;
@@ -374,7 +374,7 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 		     config.registerAddress = request->getParam(i)->value().toInt();
 		 }
 		 if(String(request->getParam(i)->name()).equals("valueType")) {
-		     config.valueType = energyMeter.stringToType(request->getParam(i)->value());
+		     config.valueType = utils.stringToType(request->getParam(i)->value());
 		 }
 	     }
 	     settings.setModbusConfig(n, &config);
@@ -390,15 +390,28 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 
 
 void RESTful::serial1Config(AsyncWebServerRequest *request) {
+    int i;
+    String value = "";
 
     switch (request->method()) {
      case HTTP_GET:
-	 request->send(200);
-	 break;
+	 value = "baud=" + String(settings.getSerial1Baud()) + "&";
+	 value = value + "config=" + utils.configToString((SerialConfig)settings.getSerial1Config());
+	 request->send(200, "application/x-www-form-urlencoded", value);
+         break;
 
      case HTTP_PUT:
          if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
+
+	 for(i = 0; i < request->params(); i++) {
+	     if(String(request->getParam(i)->name()).equals("baud")) {
+	         settings.setSerial1Baud(request->getParam(i)->value().toInt());
+             }
+	     if(String(request->getParam(i)->name()).equals("config")) {
+	         settings.setSerial1Config(utils.stringToConfig(request->getParam(i)->value()));
+             }
+	 }
 	 request->send(200);
 	 break;
 

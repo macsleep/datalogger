@@ -37,6 +37,8 @@ void Settings::reset(void) {
     setHttpUser(getHttpUser());
     setHttpPassword(getHttpPassword());
     setTimer(getTimer());
+    setSerial1Baud(getSerial1Baud());
+    setSerial1Config(getSerial1Config());
 
     for(i = 0; i < MODBUS_SLOTS; i++) {
 	getModbusConfig(i, &config);
@@ -147,4 +149,32 @@ bool Settings::setModbusConfig(uint8_t n, ModbusConfig *config) {
     }
 
     return (true);
+}
+
+unsigned long Settings::getSerial1Baud(void) {
+    preferences.begin(SYSTEMNAME, RO_MODE);
+    unsigned long value = preferences.getULong("serial1Baud", 9600);
+    preferences.end();
+    return (value);
+}
+
+void Settings::setSerial1Baud(unsigned long value) {
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putULong("serial1Baud", value);
+        preferences.end();
+    }
+}
+
+uint32_t Settings::getSerial1Config(void) {
+    preferences.begin(SYSTEMNAME, RO_MODE);
+    uint32_t value = preferences.getUInt("serial1Config", SerialConfig::SERIAL_8N1);
+    preferences.end();
+    return (value);
+}
+
+void Settings::setSerial1Config(uint32_t value) {
+    if(preferences.begin(SYSTEMNAME, RW_MODE)) {
+        preferences.putULong("serial1Config", value);
+        preferences.end();
+    }
 }

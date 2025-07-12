@@ -20,26 +20,23 @@
   this software.
  */
 
-#ifndef FINDER_H
-#define FINDER_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <Arduino.h>
-#include <ModbusMaster.h>
-#include "Utils.h"
+#include <HardwareSerial.h>
 
-class Finder {
+enum class FinderType { FOO, T1, T2, T3, T_float };
+
+class Utils {
   public:
-    Finder();
-    void begin(Stream * serial, ModbusMaster * modbus);
-    String getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType);
+    Utils();
+    String configToString(SerialConfig value);
+    SerialConfig stringToConfig(String value);
+    String typeToString(FinderType value);
+    FinderType stringToType(String value);
 
   private:
-    Stream * serial;
-    ModbusMaster * modbus;
-    bool functionCode4_T1(uint16_t addr, uint16_t * value);
-    bool functionCode4_T2(uint16_t addr, int16_t * value);
-    bool functionCode4_T3(uint16_t addr, int32_t * value);
-    bool functionCode4_T_float(uint16_t addr, float * value);
 };
 
 #endif

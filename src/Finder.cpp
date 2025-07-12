@@ -32,41 +32,6 @@ void Finder::begin(Stream *serial, ModbusMaster *modbus) {
     Finder::modbus = modbus;
 }
 
-String Finder::typeToString(FinderType value) {
-    String type;
-
-    switch (value) {
-     case FinderType::T1:
-	 type = "T1";
-	 break;
-     case FinderType::T2:
-	 type = "T2";
-	 break;
-     case FinderType::T3:
-	 type = "T3";
-	 break;
-     case FinderType::T_float:
-	 type = "T_float";
-	 break;
-     default:
-	 type = "FOO";
-	 break;
-    }
-
-    return (type);
-}
-
-FinderType Finder::stringToType(String value) {
-    FinderType type = FinderType::FOO;
-
-    if(value.equals("T1")) type = FinderType::T1;
-    if(value.equals("T2")) type = FinderType::T2;
-    if(value.equals("T3")) type = FinderType::T3;
-    if(value.equals("T_float")) type = FinderType::T_float;
-
-    return (type);
-}
-
 String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType) {
     String value = "";
     float floatValue;

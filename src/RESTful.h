@@ -42,6 +42,7 @@ class RESTful {
     RESTful();
     void begin(AsyncWebServer *httpd);
     void rtcConfig(AsyncWebServerRequest *request);
+    void timerConfig(AsyncWebServerRequest *request);
     void logsList(AsyncWebServerRequest *request);
     void logsFile(AsyncWebServerRequest *request);
     void logsFileChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);

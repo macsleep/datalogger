@@ -35,8 +35,7 @@ sub rtc_read {
 	my $response = $ua->request($request);
 	$response->is_success or die(Dumper($response->status_line()));
 	my $data = $response->decoded_content;
-	$data =~ /epoch=([0-9]+)/i;
-	return defined $1 ? $1 : $data;
+	return $data;
 }
 
 sub rtc_write {

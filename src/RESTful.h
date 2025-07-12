@@ -49,6 +49,7 @@ class RESTful {
     void logsFile(AsyncWebServerRequest *request);
     void logsFileChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
     void logsRemove(AsyncWebServerRequest *request);
+    void firmwareVersion(AsyncWebServerRequest *request);
     void firmwareUpload(AsyncWebServerRequest *request);
     void firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
     void systemConfig(AsyncWebServerRequest *request);

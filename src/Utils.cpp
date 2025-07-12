@@ -129,4 +129,3 @@ FinderType Utils::stringToType(String value) {
 
     return (type);
 }
-

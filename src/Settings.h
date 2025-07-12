@@ -31,7 +31,7 @@
 #define SYSTEMNAME "datalogger"
 #define RO_MODE true
 #define RW_MODE false
-#define MODBUS_SLOTS 10
+#define MODBUS_SLOTS 5
 
 typedef struct {
     uint8_t deviceAddress;

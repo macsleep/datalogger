@@ -34,24 +34,24 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // log files
     httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
-              std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET, std::bind(&RESTful::logsFile, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
 	      std::bind(&RESTful::logsFile, this, std::placeholders::_1),
 	      std::bind(&RESTful::logsFileChunks, this, std::placeholders::_1, std::placeholders::_2,
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])\\/remove$", HTTP_POST,
-              std::bind(&RESTful::logsRemove, this, std::placeholders::_1));
+	      std::bind(&RESTful::logsRemove, this, std::placeholders::_1));
 
     // ota firmware
-    httpd->on("^\\/api\\/firmware\\/upload$", HTTP_POST,
+    httpd->on("^\\/api\\/firmware$", HTTP_GET, std::bind(&RESTful::firmwareVersion, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/firmware$", HTTP_POST,
 	      std::bind(&RESTful::firmwareUpload, this, std::placeholders::_1),
 	      std::bind(&RESTful::firmwareUploadChunks, this, std::placeholders::_1, std::placeholders::_2,
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
 
     // system settings
     httpd->on("^\\/api\\/system$", std::bind(&RESTful::systemConfig, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/system\\/reset$", std::bind(&RESTful::systemReset, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/system\\/reset$", HTTP_POST, std::bind(&RESTful::systemReset, this, std::placeholders::_1));
 
     // modbus registers
     httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
@@ -209,10 +209,19 @@ void RESTful::logsRemove(AsyncWebServerRequest *request) {
 
     String file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
     if(SD.exists(file)) {
-        SD.remove(file);
+	SD.remove(file);
     }
 
     request->send(status);
+}
+
+void RESTful::firmwareVersion(AsyncWebServerRequest *request) {
+    String version = "???";
+
+#ifdef GIT_HASH
+    version = GIT_HASH;
+#endif
+    request->send(200, "text/plain", version);
 }
 
 void RESTful::firmwareUpload(AsyncWebServerRequest *request) {
@@ -244,17 +253,12 @@ void RESTful::systemConfig(AsyncWebServerRequest *request) {
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	return request->requestAuthentication();
 
-#ifdef GIT_HASH
-    version = GIT_HASH;
-#endif
-
     switch (request->method()) {
      case HTTP_GET:
 	 value = value + "wifiSSID=" + settings.getWifiSSID() + "&";
 	 value = value + "wifiPassword=" + settings.getWifiPassword() + "&";
 	 value = value + "httpUser=" + settings.getHttpUser() + "&";
 	 value = value + "httpPassword=" + settings.getHttpPassword() + "&";
-	 value = value + "version=" + version;
 
 	 request->send(200, "application/x-www-form-urlencoded", value);
 	 break;
@@ -291,16 +295,8 @@ void RESTful::systemReset(AsyncWebServerRequest *request) {
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	return request->requestAuthentication();
 
-    switch (request->method()) {
-     case HTTP_POST:
-	 settings.reset();
-	 request->send(200);
-	 break;
-
-     default:
-	 request->send(400);
-	 break;
-    }
+    settings.reset();
+    request->send(200);
 }
 
 void RESTful::modbus(AsyncWebServerRequest *request) {
@@ -396,21 +392,21 @@ void RESTful::serial1Config(AsyncWebServerRequest *request) {
     switch (request->method()) {
      case HTTP_GET:
 	 value = "baud=" + String(settings.getSerial1Baud()) + "&";
-	 value = value + "config=" + utils.configToString((SerialConfig)settings.getSerial1Config());
+	 value = value + "config=" + utils.configToString((SerialConfig) settings.getSerial1Config());
 	 request->send(200, "application/x-www-form-urlencoded", value);
-         break;
+	 break;
 
      case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
 
 	 for(i = 0; i < request->params(); i++) {
 	     if(String(request->getParam(i)->name()).equals("baud")) {
-	         settings.setSerial1Baud(request->getParam(i)->value().toInt());
-             }
+		 settings.setSerial1Baud(request->getParam(i)->value().toInt());
+	     }
 	     if(String(request->getParam(i)->name()).equals("config")) {
-	         settings.setSerial1Config(utils.stringToConfig(request->getParam(i)->value()));
-             }
+		 settings.setSerial1Config(utils.stringToConfig(request->getParam(i)->value()));
+	     }
 	 }
 	 request->send(200);
 	 break;

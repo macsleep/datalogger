@@ -34,7 +34,8 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // log files
     httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET, std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
+              std::bind(&RESTful::logsFile, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
 	      std::bind(&RESTful::logsFile, this, std::placeholders::_1),
 	      std::bind(&RESTful::logsFileChunks, this, std::placeholders::_1, std::placeholders::_2,

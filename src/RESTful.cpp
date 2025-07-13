@@ -136,12 +136,12 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
     File root, entry, directory, file;
     AsyncResponseStream *response;
     MatchState regex;
-    String year;
+    String year = "";
 
     // filter year
     if(request->hasParam("year")) {
         year = request->getParam("year")->value();
-    } else year = "";
+    }
 
     response = request->beginResponseStream("text/html");
 
@@ -325,7 +325,7 @@ void RESTful::modbus(AsyncWebServerRequest *request) {
 }
 
 void RESTful::modbusValue(AsyncWebServerRequest *request) {
-    int n;
+    int n, status;
     ModbusConfig config;
     String value = "";
 
@@ -333,10 +333,12 @@ void RESTful::modbusValue(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
+         status = 400;
 	 if(settings.getModbusConfig(n, &config)) {
 	     value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
-	     request->send(200, "text/plain", value);
-	 } else request->send(400);
+             status = 200;
+	 }
+	 request->send(status, "text/plain", value);
 	 break;
 
      default:
@@ -390,7 +392,7 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
                  status = 200;
              }
 	 }
-	 request->send(200);
+	 request->send(status);
 	 break;
 
      default:

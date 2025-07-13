@@ -24,11 +24,13 @@ my $password = "admin";
 my $url = 'http://datalogger.local/api/logs';
 
 my %opts;
-if(!getopts('d', \%opts)) {
-        printf("syntax: $0 -d\n");
-        printf("  -d  : dry run, don't actually get any files\n");
+if(!getopts('dy:', \%opts)) {
+        printf("syntax: $0 -d -y <year>\n");
+        printf("  -d        : dry run, don't actually get any files\n");
+        printf("  -y <year> : only get files for a certain year\n");
         exit 1;
 }
+defined $opts{'y'} and $url .= "?year=" . $opts{'y'};
 
 sub logs_list {
 	my $request = HTTP::Request->new('GET', $url);

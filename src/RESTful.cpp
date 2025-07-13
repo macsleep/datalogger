@@ -218,6 +218,7 @@ void RESTful::logsRemove(AsyncWebServerRequest *request) {
     String file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
     if(SD.exists(file)) {
 	SD.remove(file);
+        status = 200;
     }
 
     request->send(status);

@@ -55,7 +55,7 @@ foreach (@{logs_list()}) {
 	my ($log, $size) = split;
 	my $file = substr($log, 4, 4);
 	my $directory = substr($log, 0, 4);
-	-e $directory or -d $directory or mkdir $directory;
+	$opts{'d'} or -e $directory or -d $directory or mkdir $directory;
 	my $destination = $directory . "/" . $file;
 	my $fsize = -f $destination ? -s $destination : 0;
 	if($fsize < $size) {

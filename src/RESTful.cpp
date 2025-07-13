@@ -151,6 +151,7 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
 		}
 		file.close();
 	    }
+            directory.close();
 	}
 	entry.close();
     }

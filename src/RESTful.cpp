@@ -258,7 +258,7 @@ void RESTful::systemConfig(AsyncWebServerRequest *request) {
 	 value = value + "wifiSSID=" + settings.getWifiSSID() + "&";
 	 value = value + "wifiPassword=" + settings.getWifiPassword() + "&";
 	 value = value + "httpUser=" + settings.getHttpUser() + "&";
-	 value = value + "httpPassword=" + settings.getHttpPassword() + "&";
+	 value = value + "httpPassword=" + settings.getHttpPassword();
 
 	 request->send(200, "application/x-www-form-urlencoded", value);
 	 break;

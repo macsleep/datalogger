@@ -346,7 +346,7 @@ void RESTful::modbusValue(AsyncWebServerRequest *request) {
 }
 
 void RESTful::modbusConfig(AsyncWebServerRequest *request) {
-    int n, i;
+    int n, i, status;
     ModbusConfig config;
     String value = "";
 
@@ -354,19 +354,22 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
+         status = 400;
 	 if(settings.getModbusConfig(n, &config)) {
 	     value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
 	     value = value + "functionCode=" + String(config.functionCode) + "&";
 	     value = value + "registerAddress=" + String(config.registerAddress) + "&";
 	     value = value + "valueType=" + utils.typeToString(config.valueType);
-	     request->send(200, "application/x-www-form-urlencoded", value);
-	 } else request->send(400);
+             status = 200;
+	 }
+	 request->send(status, "application/x-www-form-urlencoded", value);
 	 break;
 
      case HTTP_PUT:
 	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
 
+         status = 400;
 	 if(settings.getModbusConfig(n, &config)) {
 	     for(i = 0; i < request->params(); i++) {
 		 if(request->getParam(i)->name().equals("deviceAddress")) {
@@ -382,9 +385,12 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 		     config.valueType = utils.stringToType(request->getParam(i)->value());
 		 }
 	     }
-	     settings.setModbusConfig(n, &config);
-	     request->send(200);
-	 } else request->send(400);
+             if(request->params()) {
+	         settings.setModbusConfig(n, &config);
+                 status = 200;
+             }
+	 }
+	 request->send(200);
 	 break;
 
      default:

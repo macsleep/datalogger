@@ -80,8 +80,8 @@ void RESTful::rtcConfig(AsyncWebServerRequest *request) {
 
 	 status = 400;
 	 for(i = 0; i < request->params(); i++) {
-	     if(String(request->getParam(i)->name()).equals("epoch")) {
-		 value = String(request->getParam(i)->value());
+	     if(request->getParam(i)->name().equals("epoch")) {
+		 value = request->getParam(i)->value();
 		 rtc.adjust(DateTime(value.toInt()));
 		 status = 200;
 	     }
@@ -111,17 +111,17 @@ void RESTful::timerConfig(AsyncWebServerRequest *request) {
 
 	 status = 400;
 	 for(i = 0; i < request->params(); i++) {
-	     if(String(request->getParam(i)->name()).equals("minutes")) {
-		 value = String(request->getParam(i)->value());
-		 minutes = value.toInt();
-		 if(minutes >= 0 && minutes < 256) {
-		     if(timer.isEnabled()) timer.disable();
-		     timer.enable(minutes);
-		     settings.setTimer((uint8_t) minutes);
-		     status = 200;
-		 }
+	     if(request->getParam(i)->name().equals("minutes")) {
+		 value = request->getParam(i)->value();
+                 minutes = value.toInt();
+	         if(minutes >= 0 && minutes < 256) {
+	             if(timer.isEnabled()) timer.disable();
+	             timer.enable(minutes);
+	             settings.setTimer((uint8_t) minutes);
+	             status = 200;
+	         }
 	     }
-	 }
+         }
 
 	 request->send(status);
 	 break;
@@ -136,13 +136,19 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
     File root, entry, directory, file;
     AsyncResponseStream *response;
     MatchState regex;
+    String year;
+
+    // filter year
+    if(request->hasParam("year")) {
+        year = request->getParam("year")->value();
+    } else year = "";
 
     response = request->beginResponseStream("text/html");
 
     root = SD.open("/");
     while(entry = root.openNextFile()) {
 	regex.Target((char *) entry.name());
-	if(entry.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
+	if(entry.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$") && regex.Match(year.c_str())) {
 	    directory = SD.open("/" + String(entry.name()));
 	    while(file = directory.openNextFile()) {
 		regex.Target((char *) file.name());
@@ -267,17 +273,17 @@ void RESTful::systemConfig(AsyncWebServerRequest *request) {
 
      case HTTP_PUT:
 	 for(i = 0; i < request->params(); i++) {
-	     if(String(request->getParam(i)->name()).equals("wifiSSID")) {
-		 settings.setWifiSSID(String(request->getParam(i)->value()));
+	     if(request->getParam(i)->name().equals("wifiSSID")) {
+		 settings.setWifiSSID(request->getParam(i)->value());
 	     }
-	     if(String(request->getParam(i)->name()).equals("wifiPassword")) {
-		 settings.setWifiPassword(String(request->getParam(i)->value()));
+	     if(request->getParam(i)->name().equals("wifiPassword")) {
+		 settings.setWifiPassword(request->getParam(i)->value());
 	     }
-	     if(String(request->getParam(i)->name()).equals("httpUser")) {
-		 settings.setHttpUser(String(request->getParam(i)->value()));
+	     if(request->getParam(i)->name().equals("httpUser")) {
+		 settings.setHttpUser(request->getParam(i)->value());
 	     }
-	     if(String(request->getParam(i)->name()).equals("httpPassword")) {
-		 settings.setHttpPassword(String(request->getParam(i)->value()));
+	     if(request->getParam(i)->name().equals("httpPassword")) {
+		 settings.setHttpPassword(request->getParam(i)->value());
 	     }
 	 }
 
@@ -362,16 +368,16 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 
 	 if(settings.getModbusConfig(n, &config)) {
 	     for(i = 0; i < request->params(); i++) {
-		 if(String(request->getParam(i)->name()).equals("deviceAddress")) {
+		 if(request->getParam(i)->name().equals("deviceAddress")) {
 		     config.deviceAddress = request->getParam(i)->value().toInt();
 		 }
-		 if(String(request->getParam(i)->name()).equals("functionCode")) {
+		 if(request->getParam(i)->name().equals("functionCode")) {
 		     config.functionCode = request->getParam(i)->value().toInt();
 		 }
-		 if(String(request->getParam(i)->name()).equals("registerAddress")) {
+		 if(request->getParam(i)->name().equals("registerAddress")) {
 		     config.registerAddress = request->getParam(i)->value().toInt();
 		 }
-		 if(String(request->getParam(i)->name()).equals("valueType")) {
+		 if(request->getParam(i)->name().equals("valueType")) {
 		     config.valueType = utils.stringToType(request->getParam(i)->value());
 		 }
 	     }
@@ -403,10 +409,10 @@ void RESTful::serial1Config(AsyncWebServerRequest *request) {
 	     return request->requestAuthentication();
 
 	 for(i = 0; i < request->params(); i++) {
-	     if(String(request->getParam(i)->name()).equals("baud")) {
+	     if(request->getParam(i)->name().equals("baud")) {
 		 settings.setSerial1Baud(request->getParam(i)->value().toInt());
 	     }
-	     if(String(request->getParam(i)->name()).equals("config")) {
+	     if(request->getParam(i)->name().equals("config")) {
 		 settings.setSerial1Config(utils.stringToConfig(request->getParam(i)->value()));
 	     }
 	 }

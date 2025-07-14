@@ -298,9 +298,6 @@ void RESTful::systemConfig(AsyncWebServerRequest *request) {
 }
 
 void RESTful::systemReset(AsyncWebServerRequest *request) {
-    int i;
-    String value = "";
-
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	return request->requestAuthentication();
 

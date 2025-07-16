@@ -63,28 +63,15 @@ and deleting the log file is a POST on the following URL:
 curl -u "admin:admin" -X POST http://datalogger.local/api/logs/20250421/remove
 </pre>
 
-## Firmware
-This POST uploads a firmware binary to the SD card to provide an OTA (Over The Air) upgrade capability. The ESP32 will try to install the firmware binary on the SD card as soon as it wakes up from deep sleep (please see the code for details). If the upgrade is successful the ESP32 will reboot. Otherwise it will keep on running with the current firmware.
-<pre>
-curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmware
-</pre>
-
-To check the version (GIT hash) currently running on the datalogger you can issue the following GET:
-<pre>
-curl http://datalogger.local/api/firmware
-</pre>
-
 ## System
 
 To get and change the Wifi SSID, Wifi password, http user and http password you can use the following statements. A GET returns all the configurable parameters:
-
 <pre>
 curl -u "admin:admin" http://datalogger.local/api/system
 wifiSSID=Datalogger_5AB278&wifiPassword=&httpUser=admin&httpPassword=admin
 </pre>
 
 A PUT on one or multiple parameters changes the default settings. Remember changing the http password changes access to the REST API immediately. Changing the Wifi password requires rebooting the data logger (or waking it from deep sleep). Please also note a Wifi password needs to be at least eight characters in length. Otherwise the ESP will behave like it has no password set.
-
 <pre>
 curl -u "admin:admin" -X PUT -d "wifiPassword=12345678" http://datalogger.local/api/system
 </pre>
@@ -93,6 +80,7 @@ To reset the system the following POST will load default values for all system, 
 <pre>
 curl -u "admin:admin" -X POST http://datalogger.local/api/system/reset
 </pre>
+
 You should also reset the system whenever you change the number of modbus configurations stored in NVS (Non Volatile Storage).
 
 ## Modbus
@@ -122,6 +110,17 @@ And with the following GET you can test if the configuration works. Remember to 
 <pre>
 curl http://datalogger.local/api/modbus/0
 55947
+</pre>
+
+## Firmware
+This POST uploads a firmware binary to the SD card to provide an OTA (Over The Air) upgrade capability. The ESP32 will try to install the firmware binary on the SD card as soon as it wakes up from deep sleep (please see the code for details). If the upgrade is successful the ESP32 will reboot. Otherwise it will keep on running with the current firmware.
+<pre>
+curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmware
+</pre>
+
+To check the version (GIT hash) currently running on the datalogger you can issue the following GET:
+<pre>
+curl http://datalogger.local/api/firmware
 </pre>
 
 ## Serial1

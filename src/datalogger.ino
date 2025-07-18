@@ -33,14 +33,14 @@
 #include "Settings.h"
 #include "Finder.h"
 
-#define LED_GREEN GPIO_NUM_3
-#define LED_YELLOW GPIO_NUM_4
-#define BUTTON GPIO_NUM_5
-#define TIMER GPIO_NUM_6
-#define SERIAL1_TX GPIO_NUM_7
-#define SERIAL1_RX GPIO_NUM_8
-#define MAX485_DE GPIO_NUM_9
-#define MAX485_RE_NEG GPIO_NUM_10
+#define LED_GREEN GPIO_NUM_4
+#define LED_YELLOW GPIO_NUM_5
+#define BUTTON GPIO_NUM_6
+#define TIMER GPIO_NUM_7
+#define SERIAL1_TX GPIO_NUM_8
+#define SERIAL1_RX GPIO_NUM_9
+#define MAX485_DE GPIO_NUM_10
+#define MAX485_RE_NEG GPIO_NUM_11
 
 RTC_PCF8563 rtc;
 Timer_PFC8563 timer;

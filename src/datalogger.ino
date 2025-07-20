@@ -120,6 +120,7 @@ void IRAM_ATTR isrTimer() {
 }
 
 void setup() {
+    bool ok = true;
     uint64_t bitmask;
     timeval tv;
 
@@ -141,11 +142,10 @@ void setup() {
     modbus.postTransmission(postTransmission);
     energyMeter.begin(&Serial1, &modbus);
 
-    // rtc
-    rtc.begin();
-    if(rtc.lostPower()) {
-	// rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    }
+    // peripheral
+    ok &= rtc.begin();
+    ok &= SD.begin();
+    while(!ok) delay(1000);
 
     // timer
     if(!timer.isEnabled()) {
@@ -155,9 +155,6 @@ void setup() {
     // system time
     tv.tv_sec = rtc.now().unixtime();
     settimeofday(&tv, NULL);
-
-    // sd card
-    SD.begin();
 
     // firmware
     if(SD.exists("/firmware.bin")) {

@@ -147,7 +147,7 @@ void setup() {
     ok &= SD.begin();
     if(!ok) {
         // sleep
-	bitmask = (1ULL << BUTTON) | (1ULL << TIMER);
+	bitmask = (1ULL << BUTTON);
 	esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
 	esp_deep_sleep_start();
     }

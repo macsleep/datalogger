@@ -145,7 +145,12 @@ void setup() {
     // peripheral
     ok &= rtc.begin();
     ok &= SD.begin();
-    while(!ok) delay(1000);
+    if(!ok) {
+        // sleep
+	bitmask = (1ULL << BUTTON) | (1ULL << TIMER);
+	esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
+	esp_deep_sleep_start();
+    }
 
     // timer
     if(!timer.isEnabled()) {

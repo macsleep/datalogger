@@ -20,8 +20,8 @@ The MAX3485 is the RS485 differential driver used to read values off the energy 
 
 The SD card is connected via SPI (Serial Peripheral Interface) to the ESP32. It's formated using FAT32 file system. 
 
-## Breadboard Components
+## Breadboard
 
-I used the following development boards to test the hardware setup:
+I used the following development components to test the hardware setup:
 
 ![breadboard](images/breadboard.png)  

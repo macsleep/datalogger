@@ -12,9 +12,9 @@ The PCF8563 contains the RTC (Real Time Clock) and a timer running at 1/60 Hz. I
 
 The push button toggles Wifi on and off. The yellow LED indicates the Wifi status. Without Wifi running the ESP32 goes into deep sleep between reading Modbus values to conserve energy. The green LED blinks whenever values are successfully read via Modbus and written to the SD card.
 
-## MAX3485
+## SN65HVD72
 
-The MAX3485 is the RS485 differential driver used to read values off the energy counter via Modbus. It is connected to one of the three available UARTs (Universal Asynchronous Receiver Transmitter) of the ESP32 S3.
+The SN65HVD72 is the RS485 differential driver used to read values off the energy counter via Modbus. It is connected to one of the three available UARTs (Universal Asynchronous Receiver Transmitter) of the ESP32 S3.
 
 ## SD Card
 

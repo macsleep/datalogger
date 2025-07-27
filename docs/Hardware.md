@@ -23,7 +23,7 @@ The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail
 * 2 x 1N4148 (SOD-123 small signal switching diode)
 * 1 x Fuse 1A/63V (1206 chip fuse)
 * 1 x PCF8563 (SO8 real-time clock/timer)
-* 1 x SN65HVD72 (SO8 RS-485/RS-422 transceiver)
+* 1 x SN65HVD72 (SO8 RS-485 transceiver)
 * 1 x LT1129 (SOT-223 low dropout voltage regulator)
 * 1 x SM712 (SOT-23-3 asymmetrical TVS diode array)
 * 1 x ESP32-S3-WROOM-1 (dual-core 32-bit LX7 microprocessor)
@@ -38,7 +38,7 @@ The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail
 * 2 x 3k3 Ohm (0805 resistor)
 * 2 x 1k Ohm (0805 resistor)
 * 1 x 120 Ohm (0805 resistor)
-* 2 x 10 Ohm (0805 thickfilm pulse proof resistor)
+* 2 x 10 Ohm (0805 thick film pulse capable resistor)
 * 1 x Tactile Switch (NAMAE JTP 1236)
 * 1 x Jumper (2.54mm pitch)
 

@@ -39,7 +39,7 @@
 #define TIMER GPIO_NUM_7
 #define SERIAL1_TX GPIO_NUM_17
 #define SERIAL1_RX GPIO_NUM_18
-#define MAX485_DE_RE GPIO_NUM_19
+#define RS485_DE_RE GPIO_NUM_19
 
 RTC_PCF8563 rtc;
 Timer_PFC8563 timer;
@@ -97,11 +97,11 @@ bool writeLogfile() {
 }
 
 void preTransmission() {
-    digitalWrite(MAX485_DE_RE, HIGH);
+    digitalWrite(RS485_DE_RE, HIGH);
 }
 
 void postTransmission() {
-    digitalWrite(MAX485_DE_RE, LOW);
+    digitalWrite(RS485_DE_RE, LOW);
 }
 
 void progressCallBack(size_t currSize, size_t totalSize) {
@@ -129,8 +129,8 @@ void setup() {
     digitalWrite(LED_GREEN, LOW);
     pinMode(LED_YELLOW, OUTPUT);
     digitalWrite(LED_YELLOW, LOW);
-    pinMode(MAX485_DE_RE, OUTPUT);
-    digitalWrite(MAX485_DE_RE, LOW);
+    pinMode(RS485_DE_RE, OUTPUT);
+    digitalWrite(RS485_DE_RE, LOW);
     pinMode(BUTTON, INPUT);
     attachInterrupt(BUTTON, isrButton, FALLING);
     pinMode(TIMER, INPUT);

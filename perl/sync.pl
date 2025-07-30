@@ -22,6 +22,7 @@ use LWP::UserAgent;
 my $user = "admin";
 my $password = "admin";
 my $url = 'http://datalogger.local/api/logs';
+my $timeout = 10;
 
 my %opts;
 if(!getopts('dy:', \%opts)) {
@@ -35,7 +36,7 @@ defined $opts{'y'} and $url .= "?year=" . $opts{'y'};
 sub logs_list {
 	my $request = HTTP::Request->new('GET', $url);
 	my $useragent = LWP::UserAgent->new();
-	$useragent->timeout(3);
+	$useragent->timeout($timeout);
 	my $response = $useragent->simple_request($request);
 	$response->is_success or die(Dumper($response->status_line()));
 	my @data = split(/\r\n/, $response->decoded_content);
@@ -48,7 +49,7 @@ sub logs_get {
 
 	my $request = HTTP::Request->new('GET', $url . "/" . $log);
 	my $useragent = LWP::UserAgent->new();
-	$useragent->timeout(3);
+	$useragent->timeout($timeout);
 	my $response = $useragent->simple_request($request, $destination);
 	$response->is_success or die(Dumper($response->status_line()));
 }

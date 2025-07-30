@@ -20,6 +20,7 @@ use LWP::UserAgent;
 my $user = "admin";
 my $password = "admin";
 my $url = 'http://datalogger.local/api/rtc';
+my $timeout = 10;
 
 my %opts;
 if(!getopts('s', \%opts)) {
@@ -31,7 +32,7 @@ if(!getopts('s', \%opts)) {
 sub rtc_read {
 	my $request = HTTP::Request->new('GET', $url);
 	my $ua = LWP::UserAgent->new();
-	$ua->timeout(3);
+	$ua->timeout($timeout);
 	my $response = $ua->request($request);
 	$response->is_success or die(Dumper($response->status_line()));
 	my $data = $response->decoded_content;
@@ -46,7 +47,7 @@ sub rtc_write {
 	my $request = HTTP::Request->new('PUT', $url, $header, $content);
 	$request->authorization_basic($user, $password);
 	my $ua = LWP::UserAgent->new();
-	$ua->timeout(3);
+	$ua->timeout($timeout);
 	my $response = $ua->request($request);
 	$response->is_success or die(Dumper($response->status_line()));
 }

@@ -58,9 +58,9 @@ Uploading to an existing log file is a POST:
 curl -u "admin:admin" -F "file=@20250421" http://datalogger.local/api/logs/20250421
 </pre>  
 
-and deleting the log file is a POST on the following URL:
+and deleting the log file is a DELETE on the following URL:
 <pre>
-curl -u "admin:admin" -X POST http://datalogger.local/api/logs/20250421/remove
+curl -u "admin:admin" -X DELETE http://datalogger.local/api/logs/20250421
 </pre>
 
 ## System
@@ -76,9 +76,9 @@ A PUT on one or multiple parameters changes the default settings. Remember chang
 curl -u "admin:admin" -X PUT -d "wifiPassword=12345678" http://datalogger.local/api/system
 </pre>
 
-To reset the system the following POST will load default values for all system, serial and modbus settings:
+To reset the system the following DELETE will load default values for all system, serial and modbus settings:
 <pre>
-curl -u "admin:admin" -X POST http://datalogger.local/api/system/reset
+curl -u "admin:admin" -X DELETE http://datalogger.local/api/system
 </pre>
 
 You should also reset the system whenever you change the number of modbus configurations stored in NVS (Non Volatile Storage).

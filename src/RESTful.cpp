@@ -34,14 +34,12 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // log files
     httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET,
-              std::bind(&RESTful::logsFile, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET | HTTP_DELETE,
+	      std::bind(&RESTful::logsFile, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
 	      std::bind(&RESTful::logsFile, this, std::placeholders::_1),
 	      std::bind(&RESTful::logsFileChunks, this, std::placeholders::_1, std::placeholders::_2,
 			std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])\\/remove$", HTTP_POST,
-	      std::bind(&RESTful::logsRemove, this, std::placeholders::_1));
 
     // ota firmware
     httpd->on("^\\/api\\/firmware$", HTTP_GET, std::bind(&RESTful::firmwareVersion, this, std::placeholders::_1));
@@ -52,7 +50,6 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // system settings
     httpd->on("^\\/api\\/system$", std::bind(&RESTful::systemConfig, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/system\\/reset$", HTTP_POST, std::bind(&RESTful::systemReset, this, std::placeholders::_1));
 
     // modbus registers
     httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
@@ -113,15 +110,15 @@ void RESTful::timerConfig(AsyncWebServerRequest *request) {
 	 for(i = 0; i < request->params(); i++) {
 	     if(request->getParam(i)->name().equals("minutes")) {
 		 value = request->getParam(i)->value();
-                 minutes = value.toInt();
-	         if(minutes >= 0 && minutes < 256) {
-	             if(timer.isEnabled()) timer.disable();
-	             timer.enable(minutes);
-	             settings.setTimer((uint8_t) minutes);
-	             status = 200;
-	         }
+		 minutes = value.toInt();
+		 if(minutes >= 0 && minutes < 256) {
+		     if(timer.isEnabled()) timer.disable();
+		     timer.enable(minutes);
+		     settings.setTimer((uint8_t) minutes);
+		     status = 200;
+		 }
 	     }
-         }
+	 }
 
 	 request->send(status);
 	 break;
@@ -140,7 +137,7 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
 
     // filter year
     if(request->hasParam("year")) {
-        year = request->getParam("year")->value();
+	year = request->getParam("year")->value();
     }
 
     response = request->beginResponseStream("text/html");
@@ -157,7 +154,7 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
 		}
 		file.close();
 	    }
-            directory.close();
+	    directory.close();
 	}
 	entry.close();
     }
@@ -177,8 +174,15 @@ void RESTful::logsFile(AsyncWebServerRequest *request) {
 	 } else request->send(400);
 	 break;
 
-     case HTTP_POST:
-	 request->send(200);
+     case HTTP_DELETE:
+	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+	     return request->requestAuthentication();
+
+	 file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+	 if(SD.exists(file)) {
+	     SD.remove(file);
+	     request->send(200);
+	 } else request->send(400);
 	 break;
 
      default:
@@ -207,21 +211,6 @@ void RESTful::logsFileChunks(AsyncWebServerRequest *request, String filename, si
     if(final) {
 	request->_tempFile.close();
     }
-}
-
-void RESTful::logsRemove(AsyncWebServerRequest *request) {
-    int status = 400;
-
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-	return request->requestAuthentication();
-
-    String file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-    if(SD.exists(file)) {
-	SD.remove(file);
-        status = 200;
-    }
-
-    request->send(status);
 }
 
 void RESTful::firmwareVersion(AsyncWebServerRequest *request) {
@@ -291,18 +280,16 @@ void RESTful::systemConfig(AsyncWebServerRequest *request) {
 	 request->send(200);
 	 break;
 
+     case HTTP_DELETE:
+	 settings.reset();
+
+	 request->send(200);
+	 break;
+
      default:
 	 request->send(400);
 	 break;
     }
-}
-
-void RESTful::systemReset(AsyncWebServerRequest *request) {
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-	return request->requestAuthentication();
-
-    settings.reset();
-    request->send(200);
 }
 
 void RESTful::modbus(AsyncWebServerRequest *request) {
@@ -330,10 +317,10 @@ void RESTful::modbusValue(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
-         status = 400;
+	 status = 400;
 	 if(settings.getModbusConfig(n, &config)) {
 	     value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
-             status = 200;
+	     status = 200;
 	 }
 	 request->send(status, "text/plain", value);
 	 break;
@@ -353,13 +340,13 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 
     switch (request->method()) {
      case HTTP_GET:
-         status = 400;
+	 status = 400;
 	 if(settings.getModbusConfig(n, &config)) {
 	     value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
 	     value = value + "functionCode=" + String(config.functionCode) + "&";
 	     value = value + "registerAddress=" + String(config.registerAddress) + "&";
 	     value = value + "valueType=" + utils.typeToString(config.valueType);
-             status = 200;
+	     status = 200;
 	 }
 	 request->send(status, "application/x-www-form-urlencoded", value);
 	 break;
@@ -368,7 +355,7 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 	 if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	     return request->requestAuthentication();
 
-         status = 400;
+	 status = 400;
 	 if(settings.getModbusConfig(n, &config)) {
 	     for(i = 0; i < request->params(); i++) {
 		 if(request->getParam(i)->name().equals("deviceAddress")) {
@@ -384,10 +371,10 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 		     config.valueType = utils.stringToType(request->getParam(i)->value());
 		 }
 	     }
-             if(request->params()) {
-	         settings.setModbusConfig(n, &config);
-                 status = 200;
-             }
+	     if(request->params()) {
+		 settings.setModbusConfig(n, &config);
+		 status = 200;
+	     }
 	 }
 	 request->send(status);
 	 break;

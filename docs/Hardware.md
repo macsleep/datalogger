@@ -29,7 +29,7 @@ The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail
 * 1 x ESP32-S3-WROOM-1 (dual-core 32-bit LX7 microprocessor)
 * 1 x SD Card 16GB
 * 1 x SD Card Holder (Molex SD-47219-001)
-* 1 x Pinheader 1x6 (2.54mm pitch)
+* 1 x Pin-header 1x6 (2.54mm pitch)
 * 1 x LED Green (Dialight 551-xx07 3mm LED)
 * 1 x LED Yellow (Dialight 551-xx07 3mm LED)
 * 1 x Quarz 32k768 (Euroquarz EQ162 9pF crystal)

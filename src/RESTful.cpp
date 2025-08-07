@@ -62,7 +62,7 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
 void RESTful::rtcConfig(AsyncWebServerRequest *request) {
     int i, status;
-    unsigned long epoch = 0;
+    uint32_t epoch = 0;
     String value;
 
     switch (request->method()) {
@@ -246,7 +246,6 @@ void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filena
 void RESTful::systemConfig(AsyncWebServerRequest *request) {
     int i;
     String value = "";
-    String version = "???";
 
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
 	return request->requestAuthentication();

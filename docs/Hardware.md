@@ -44,16 +44,14 @@ The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail
 
 ## ESP32 M5Stack Downloader Pinout
 
-<pre>
-ESP32   M5Stack
----------------
-GND   <->  GND
-IO0   <->  G0
-EN    <->  EN
-RXD0  <->  TXD
-TXD0  <->  RXD
-DD33  <->  3.3V
-</pre>
+| Nr. | ESP32 | M5Stack |
+|:---:|:-----:|:-------:|
+| 1   | GND   | GND     |
+| 2   | IO0   | G0      |
+| 3   | EN    | EN      |
+| 4   | RXD0  | TXD     |
+| 5   | TXD0  | RXD     |
+| 6   | DD33  | 3.3V    |
 
 ## PCB
 

@@ -41,45 +41,45 @@ String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t r
     char buffer[64];
 
     if(deviceAddress > 0 && valueType != FinderType::FOO) {
-	// device
-	modbus->begin(deviceAddress, *Finder::serial);
+        // device
+        modbus->begin(deviceAddress, *Finder::serial);
 
-	switch (functionCode) {
-	 case 4:
-	     switch (valueType) {
-	      case FinderType::T1:
-		  if(functionCode4_T1(registerAddress, &uint16Value)) {
-		      value = String(uint16Value);
-		  } else value = "err";
-		  break;
+        switch (functionCode) {
+         case 4:
+             switch (valueType) {
+              case FinderType::T1:
+                  if(functionCode4_T1(registerAddress, &uint16Value)) {
+                      value = String(uint16Value);
+                  } else value = "err";
+                  break;
 
-	      case FinderType::T2:
-		  if(functionCode4_T2(registerAddress, &int16Value)) {
-		      value = String(int16Value);
-		  } else value = "err";
-		  break;
+              case FinderType::T2:
+                  if(functionCode4_T2(registerAddress, &int16Value)) {
+                      value = String(int16Value);
+                  } else value = "err";
+                  break;
 
-	      case FinderType::T3:
-		  if(functionCode4_T3(registerAddress, &int32Value)) {
-		      value = String(int32Value);
-		  } else value = "err";
-		  break;
+              case FinderType::T3:
+                  if(functionCode4_T3(registerAddress, &int32Value)) {
+                      value = String(int32Value);
+                  } else value = "err";
+                  break;
 
-	      case FinderType::T_float:
-		  if(functionCode4_T_float(registerAddress, &floatValue)) {
-		      snprintf(buffer, sizeof(buffer), "%g", floatValue);
-		      value = String(buffer);
-		  } else value = "err";
-		  break;
+              case FinderType::T_float:
+                  if(functionCode4_T_float(registerAddress, &floatValue)) {
+                      snprintf(buffer, sizeof(buffer), "%g", floatValue);
+                      value = String(buffer);
+                  } else value = "err";
+                  break;
 
-	      default:
-		  break;
-	     }
-	     break;
+              default:
+                  break;
+             }
+             break;
 
-	 default:
-	     break;
-	}
+         default:
+             break;
+        }
     }
 
     return (value);
@@ -113,7 +113,7 @@ bool Finder::functionCode4_T3(uint16_t addr, int32_t *value) {
     result = modbus->readInputRegisters(addr, 2);
     if(result != modbus->ku8MBSuccess) return (false);
     for(i = 0; i < 2; i++) {
-	data[i] = modbus->getResponseBuffer(i);
+        data[i] = modbus->getResponseBuffer(i);
     }
     *value = (data[0] << 16) | data[1];
 
@@ -128,7 +128,7 @@ bool Finder::functionCode4_T_float(uint16_t addr, float *value) {
     result = modbus->readInputRegisters(addr, 2);
     if(result != modbus->ku8MBSuccess) return (false);
     for(i = 0; i < 2; i++) {
-	data[i] = modbus->getResponseBuffer(i);
+        data[i] = modbus->getResponseBuffer(i);
     }
 
     a = (data[0] >> 8) & 0xff;

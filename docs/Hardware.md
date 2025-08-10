@@ -19,39 +19,39 @@ The data logger is based on an Espressif ESP32 S3 micro controller in a DIN rail
 * 1 x 10u/35V (SMC_C polar tantalum capacitor)
 * 2 x 1u (SMC_A polar tantalum capacitor)
 * 2 x 100n (0805 ceramic capacitor)
-* 1 x 10p (0805 ceramic capacitor)
+* 1 x SR201TR 5-20p (trimmer capacitor)
 * 2 x 1N4148 (SOD-123 small signal switching diode)
 * 1 x Fuse 1A/63V (1206 chip fuse)
 * 1 x PCF8563 (SO8 real-time clock/timer)
-* 1 x MAX3485 (SO8 RS-485/RS-422 transceiver)
+* 1 x SN65HVD72 (SO8 RS-485 transceiver)
 * 1 x LT1129 (SOT-223 low dropout voltage regulator)
 * 1 x SM712 (SOT-23-3 asymmetrical TVS diode array)
 * 1 x ESP32-S3-WROOM-1 (dual-core 32-bit LX7 microprocessor)
 * 1 x SD Card 16GB
 * 1 x SD Card Holder (Molex SD-47219-001)
-* 1 x Pinheader 1x6 (2.54mm pitch)
+* 1 x Pin-header 1x6 (2.54mm pitch)
 * 1 x LED Green (Dialight 551-xx07 3mm LED)
 * 1 x LED Yellow (Dialight 551-xx07 3mm LED)
-* 1 x Quarz 32k768 (Euroquarz EQ162 12.5pF crystal)
+* 1 x Quarz 32k768 (Euroquarz EQ162 9pF crystal)
 * 4 x 10k Ohm (0805 resistor)
 * 1 x 5k1 Ohm (0805 resistor)
-* 2 x 4k7 Ohm (0805 resistor)
 * 2 x 3k3 Ohm (0805 resistor)
+* 2 x 1k Ohm (0805 resistor)
 * 1 x 120 Ohm (0805 resistor)
+* 2 x 10 Ohm (0805 thick film pulse capable resistor)
 * 1 x Tactile Switch (NAMAE JTP 1236)
+* 1 x Jumper (2.54mm pitch)
 
 ## ESP32 M5Stack Downloader Pinout
 
-<pre>
-ESP32   M5Stack
----------------
-GND   <->  GND
-IO0   <->  G0
-EN    <->  EN
-RXD0  <->  TXD
-TXD0  <->  RXD
-DD33  <->  3.3V
-</pre>
+| Nr. | ESP32 | M5Stack |
+|:---:|:-----:|:-------:|
+| 1   | GND   | GND     |
+| 2   | IO0   | G0      |
+| 3   | EN    | EN      |
+| 4   | RXD0  | TXD     |
+| 5   | TXD0  | RXD     |
+| 6   | DD33  | 3.3V    |
 
 ## PCB
 

@@ -33,14 +33,13 @@
 #include "Settings.h"
 #include "Finder.h"
 
-#define LED_GREEN GPIO_NUM_3
-#define LED_YELLOW GPIO_NUM_4
-#define BUTTON GPIO_NUM_5
-#define TIMER GPIO_NUM_6
-#define SERIAL1_TX GPIO_NUM_7
-#define SERIAL1_RX GPIO_NUM_8
-#define MAX485_DE GPIO_NUM_9
-#define MAX485_RE_NEG GPIO_NUM_10
+#define LED_GREEN GPIO_NUM_4
+#define LED_YELLOW GPIO_NUM_5
+#define BUTTON GPIO_NUM_6
+#define TIMER GPIO_NUM_7
+#define SERIAL1_TX GPIO_NUM_17
+#define SERIAL1_RX GPIO_NUM_18
+#define RS485_DE_RE GPIO_NUM_19
 
 RTC_PCF8563 rtc;
 Timer_PFC8563 timer;
@@ -98,13 +97,11 @@ bool writeLogfile() {
 }
 
 void preTransmission() {
-    digitalWrite(MAX485_RE_NEG, HIGH);
-    digitalWrite(MAX485_DE, HIGH);
+    digitalWrite(RS485_DE_RE, HIGH);
 }
 
 void postTransmission() {
-    digitalWrite(MAX485_RE_NEG, LOW);
-    digitalWrite(MAX485_DE, LOW);
+    digitalWrite(RS485_DE_RE, LOW);
 }
 
 void progressCallBack(size_t currSize, size_t totalSize) {
@@ -123,6 +120,7 @@ void IRAM_ATTR isrTimer() {
 }
 
 void setup() {
+    bool ok = true;
     uint64_t bitmask;
     timeval tv;
 
@@ -131,10 +129,8 @@ void setup() {
     digitalWrite(LED_GREEN, LOW);
     pinMode(LED_YELLOW, OUTPUT);
     digitalWrite(LED_YELLOW, LOW);
-    pinMode(MAX485_RE_NEG, OUTPUT);
-    pinMode(MAX485_DE, OUTPUT);
-    digitalWrite(MAX485_RE_NEG, LOW);
-    digitalWrite(MAX485_DE, LOW);
+    pinMode(RS485_DE_RE, OUTPUT);
+    digitalWrite(RS485_DE_RE, LOW);
     pinMode(BUTTON, INPUT);
     attachInterrupt(BUTTON, isrButton, FALLING);
     pinMode(TIMER, INPUT);
@@ -146,10 +142,14 @@ void setup() {
     modbus.postTransmission(postTransmission);
     energyMeter.begin(&Serial1, &modbus);
 
-    // rtc
-    rtc.begin();
-    if(rtc.lostPower()) {
-	// rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // peripheral
+    ok &= rtc.begin();
+    ok &= SD.begin();
+    if(!ok) {
+        // sleep
+	bitmask = (1ULL << BUTTON);
+	esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
+	esp_deep_sleep_start();
     }
 
     // timer
@@ -160,9 +160,6 @@ void setup() {
     // system time
     tv.tv_sec = rtc.now().unixtime();
     settimeofday(&tv, NULL);
-
-    // sd card
-    SD.begin();
 
     // firmware
     if(SD.exists("/firmware.bin")) {

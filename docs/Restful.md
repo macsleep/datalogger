@@ -1,6 +1,6 @@
 # REST API
 
-After experimenting with a ftp/telnet server for a while it soon dawned on me that the ESP32 wants to programmed using a web server. I never liked the way most programms mix code and html. After some searching I rediscoverd an oldie but goodie: The [REST](https://en.wikipedia.org/wiki/REST) API (Application Programming Interface). It as some nice features like being client/server, stateless and more. It's also loosely based on the [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) concept. The most important features for me include separating html and binary code. REST URLs can also easily be scripted. And if you have them work with JSON objects a web interface can be added on top. All examples below use the nifty [cURL](https://curl.se/) command line utility. 
+After experimenting with a ftp/telnet server for a while it soon dawned on me that the ESP32 wants to programmed using a web server. I never liked the way most programs mix code and html. After some searching I rediscovered an oldie but goodie: The [REST](https://en.wikipedia.org/wiki/REST) API (Application Programming Interface). It as some nice features like being client/server, stateless and more. It's also loosely based on the [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) concept. The most important features for me include separating html and binary code. REST URLs can also easily be scripted. And if you have them work with JSON objects a web interface can be added on top. All examples below use the nifty [cURL](https://curl.se/) command line utility. 
 
 ## Overview
 
@@ -58,9 +58,9 @@ Uploading to an existing log file is a POST:
 curl -u "admin:admin" -F "file=@20250421" http://datalogger.local/api/logs/20250421
 </pre>  
 
-and deleting the log file is a POST on the following URL:
+and deleting the log file is a DELETE on the following URL:
 <pre>
-curl -u "admin:admin" -X POST http://datalogger.local/api/logs/20250421/remove
+curl -u "admin:admin" -X DELETE http://datalogger.local/api/logs/20250421
 </pre>
 
 ## System
@@ -76,12 +76,12 @@ A PUT on one or multiple parameters changes the default settings. Remember chang
 curl -u "admin:admin" -X PUT -d "wifiPassword=12345678" http://datalogger.local/api/system
 </pre>
 
-To reset the system the following POST will load default values for all system, serial and modbus settings:
+To reset the system the following DELETE will load default values for all system, serial and Modbus settings:
 <pre>
-curl -u "admin:admin" -X POST http://datalogger.local/api/system/reset
+curl -u "admin:admin" -X DELETE http://datalogger.local/api/system
 </pre>
 
-You should also reset the system whenever you change the number of modbus configurations stored in NVS (Non Volatile Storage).
+You should also reset the system whenever you change the number of Modbus configurations stored in NVS (Non Volatile Storage).
 
 ## Modbus
 
@@ -118,20 +118,20 @@ This POST uploads a firmware binary to the SD card to provide an OTA (Over The A
 curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmware
 </pre>
 
-To check the version (GIT hash) currently running on the datalogger you can issue the following GET:
+To check the version (GIT hash) currently running on the data logger you can issue the following GET:
 <pre>
 curl http://datalogger.local/api/firmware
 </pre>
 
 ## Serial1
 
-Using the following GET you can view the serial port configuration driving modbus:
+Using the following GET you can view the serial port configuration driving Modbus:
 <pre>
 curl http://datalogger.local/api/serial1
 baud=19200&config=8N2
 </pre>
 
-And the following PUT changes the configuration of Serial Port 1. Remember to power cycle or wake the datalogger from deep sleep for the new values to take effect.
+And the following PUT changes the configuration of Serial Port 1. Remember to power cycle or wake the data logger from deep sleep for the new values to take effect.
 <pre>
 curl -u "admin:admin" -X PUT -d "baud=9600&config=8N1" http://datalogger.local/api/serial1
 </pre>

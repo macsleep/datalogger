@@ -71,26 +71,25 @@ bool writeLogfile() {
     if(n < 0) return (false);
     if(File file = SD.open(path, FILE_APPEND)) {
 
-	// timestamp
-	n = snprintf(buffer, sizeof(buffer), "%04d%02d%02d%02d%02d%02d", now.year(),
-                     now.month(), now.day(), now.hour(), now.minute(), now.second());
-	if(n < 0) return (false);
-	line += String(buffer);
+        // timestamp
+        n = snprintf(buffer, sizeof(buffer), "%04d%02d%02d%02d%02d%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+        if(n < 0) return (false);
+        line += String(buffer);
 
-	// modbus
-	i = 0;
-	while(settings.getModbusConfig(i++, &config)) {
-	    if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) continue;
-	    String value = energyMeter.getModbus(config.deviceAddress,
-						 config.functionCode,
-						 config.registerAddress,
-						 config.valueType);
-	    if(value.length() > 0) line += " " + value;
-	}
+        // modbus
+        i = 0;
+        while(settings.getModbusConfig(i++, &config)) {
+            if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) continue;
+            String value = energyMeter.getModbus(config.deviceAddress,
+                                                 config.functionCode,
+                                                 config.registerAddress,
+                                                 config.valueType);
+            if(value.length() > 0) line += " " + value;
+        }
 
-	// write log
-	file.println(line.c_str());
-	file.close();
+        // write log
+        file.println(line.c_str());
+        file.close();
     } else return (false);
 
     return (true);
@@ -111,7 +110,7 @@ void progressCallBack(size_t currSize, size_t totalSize) {
 void IRAM_ATTR isrButton() {
     // debounce button
     if(millis() > 500) {
-	enableWifi = false;
+        enableWifi = false;
     }
 }
 
@@ -147,14 +146,14 @@ void setup() {
     ok &= SD.begin();
     if(!ok) {
         // sleep
-	bitmask = (1ULL << BUTTON);
-	esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
-	esp_deep_sleep_start();
+        bitmask = (1ULL << BUTTON);
+        esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
+        esp_deep_sleep_start();
     }
 
     // timer
     if(!timer.isEnabled()) {
-	timer.enable(settings.getTimer());
+        timer.enable(settings.getTimer());
     }
 
     // system time
@@ -163,61 +162,62 @@ void setup() {
 
     // firmware
     if(SD.exists("/firmware.bin")) {
-	File firmware = SD.open("/firmware.bin");
-	if(firmware) {
-	    Update.onProgress(progressCallBack);
-	    Update.begin(firmware.size(), U_FLASH);
-	    Update.writeStream(firmware);
-	    firmware.close();
-	}
-	SD.remove("/firmware.bin");
-	if(Update.end()) {
-	    digitalWrite(LED_YELLOW, LOW);
-	    delay(500);
-	    ESP.restart();
-	}
+        File firmware = SD.open("/firmware.bin");
+        if(firmware) {
+            Update.onProgress(progressCallBack);
+            Update.begin(firmware.size(), U_FLASH);
+            Update.writeStream(firmware);
+            firmware.close();
+        }
+        SD.remove("/firmware.bin");
+        if(Update.end()) {
+            digitalWrite(LED_YELLOW, LOW);
+            delay(500);
+            ESP.restart();
+        }
     }
 
     // wakeup
     switch (esp_sleep_get_wakeup_cause()) {
      case ESP_SLEEP_WAKEUP_EXT1:
-	 bitmask = esp_sleep_get_ext1_wakeup_status();
-	 if(bitmask & (1ULL << BUTTON)) enableWifi = true;
-	 if(bitmask & (1ULL << TIMER)) execJob = true;
-	 break;
+         bitmask = esp_sleep_get_ext1_wakeup_status();
+         if(bitmask & (1ULL << BUTTON)) enableWifi = true;
+         if(bitmask & (1ULL << TIMER)) execJob = true;
+         break;
      default:
-	 execJob = false;
-	 enableWifi = false;
+         execJob = false;
+         enableWifi = false;
 
-	 // boot blink
-	 digitalWrite(LED_GREEN, HIGH);
-	 digitalWrite(LED_YELLOW, HIGH);
-	 delay(500);
-	 digitalWrite(LED_GREEN, LOW);
-	 digitalWrite(LED_YELLOW, LOW);
-	 break;
+         // boot blink
+         digitalWrite(LED_GREEN, HIGH);
+         digitalWrite(LED_YELLOW, HIGH);
+         delay(500);
+         digitalWrite(LED_GREEN, LOW);
+         digitalWrite(LED_YELLOW, LOW);
+         break;
     }
 
     if(enableWifi) {
-	// led
-	digitalWrite(LED_YELLOW, HIGH);
+        // led
+        digitalWrite(LED_YELLOW, HIGH);
 
-	// start Wifi
-	WiFi.softAP(settings.getWifiSSID().c_str(), settings.getWifiPassword().c_str());
-	IPAddress IP = IPAddress(10, 0, 0, 1);
-	IPAddress Netmask = IPAddress(255, 255, 255, 0);
-	WiFi.softAPConfig(IP, IP, Netmask);
+        // start Wifi
+        WiFi.softAP(settings.getWifiSSID().c_str(), settings.getWifiPassword().c_str());
+        IPAddress IP = IPAddress(10, 0, 0, 1);
+        IPAddress Netmask = IPAddress(255, 255, 255, 0);
+        WiFi.softAPConfig(IP, IP, Netmask);
 
-	// mdns
-	MDNS.begin(SYSTEMNAME);
+        // mdns
+        MDNS.begin(SYSTEMNAME);
 
-	// http
-	httpd = new AsyncWebServer(80);
-	restApi.begin(httpd);
-	httpd->onNotFound([](AsyncWebServerRequest * request) {
-			  request->send(404, "text/plain", "Not found");}
-	);
-	httpd->begin();
+        // http
+        httpd = new AsyncWebServer(80);
+        restApi.begin(httpd);
+        httpd->onNotFound([](AsyncWebServerRequest * request) {
+                          request->send(404, "text/plain", "Not found");
+                          }
+        );
+        httpd->begin();
     }
 }
 
@@ -225,24 +225,24 @@ void loop() {
     uint64_t bitmask;
 
     if(execJob) {
-	execJob = false;
-	if(writeLogfile()) {
-	    digitalWrite(LED_GREEN, HIGH);
-	    delay(500);
-	    digitalWrite(LED_GREEN, LOW);
-	}
+        execJob = false;
+        if(writeLogfile()) {
+            digitalWrite(LED_GREEN, HIGH);
+            delay(500);
+            digitalWrite(LED_GREEN, LOW);
+        }
     }
 
     if(!enableWifi) {
-	// stop Wifi
-	WiFi.softAPdisconnect(true);
+        // stop Wifi
+        WiFi.softAPdisconnect(true);
 
-	// debounce button
-	delay(500);
+        // debounce button
+        delay(500);
 
-	// sleep
-	bitmask = (1ULL << BUTTON) | (1ULL << TIMER);
-	esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
-	esp_deep_sleep_start();
+        // sleep
+        bitmask = (1ULL << BUTTON) | (1ULL << TIMER);
+        esp_sleep_enable_ext1_wakeup(bitmask, ESP_EXT1_WAKEUP_ANY_LOW);
+        esp_deep_sleep_start();
     }
 }

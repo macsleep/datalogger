@@ -41,16 +41,15 @@ void Settings::reset(void) {
     setSerial1Config(getSerial1Config());
 
     for(i = 0; i < MODBUS_SLOTS; i++) {
-	getModbusConfig(i, &config);
-	setModbusConfig(i, &config);
+        getModbusConfig(i, &config);
+        setModbusConfig(i, &config);
     }
 }
 
 String Settings::getWifiSSID(void) {
     char buffer[128] = "";
     uint64_t mac = ESP.getEfuseMac();
-    sprintf(buffer, "%s_%02X%02X%02X", SYSTEMNAME, uint8_t((mac >> 24) & 0xff),
-	    uint8_t((mac >> 32) & 0xff), uint8_t((mac >> 40) & 0xff));
+    sprintf(buffer, "%s_%02X%02X%02X", SYSTEMNAME, uint8_t((mac >> 24) & 0xff), uint8_t((mac >> 32) & 0xff), uint8_t((mac >> 40) & 0xff));
     buffer[0] = toupper(buffer[0]);
     String ssid = String(buffer);
 
@@ -131,7 +130,7 @@ bool Settings::getModbusConfig(uint8_t n, ModbusConfig *config) {
     preferences.begin(SYSTEMNAME, RO_MODE);
     snprintf(key, sizeof(key), "modbus_%d", n);
     if(preferences.isKey(key) && preferences.getBytesLength(key) == sizeof(ModbusConfig)) {
-	preferences.getBytes(key, config, sizeof(ModbusConfig));
+        preferences.getBytes(key, config, sizeof(ModbusConfig));
     } else bzero(config, sizeof(ModbusConfig));
     preferences.end();
 

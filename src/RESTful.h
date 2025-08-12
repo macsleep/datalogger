@@ -42,20 +42,20 @@ extern Settings settings;
 class RESTful {
   public:
     RESTful();
-    void begin(AsyncWebServer *httpd);
-    void rtcConfig(AsyncWebServerRequest *request);
-    void timerConfig(AsyncWebServerRequest *request);
-    void logsList(AsyncWebServerRequest *request);
-    void logsFile(AsyncWebServerRequest *request);
-    void logsFileChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
-    void firmwareVersion(AsyncWebServerRequest *request);
-    void firmwareUpload(AsyncWebServerRequest *request);
-    void firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
-    void systemConfig(AsyncWebServerRequest *request);
-    void modbus(AsyncWebServerRequest *request);
-    void modbusValue(AsyncWebServerRequest *request);
-    void modbusConfig(AsyncWebServerRequest *request);
-    void serial1Config(AsyncWebServerRequest *request);
+    void begin(AsyncWebServer * httpd);
+    void rtcConfig(AsyncWebServerRequest * request);
+    void timerConfig(AsyncWebServerRequest * request);
+    void logsList(AsyncWebServerRequest * request);
+    void logsFile(AsyncWebServerRequest * request);
+    void logsFileChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
+    void firmwareVersion(AsyncWebServerRequest * request);
+    void firmwareUpload(AsyncWebServerRequest * request);
+    void firmwareUploadChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
+    void systemConfig(AsyncWebServerRequest * request);
+    void modbus(AsyncWebServerRequest * request);
+    void modbusValue(AsyncWebServerRequest * request);
+    void modbusConfig(AsyncWebServerRequest * request);
+    void serial1Config(AsyncWebServerRequest * request);
 
   private:
     Utils utils;

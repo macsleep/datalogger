@@ -63,7 +63,7 @@ class Settings {
     void setSerial1Config(uint32_t value);
 
   private:
-     Preferences preferences;
+    Preferences preferences;
 };
 
 #endif

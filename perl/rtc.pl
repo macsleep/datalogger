@@ -24,9 +24,9 @@ my $timeout = 10;
 
 my %opts;
 if(!getopts('s', \%opts)) {
-        printf("syntax: $0 -s\n");
+	printf("syntax: $0 -s\n");
 	printf("  -s  : write rtc\n");
-        exit 1;
+	exit 1;
 }
 
 sub rtc_read {

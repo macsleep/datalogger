@@ -29,6 +29,7 @@
 #define PCF8563_ADDRESS 0x51
 #define PCF8563_CONTROL_STATUS_1 0x00
 #define PCF8563_CONTROL_STATUS_2 0x01
+#define PCF8563_CLKOUT_CONTROL 0x0d
 #define PCF8563_TIMER_CONTROL 0x0e
 #define PCF8563_TIMER 0x0f
 
@@ -40,6 +41,8 @@ class Timer_PFC8563 {
     void disable();
 
   private:
+    void clkoutEnable();
+    void clkoutDisable();
 };
 
 #endif

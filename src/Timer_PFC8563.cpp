@@ -28,24 +28,33 @@ Timer_PFC8563::Timer_PFC8563() {
 void Timer_PFC8563::enable(uint8_t value) {
     uint8_t data;
 
+    // timer control
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_TIMER_CONTROL);
+    Wire.endTransmission();
+
+    Wire.requestFrom(PCF8563_ADDRESS, 1);
+    data = Wire.read();
+
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_TIMER_CONTROL);
     bitSet(data, 0);            // TD 1/60 Hz
     bitSet(data, 1);            // TD 1/60 Hz
     bitSet(data, 7);            // TE
-    Wire.write(B10000011);      // enable 1/60 Hz clock
+    Wire.write(data);
     Wire.endTransmission();
 
+    // timer value
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_TIMER);
     Wire.write(value);          // timer value
     Wire.endTransmission();
 
+    // timer control status 2
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_CONTROL_STATUS_2);
     Wire.endTransmission();
 
-    // Control_status_2
     Wire.requestFrom(PCF8563_ADDRESS, 1);
     data = Wire.read();
     bitSet(data, 0);            // TIE
@@ -61,14 +70,14 @@ bool Timer_PFC8563::isEnabled() {
     uint8_t data;
     bool flag;
 
+    // timer control
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_TIMER_CONTROL);
     Wire.endTransmission();
 
-    // Timer_control
     Wire.requestFrom(PCF8563_ADDRESS, 1);
     data = Wire.read();
-    flag = bitRead(data, 7);    // TE 
+    flag = bitRead(data, 7);    // TE
 
     return (flag);
 }
@@ -76,17 +85,55 @@ bool Timer_PFC8563::isEnabled() {
 void Timer_PFC8563::disable(void) {
     uint8_t data;
 
+    // timer control
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_TIMER_CONTROL);
     Wire.endTransmission();
 
-    // Timer_control
     Wire.requestFrom(PCF8563_ADDRESS, 1);
     data = Wire.read();
     bitClear(data, 7);          // TE
 
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_TIMER_CONTROL);
+    Wire.write(data);
+    Wire.endTransmission();
+}
+
+void Timer_PFC8563::clkoutEnable(void) {
+    uint8_t data;
+
+    // clkout control
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_CLKOUT_CONTROL);
+    Wire.endTransmission();
+
+    Wire.requestFrom(PCF8563_ADDRESS, 1);
+    data = Wire.read();
+    bitClear(data, 0);          // FD 32.768 kHz
+    bitClear(data, 1);          // FD 32.768 kHz
+    bitSet(data, 7);            // FE CLKOUT output is activated
+
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_CLKOUT_CONTROL);
+    Wire.write(data);
+    Wire.endTransmission();
+}
+
+void Timer_PFC8563::clkoutDisable(void) {
+    uint8_t data;
+
+    // clkout control
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_CLKOUT_CONTROL);
+    Wire.endTransmission();
+
+    Wire.requestFrom(PCF8563_ADDRESS, 1);
+    data = Wire.read();
+    bitClear(data, 7);          // FE CLKOUT output is diabled
+
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_CLKOUT_CONTROL);
     Wire.write(data);
     Wire.endTransmission();
 }

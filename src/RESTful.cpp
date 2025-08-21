@@ -22,13 +22,7 @@
 
 #include "RESTful.h"
 
-RESTful::RESTful() {
-}
-
-void RESTful::begin(AsyncWebServer *httpd) {
-    // real time clock
-    httpd->on("^\\/api\\/rtc$", std::bind(&RESTful::rtcConfig, this, std::placeholders::_1));
-
+RESTful::RESTful(AsyncWebServer *httpd) {
     // timer, sheduler
     httpd->on("^\\/api\\/timer$", std::bind(&RESTful::timerConfig, this, std::placeholders::_1));
 
@@ -58,39 +52,6 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // serial configuration
     httpd->on("^\\/api\\/serial1$", std::bind(&RESTful::serial1Config, this, std::placeholders::_1));
-}
-
-void RESTful::rtcConfig(AsyncWebServerRequest *request) {
-    int i, status;
-    uint32_t epoch = 0;
-    String value;
-
-    switch (request->method()) {
-     case HTTP_GET:
-         epoch = rtc.now().unixtime();
-         request->send(200, "text/plain", String(epoch).c_str());
-         break;
-
-     case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
-
-         status = 400;
-         for(i = 0; i < request->params(); i++) {
-             if(request->getParam(i)->name().equals("epoch")) {
-                 value = request->getParam(i)->value();
-                 rtc.adjust(DateTime(value.toInt()));
-                 status = 200;
-             }
-         }
-
-         request->send(status);
-         break;
-
-     default:
-         request->send(400);
-         break;
-    }
 }
 
 void RESTful::timerConfig(AsyncWebServerRequest *request) {

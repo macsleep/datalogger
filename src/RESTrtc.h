@@ -20,8 +20,8 @@
   this software.
  */
 
-#ifndef RESTFUL_H
-#define RESTFUL_H
+#ifndef RESTRTC_H
+#define RESTRTC_H
 
 #include <Arduino.h>
 #include <SD.h>
@@ -30,34 +30,21 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <HardwareSerial.h>
+#include <AsyncJson.h>
 #include <ArduinoJson.h>
-#include "Timer_PFC8563.h"
 #include "Settings.h"
-#include "Utils.h"
 
 extern RTC_PCF8563 rtc;
-extern Timer_PFC8563 timer;
-extern Finder energyMeter;;
 extern Settings settings;
 
-class RESTful {
+class RESTrtc {
   public:
-    RESTful(AsyncWebServer * httpd);
-    void timerConfig(AsyncWebServerRequest * request);
-    void logsList(AsyncWebServerRequest * request);
-    void logsFile(AsyncWebServerRequest * request);
-    void logsFileChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
-    void firmwareVersion(AsyncWebServerRequest * request);
-    void firmwareUpload(AsyncWebServerRequest * request);
-    void firmwareUploadChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
-    void systemConfig(AsyncWebServerRequest * request);
-    void modbus(AsyncWebServerRequest * request);
-    void modbusValue(AsyncWebServerRequest * request);
-    void modbusConfig(AsyncWebServerRequest * request);
-    void serial1Config(AsyncWebServerRequest * request);
+    RESTrtc(AsyncWebServer *httpd);
+    void onRequestGet(AsyncWebServerRequest * request);
+    void onRequestPut(AsyncWebServerRequest * request);
+    void onBodyPut(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 
   private:
-    Utils utils;
 };
 
 #endif

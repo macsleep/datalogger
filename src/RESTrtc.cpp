@@ -76,7 +76,6 @@ void RESTrtc::onRequestPut(AsyncWebServerRequest *request) {
 
 void RESTrtc::onBodyPut(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     if(!index) request->_tempObject = malloc(total);
-
     if(len) memcpy((uint8_t *)(request->_tempObject) + index, data, len);
 
     request->send(200);

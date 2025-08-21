@@ -30,7 +30,6 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <HardwareSerial.h>
-#include <AsyncJson.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
 

@@ -38,9 +38,9 @@ class RESTrtc {
   public:
     RESTrtc();
     void begin(AsyncWebServer *httpd);
-    void onRequestGet(AsyncWebServerRequest * request);
-    void onRequestPut(AsyncWebServerRequest * request);
-    void onBodyPut(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void rtcGet(AsyncWebServerRequest * request);
+    void rtcPut(AsyncWebServerRequest * request);
+    void rtcBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 
   private:
 };

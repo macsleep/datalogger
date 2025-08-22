@@ -30,7 +30,7 @@ void RESTful::begin(AsyncWebServer *httpd) {
     restRtc.begin(httpd);
 
     // timer, sheduler
-    httpd->on("^\\/api\\/timer$", std::bind(&RESTful::timerConfig, this, std::placeholders::_1));
+    restTimer.begin(httpd);
 
     // log files
     httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
@@ -58,42 +58,6 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // serial configuration
     httpd->on("^\\/api\\/serial1$", std::bind(&RESTful::serial1Config, this, std::placeholders::_1));
-}
-
-void RESTful::timerConfig(AsyncWebServerRequest *request) {
-    int i, minutes, status;
-    String value;
-
-    switch (request->method()) {
-     case HTTP_GET:
-         request->send(200, "text/plain", String(settings.getTimer(), DEC).c_str());
-         break;
-
-     case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
-
-         status = 400;
-         for(i = 0; i < request->params(); i++) {
-             if(request->getParam(i)->name().equals("minutes")) {
-                 value = request->getParam(i)->value();
-                 minutes = value.toInt();
-                 if(minutes >= 0 && minutes < 256) {
-                     if(timer.isEnabled()) timer.disable();
-                     timer.enable(minutes);
-                     settings.setTimer((uint8_t) minutes);
-                     status = 200;
-                 }
-             }
-         }
-
-         request->send(status);
-         break;
-
-     default:
-         request->send(400);
-         break;
-    }
 }
 
 void RESTful::logsList(AsyncWebServerRequest *request) {

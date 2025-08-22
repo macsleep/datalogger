@@ -22,7 +22,10 @@
 
 #include "RESTrtc.h"
 
-RESTrtc::RESTrtc(AsyncWebServer *httpd) {
+RESTrtc::RESTrtc() {
+}
+
+void RESTrtc::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/rtc$", HTTP_GET, std::bind(&RESTrtc::onRequestGet, this, std::placeholders::_1));
     httpd->on("^\\/api\\/rtc$", HTTP_PUT, std::bind(&RESTrtc::onRequestPut, this, std::placeholders::_1), NULL,
               std::bind(&RESTrtc::onBodyPut, this, std::placeholders::_1, std::placeholders::_2,
@@ -53,6 +56,7 @@ void RESTrtc::onRequestPut(AsyncWebServerRequest *request) {
     uint32_t epoch;
     JsonDocument document;
     DeserializationError error;
+    bool ok = false;
 
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
         return request->requestAuthentication();
@@ -60,23 +64,23 @@ void RESTrtc::onRequestPut(AsyncWebServerRequest *request) {
     if(request->hasParam("epoch", true)) {
         const AsyncWebParameter *param = request->getParam("epoch", true);
         epoch = param->value().toInt();
-        rtc.adjust(DateTime(epoch));
+        ok = true;
     }
 
     error = deserializeJson(document, (const char *)(request->_tempObject));
     if(!error) {
         if(document["epoch"].is<uint32_t>()) {
             epoch = document["epoch"];
-            rtc.adjust(DateTime(epoch));
+            ok = true;
         }
     }
 
+    if(ok) rtc.adjust(DateTime(epoch));
     request->send(200);
 }
 
 void RESTrtc::onBodyPut(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     if(!index) request->_tempObject = malloc(total);
     if(len) memcpy((uint8_t *)(request->_tempObject) + index, data, len);
-
     request->send(200);
 }

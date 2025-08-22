@@ -25,24 +25,23 @@
 
 #include <Arduino.h>
 #include <SD.h>
-#include <RTClib.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <HardwareSerial.h>
-#include <ArduinoJson.h>
 #include "Timer_PFC8563.h"
 #include "Settings.h"
 #include "Utils.h"
+#include "RESTrtc.h"
 
-extern RTC_PCF8563 rtc;
 extern Timer_PFC8563 timer;
 extern Finder energyMeter;;
 extern Settings settings;
 
 class RESTful {
   public:
-    RESTful(AsyncWebServer * httpd);
+    RESTful();
+    void begin(AsyncWebServer * httpd);
     void timerConfig(AsyncWebServerRequest * request);
     void logsList(AsyncWebServerRequest * request);
     void logsFile(AsyncWebServerRequest * request);
@@ -57,6 +56,7 @@ class RESTful {
     void serial1Config(AsyncWebServerRequest * request);
 
   private:
+    RESTrtc restRtc;
     Utils utils;
 };
 

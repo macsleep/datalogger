@@ -22,7 +22,13 @@
 
 #include "RESTful.h"
 
-RESTful::RESTful(AsyncWebServer *httpd) {
+RESTful::RESTful() {
+}
+
+void RESTful::begin(AsyncWebServer *httpd) {
+    // rtc
+    restRtc.begin(httpd);
+
     // timer, sheduler
     httpd->on("^\\/api\\/timer$", std::bind(&RESTful::timerConfig, this, std::placeholders::_1));
 

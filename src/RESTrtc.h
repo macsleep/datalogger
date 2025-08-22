@@ -24,12 +24,10 @@
 #define RESTRTC_H
 
 #include <Arduino.h>
-#include <SD.h>
 #include <RTClib.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <HardwareSerial.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
 
@@ -38,7 +36,8 @@ extern Settings settings;
 
 class RESTrtc {
   public:
-    RESTrtc(AsyncWebServer *httpd);
+    RESTrtc();
+    void begin(AsyncWebServer *httpd);
     void onRequestGet(AsyncWebServerRequest * request);
     void onRequestPut(AsyncWebServerRequest * request);
     void onBodyPut(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);

@@ -30,7 +30,6 @@
 #include <ESPmDNS.h>
 #include "Timer_PFC8563.h"
 #include "RESTful.h"
-#include "RESTrtc.h"
 #include "Settings.h"
 #include "Finder.h"
 
@@ -47,6 +46,7 @@ Timer_PFC8563 timer;
 AsyncWebServer *httpd;
 ModbusMaster modbus;
 Finder energyMeter;
+RESTful restAPI;
 Settings settings;
 
 RTC_DATA_ATTR bool enableWifi;
@@ -122,9 +122,6 @@ void setup() {
     bool ok = true;
     uint64_t bitmask;
     timeval tv;
-
-    Serial.begin(115200);
-    while(!Serial) delay(100);
 
     // gpio
     pinMode(LED_GREEN, OUTPUT);
@@ -215,8 +212,7 @@ void setup() {
 
         // http
         httpd = new AsyncWebServer(80);
-        new RESTful(httpd);
-        new RESTrtc(httpd);
+        restAPI.begin(httpd);
         httpd->onNotFound([](AsyncWebServerRequest * request) {
                           request->send(404, "text/plain", "Not found");
                           }

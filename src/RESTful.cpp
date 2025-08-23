@@ -140,7 +140,7 @@ void RESTful::logsList(AsyncWebServerRequest *request) {
         year = request->getParam("year")->value();
     }
 
-    response = request->beginResponseStream("text/html");
+    response = request->beginResponseStream("text/plain");
 
     root = SD.open("/");
     while(entry = root.openNextFile()) {

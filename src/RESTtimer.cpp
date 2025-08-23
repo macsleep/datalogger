@@ -26,68 +26,76 @@ RESTtimer::RESTtimer() {
 }
 
 void RESTtimer::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/timer$", HTTP_GET, std::bind(&RESTtimer::timerGet, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/timer$", HTTP_PUT, std::bind(&RESTtimer::timerPut, this, std::placeholders::_1), NULL,
+    httpd->on("^\\/api\\/timer$", HTTP_GET | HTTP_PUT,
+              std::bind(&RESTtimer::timerRequest, this, std::placeholders::_1), NULL,
               std::bind(&RESTtimer::timerBody, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
-void RESTtimer::timerGet(AsyncWebServerRequest *request) {
+void RESTtimer::timerRequest(AsyncWebServerRequest *request) {
     String value;
     uint8_t minutes;
     MatchState regex;
     JsonDocument document;
-
-    minutes = settings.getTimer();
-    request->send(200, "text/plain", String(minutes).c_str());
-
-    if(!request->hasHeader("Accept")) return;
-    const AsyncWebHeader *header = request->getHeader("Accept");
-    regex.Target((char *) header->value().c_str());
-
-    if(regex.Match("application/json")) {
-        document["minutes"] = minutes;
-        serializeJson(document, value);
-        request->send(200, "application/json", value.c_str());
-    }
-}
-
-void RESTtimer::timerPut(AsyncWebServerRequest *request) {
-    uint8_t minutes;
-    JsonDocument document;
+    const AsyncWebHeader *header;
+    const AsyncWebParameter *param;
     DeserializationError error;
     bool ok = false;
 
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-        return request->requestAuthentication();
+    switch (request->method()) {
+     case HTTP_GET:
+         minutes = settings.getTimer();
+         request->send(200, "text/plain", String(minutes).c_str());
 
-    if(request->hasParam("minutes", true)) {
-        const AsyncWebParameter *param = request->getParam("minutes", true);
-        if(param->value().toInt() < 0x100) {
-            minutes = param->value().toInt(); 
-            ok = true;
-        }
+         if(!request->hasHeader("Accept")) return;
+         header = request->getHeader("Accept");
+         regex.Target((char *) header->value().c_str());
+
+         if(regex.Match("application/json")) {
+             document["minutes"] = minutes;
+             serializeJson(document, value);
+             request->send(200, "application/json", value.c_str());
+         }
+         break;
+
+
+     case HTTP_PUT:
+         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+             return request->requestAuthentication();
+
+         if(request->hasParam("minutes", true)) {
+             param = request->getParam("minutes", true);
+             if(param->value().toInt() < 0x100) {
+                 minutes = param->value().toInt();
+                 ok = true;
+             }
+         }
+
+         error = deserializeJson(document, (const char *) (request->_tempObject));
+         if(!error) {
+             if(document["minutes"].is < uint8_t > ()) {
+                 minutes = document["minutes"];
+                 ok = true;
+             }
+         }
+
+         if(ok) {
+             if(timer.isEnabled()) timer.disable();
+             timer.enable(minutes);
+             settings.setTimer(minutes);
+         }
+
+         request->send(200);
+         break;
+
+     default:
+         request->send(400);
+         break;
     }
-
-    error = deserializeJson(document, (const char *)(request->_tempObject));
-    if(!error) {
-        if(document["minutes"].is<uint8_t>()) {
-            minutes = document["minutes"];
-            ok = true;
-        }
-    }
-
-    if(ok) {
-        if(timer.isEnabled()) timer.disable();
-        timer.enable(minutes);
-        settings.setTimer(minutes);
-    }
-
-    request->send(200);
 }
 
 void RESTtimer::timerBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     if(!index) request->_tempObject = malloc(total);
-    if(len) memcpy((uint8_t *)(request->_tempObject) + index, data, len);
+    if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
     request->send(200);
 }

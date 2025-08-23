@@ -26,61 +26,67 @@ RESTrtc::RESTrtc() {
 }
 
 void RESTrtc::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/rtc$", HTTP_GET, std::bind(&RESTrtc::rtcGet, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/rtc$", HTTP_PUT, std::bind(&RESTrtc::rtcPut, this, std::placeholders::_1), NULL,
+    httpd->on("^\\/api\\/rtc$", HTTP_GET | HTTP_PUT,
+              std::bind(&RESTrtc::rtcRequest, this, std::placeholders::_1), NULL,
               std::bind(&RESTrtc::rtcBody, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
-void RESTrtc::rtcGet(AsyncWebServerRequest *request) {
+void RESTrtc::rtcRequest(AsyncWebServerRequest *request) {
     String value;
+    bool ok = false;
     uint32_t epoch;
     MatchState regex;
     JsonDocument document;
-
-    epoch = rtc.now().unixtime();
-    request->send(200, "text/plain", String(epoch).c_str());
-
-    if(!request->hasHeader("Accept")) return;
-    const AsyncWebHeader *header = request->getHeader("Accept");
-    regex.Target((char *) header->value().c_str());
-
-    if(regex.Match("application/json")) {
-        document["epoch"] = epoch;
-        serializeJson(document, value);
-        request->send(200, "application/json", value.c_str());
-    }
-}
-
-void RESTrtc::rtcPut(AsyncWebServerRequest *request) {
-    uint32_t epoch;
-    JsonDocument document;
     DeserializationError error;
-    bool ok = false;
+    const AsyncWebHeader *header;
 
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-        return request->requestAuthentication();
+    switch (request->method()) {
+     case HTTP_GET:
+         epoch = rtc.now().unixtime();
+         request->send(200, "text/plain", String(epoch).c_str());
 
-    if(request->hasParam("epoch", true)) {
-        const AsyncWebParameter *param = request->getParam("epoch", true);
-        epoch = param->value().toInt();
-        ok = true;
+         if(!request->hasHeader("Accept")) return;
+         header = request->getHeader("Accept");
+         regex.Target((char *) header->value().c_str());
+
+         if(regex.Match("application/json")) {
+             document["epoch"] = epoch;
+             serializeJson(document, value);
+             request->send(200, "application/json", value.c_str());
+         }
+         break;
+
+     case HTTP_PUT:
+         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+             return request->requestAuthentication();
+
+         if(request->hasParam("epoch", true)) {
+             const AsyncWebParameter *param = request->getParam("epoch", true);
+             epoch = param->value().toInt();
+             ok = true;
+         }
+
+         error = deserializeJson(document, (const char *) (request->_tempObject));
+         if(!error) {
+             if(document["epoch"].is < uint32_t > ()) {
+                 epoch = document["epoch"];
+                 ok = true;
+             }
+         }
+
+         if(ok) rtc.adjust(DateTime(epoch));
+         request->send(200);
+         break;
+
+     default:
+         request->send(400);
+         break;
     }
-
-    error = deserializeJson(document, (const char *)(request->_tempObject));
-    if(!error) {
-        if(document["epoch"].is<uint32_t>()) {
-            epoch = document["epoch"];
-            ok = true;
-        }
-    }
-
-    if(ok) rtc.adjust(DateTime(epoch));
-    request->send(200);
 }
 
 void RESTrtc::rtcBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     if(!index) request->_tempObject = malloc(total);
-    if(len) memcpy((uint8_t *)(request->_tempObject) + index, data, len);
+    if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
     request->send(200);
 }

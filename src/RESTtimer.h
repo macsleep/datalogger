@@ -39,8 +39,7 @@ class RESTtimer {
   public:
     RESTtimer();
     void begin(AsyncWebServer *httpd);
-    void timerGet(AsyncWebServerRequest * request);
-    void timerPut(AsyncWebServerRequest * request);
+    void timerRequest(AsyncWebServerRequest * request);
     void timerBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 
   private:

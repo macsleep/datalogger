@@ -41,7 +41,7 @@ class RESTlogs {
     void logsRequest(AsyncWebServerRequest * request);
 
   private:
-     std::map < String, int >*listLong();
+     std::map<String, int> *listLong();
 };
 
 #endif

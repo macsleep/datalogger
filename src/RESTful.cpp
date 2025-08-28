@@ -35,13 +35,8 @@ void RESTful::begin(AsyncWebServer *httpd) {
     // logs
     restLogs.begin(httpd);
 
-    // log files
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET | HTTP_DELETE,
-              std::bind(&RESTful::logsFile, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
-              std::bind(&RESTful::logsFile, this, std::placeholders::_1),
-              std::bind(&RESTful::logsFileChunks, this, std::placeholders::_1, std::placeholders::_2,
-                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
+    // log file
+    restLogFile.begin(httpd);
 
     // ota firmware
     httpd->on("^\\/api\\/firmware$", HTTP_GET, std::bind(&RESTful::firmwareVersion, this, std::placeholders::_1));
@@ -60,56 +55,6 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // serial configuration
     httpd->on("^\\/api\\/serial1$", std::bind(&RESTful::serial1Config, this, std::placeholders::_1));
-}
-
-void RESTful::logsFile(AsyncWebServerRequest *request) {
-    String file;
-
-    switch (request->method()) {
-     case HTTP_GET:
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
-             request->send(SD, file, "text/plain");
-         } else request->send(400);
-         break;
-
-     case HTTP_DELETE:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
-
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
-             SD.remove(file);
-             request->send(200);
-         } else request->send(400);
-         break;
-
-     default:
-         request->send(400);
-         break;
-    }
-}
-
-void RESTful::logsFileChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
-    String file;
-
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-        return request->requestAuthentication();
-
-    if(!index) {
-        file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-        if(SD.exists(file)) {
-            request->_tempFile = SD.open(file, "w");
-        }
-    }
-
-    if(len) {
-        request->_tempFile.write(data, len);
-    }
-
-    if(final) {
-        request->_tempFile.close();
-    }
 }
 
 void RESTful::firmwareVersion(AsyncWebServerRequest *request) {

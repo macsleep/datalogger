@@ -20,44 +20,28 @@
   this software.
  */
 
-#ifndef FUL_H
-#define FUL_H
+#ifndef LOGFILE_H
+#define LOGFILE_H
 
 #include <Arduino.h>
 #include <SD.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <HardwareSerial.h>
+#include <ArduinoJson.h>
 #include "Settings.h"
-#include "Utils.h"
-#include "rest/Rtc.h"
-#include "rest/Timer.h"
-#include "rest/Logs.h"
-#include "rest/LogFile.h"
 
-extern Finder energyMeter;;
 extern Settings settings;
 
-class RESTful {
-  public:
-    RESTful();
-    void begin(AsyncWebServer * httpd);
-    void firmwareVersion(AsyncWebServerRequest * request);
-    void firmwareUpload(AsyncWebServerRequest * request);
-    void firmwareUploadChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
-    void systemConfig(AsyncWebServerRequest * request);
-    void modbus(AsyncWebServerRequest * request);
-    void modbusValue(AsyncWebServerRequest * request);
-    void modbusConfig(AsyncWebServerRequest * request);
-    void serial1Config(AsyncWebServerRequest * request);
+namespace REST {
+    class LogFile {
+      public:
+        LogFile();
+        void begin(AsyncWebServer * httpd);
+        void request(AsyncWebServerRequest * request);
+        void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
 
-  private:
-    REST::Rtc restRtc;
-    REST::Timer restTimer;
-    REST::Logs restLogs;
-    REST::LogFile restLogFile;
-    Utils utils;
-};
-
+      private:
+    };
+}
 #endif

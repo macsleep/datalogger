@@ -28,8 +28,7 @@ REST::Timer::Timer() {
 void REST::Timer::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/timer$", HTTP_GET | HTTP_PUT,
               std::bind(&Timer::request, this, std::placeholders::_1), NULL,
-              std::bind(&Timer::body, this, std::placeholders::_1, std::placeholders::_2,
-                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+              std::bind(&Timer::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
 void REST::Timer::request(AsyncWebServerRequest *request) {

@@ -32,8 +32,10 @@ void RESTful::begin(AsyncWebServer *httpd) {
     // timer, sheduler
     restTimer.begin(httpd);
 
+    // logs
+    restLogs.begin(httpd);
+
     // log files
-    httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTful::logsList, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET | HTTP_DELETE,
               std::bind(&RESTful::logsFile, this, std::placeholders::_1));
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_POST,
@@ -58,40 +60,6 @@ void RESTful::begin(AsyncWebServer *httpd) {
 
     // serial configuration
     httpd->on("^\\/api\\/serial1$", std::bind(&RESTful::serial1Config, this, std::placeholders::_1));
-}
-
-void RESTful::logsList(AsyncWebServerRequest *request) {
-    File root, entry, directory, file;
-    AsyncResponseStream *response;
-    MatchState regex;
-    String year = "";
-
-    // filter year
-    if(request->hasParam("year")) {
-        year = request->getParam("year")->value();
-    }
-
-    response = request->beginResponseStream("text/html");
-
-    root = SD.open("/");
-    while(entry = root.openNextFile()) {
-        regex.Target((char *) entry.name());
-        if(entry.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$") && regex.Match(year.c_str())) {
-            directory = SD.open("/" + String(entry.name()));
-            while(file = directory.openNextFile()) {
-                regex.Target((char *) file.name());
-                if(!file.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
-                    response->println(String(directory.name()) + String(file.name()) + " " + String(file.size()));
-                }
-                file.close();
-            }
-            directory.close();
-        }
-        entry.close();
-    }
-    root.close();
-
-    request->send(response);
 }
 
 void RESTful::logsFile(AsyncWebServerRequest *request) {

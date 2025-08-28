@@ -20,44 +20,28 @@
   this software.
  */
 
-#ifndef RESTFUL_H
-#define RESTFUL_H
+#ifndef RESTLOGS_H
+#define RESTLOGS_H
 
 #include <Arduino.h>
+#include <RTClib.h>
 #include <SD.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <HardwareSerial.h>
+#include <ArduinoJson.h>
 #include "Settings.h"
-#include "Utils.h"
-#include "RESTrtc.h"
-#include "RESTtimer.h"
-#include "RESTlogs.h"
 
-extern Finder energyMeter;;
 extern Settings settings;
 
-class RESTful {
+class RESTlogs {
   public:
-    RESTful();
-    void begin(AsyncWebServer * httpd);
-    void logsFile(AsyncWebServerRequest * request);
-    void logsFileChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
-    void firmwareVersion(AsyncWebServerRequest * request);
-    void firmwareUpload(AsyncWebServerRequest * request);
-    void firmwareUploadChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
-    void systemConfig(AsyncWebServerRequest * request);
-    void modbus(AsyncWebServerRequest * request);
-    void modbusValue(AsyncWebServerRequest * request);
-    void modbusConfig(AsyncWebServerRequest * request);
-    void serial1Config(AsyncWebServerRequest * request);
+    RESTlogs();
+    void begin(AsyncWebServer *httpd);
+    void logsRequest(AsyncWebServerRequest * request);
 
   private:
-    RESTrtc restRtc;
-    RESTtimer restTimer;
-    RESTlogs restLogs;
-    Utils utils;
+    std::map<String, int> *listLong();
 };
 
 #endif

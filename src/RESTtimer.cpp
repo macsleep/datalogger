@@ -45,7 +45,6 @@ void RESTtimer::timerRequest(AsyncWebServerRequest *request) {
     switch (request->method()) {
      case HTTP_GET:
          minutes = settings.getTimer();
-         request->send(200, "text/plain", String(minutes).c_str());
 
          if(!request->hasHeader("Accept")) return;
          header = request->getHeader("Accept");
@@ -55,6 +54,8 @@ void RESTtimer::timerRequest(AsyncWebServerRequest *request) {
              document["minutes"] = minutes;
              serializeJson(document, value);
              request->send(200, "application/json", value.c_str());
+         } else {
+             request->send(200, "text/plain", String(minutes).c_str());
          }
          break;
 
@@ -63,16 +64,16 @@ void RESTtimer::timerRequest(AsyncWebServerRequest *request) {
          if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
              return request->requestAuthentication();
 
-         if(request->hasParam("minutes", true)) {
-             param = request->getParam("minutes", true);
-             if(param->value().toInt() < 0x100) {
-                 minutes = param->value().toInt();
-                 ok = true;
-             }
-         }
-
          error = deserializeJson(document, (const char *) (request->_tempObject));
-         if(!error) {
+         if(error) {
+             if(request->hasParam("minutes", true)) {
+                 param = request->getParam("minutes", true);
+                 if(param->value().toInt() < 0x100) {
+                     minutes = param->value().toInt();
+                     ok = true;
+                 }
+             }
+         } else {
              if(document["minutes"].is < uint8_t > ()) {
                  minutes = document["minutes"];
                  ok = true;

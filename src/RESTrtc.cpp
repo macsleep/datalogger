@@ -44,7 +44,6 @@ void RESTrtc::rtcRequest(AsyncWebServerRequest *request) {
     switch (request->method()) {
      case HTTP_GET:
          epoch = rtc.now().unixtime();
-         request->send(200, "text/plain", String(epoch).c_str());
 
          if(!request->hasHeader("Accept")) return;
          header = request->getHeader("Accept");
@@ -54,6 +53,8 @@ void RESTrtc::rtcRequest(AsyncWebServerRequest *request) {
              document["epoch"] = epoch;
              serializeJson(document, value);
              request->send(200, "application/json", value.c_str());
+         } else {
+             request->send(200, "text/plain", String(epoch).c_str());
          }
          break;
 
@@ -61,14 +62,14 @@ void RESTrtc::rtcRequest(AsyncWebServerRequest *request) {
          if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
              return request->requestAuthentication();
 
-         if(request->hasParam("epoch", true)) {
-             const AsyncWebParameter *param = request->getParam("epoch", true);
-             epoch = param->value().toInt();
-             ok = true;
-         }
-
          error = deserializeJson(document, (const char *) (request->_tempObject));
-         if(!error) {
+         if(error) {
+             if(request->hasParam("epoch", true)) {
+                 const AsyncWebParameter *param = request->getParam("epoch", true);
+                 epoch = param->value().toInt();
+                 ok = true;
+             }
+         } else {
              if(document["epoch"].is < uint32_t > ()) {
                  epoch = document["epoch"];
                  ok = true;

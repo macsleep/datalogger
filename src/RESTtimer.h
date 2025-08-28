@@ -38,9 +38,9 @@ extern Settings settings;
 class RESTtimer {
   public:
     RESTtimer();
-    void begin(AsyncWebServer *httpd);
+    void begin(AsyncWebServer * httpd);
     void timerRequest(AsyncWebServerRequest * request);
-    void timerBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void timerBody(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
   private:
 };

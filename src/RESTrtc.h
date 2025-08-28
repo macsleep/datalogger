@@ -37,9 +37,9 @@ extern Settings settings;
 class RESTrtc {
   public:
     RESTrtc();
-    void begin(AsyncWebServer *httpd);
+    void begin(AsyncWebServer * httpd);
     void rtcRequest(AsyncWebServerRequest * request);
-    void rtcBody(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+    void rtcBody(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
   private:
 };

@@ -54,7 +54,7 @@ class RESTful {
     void serial1Config(AsyncWebServerRequest * request);
 
   private:
-    RESTrtc restRtc;
+     RESTrtc restRtc;
     RESTtimer restTimer;
     RESTlogs restLogs;
     Utils utils;

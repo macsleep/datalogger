@@ -37,11 +37,11 @@ extern Settings settings;
 class RESTlogs {
   public:
     RESTlogs();
-    void begin(AsyncWebServer *httpd);
+    void begin(AsyncWebServer * httpd);
     void logsRequest(AsyncWebServerRequest * request);
 
   private:
-    std::map<String, int> *listLong();
+     std::map < String, int >*listLong();
 };
 
 #endif

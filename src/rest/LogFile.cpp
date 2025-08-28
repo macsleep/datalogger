@@ -40,7 +40,7 @@ void REST::LogFile::request(AsyncWebServerRequest *request) {
          file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
          if(SD.exists(file)) {
              request->send(SD, file, "text/plain");
-         }
+         } else request->send(400);
          break;
 
      case HTTP_DELETE:
@@ -51,7 +51,7 @@ void REST::LogFile::request(AsyncWebServerRequest *request) {
          if(SD.exists(file)) {
              SD.remove(file);
              request->send(200);
-         }
+         } else request->send(400);
          break;
 
      case HTTP_POST:

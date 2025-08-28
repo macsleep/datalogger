@@ -20,8 +20,8 @@
   this software.
  */
 
-#ifndef RESTFUL_H
-#define RESTFUL_H
+#ifndef FUL_H
+#define FUL_H
 
 #include <Arduino.h>
 #include <SD.h>
@@ -31,9 +31,9 @@
 #include <HardwareSerial.h>
 #include "Settings.h"
 #include "Utils.h"
-#include "RESTrtc.h"
-#include "RESTtimer.h"
-#include "RESTlogs.h"
+#include "rest/Rtc.h"
+#include "rest/Timer.h"
+#include "rest/Logs.h"
 
 extern Finder energyMeter;;
 extern Settings settings;
@@ -54,9 +54,9 @@ class RESTful {
     void serial1Config(AsyncWebServerRequest * request);
 
   private:
-     RESTrtc restRtc;
-    RESTtimer restTimer;
-    RESTlogs restLogs;
+    REST::Rtc restRtc;
+    REST::Timer restTimer;
+    REST::Logs restLogs;
     Utils utils;
 };
 

@@ -20,28 +20,30 @@
   this software.
  */
 
-#ifndef RESTLOGS_H
-#define RESTLOGS_H
+#ifndef RTC_H
+#define RTC_H
 
 #include <Arduino.h>
 #include <RTClib.h>
-#include <SD.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
 
+extern RTC_PCF8563 rtc;
 extern Settings settings;
 
-class RESTlogs {
-  public:
-    RESTlogs();
-    void begin(AsyncWebServer * httpd);
-    void logsRequest(AsyncWebServerRequest * request);
+namespace REST {
+    class Rtc {
+      public:
+        Rtc();
+        void begin(AsyncWebServer * httpd);
+        void request(AsyncWebServerRequest * request);
+        void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
-  private:
-     std::map<String, int> *listLong();
-};
+      private:
+    };
+}
 
 #endif

@@ -20,29 +20,30 @@
   this software.
  */
 
-#ifndef RESTTIMER_H
-#define RESTTIMER_H
+#ifndef LOGS_H
+#define LOGS_H
 
 #include <Arduino.h>
 #include <RTClib.h>
+#include <SD.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
-#include "Timer_PFC8563.h"
 
-extern Timer_PFC8563 timer;
 extern Settings settings;
 
-class RESTtimer {
-  public:
-    RESTtimer();
-    void begin(AsyncWebServer * httpd);
-    void timerRequest(AsyncWebServerRequest * request);
-    void timerBody(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
+namespace REST {
+    class Logs {
+      public:
+        Logs();
+        void begin(AsyncWebServer * httpd);
+        void request(AsyncWebServerRequest * request);
 
-  private:
-};
+      private:
+         std::map < String, int >*listLong();
+    };
+}
 
 #endif

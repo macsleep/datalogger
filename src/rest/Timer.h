@@ -20,8 +20,8 @@
   this software.
  */
 
-#ifndef RESTRTC_H
-#define RESTRTC_H
+#ifndef TIMER_H
+#define TIMER_H
 
 #include <Arduino.h>
 #include <RTClib.h>
@@ -30,18 +30,21 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
+#include "Timer_PFC8563.h"
 
-extern RTC_PCF8563 rtc;
+extern Timer_PFC8563 timer;
 extern Settings settings;
 
-class RESTrtc {
+namespace REST {
+class Timer {
   public:
-    RESTrtc();
+    Timer();
     void begin(AsyncWebServer * httpd);
-    void rtcRequest(AsyncWebServerRequest * request);
-    void rtcBody(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
+    void request(AsyncWebServerRequest * request);
+    void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
   private:
 };
+}
 
 #endif

@@ -20,22 +20,22 @@
   this software.
  */
 
-#include "RESTlogs.h"
+#include "Logs.h"
 
-RESTlogs::RESTlogs() {
+REST::Logs::Logs() {
 }
 
-void RESTlogs::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&RESTlogs::logsRequest, this, std::placeholders::_1));
+void REST::Logs::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&Logs::request, this, std::placeholders::_1));
 }
 
-void RESTlogs::logsRequest(AsyncWebServerRequest *request) {
+void REST::Logs::request(AsyncWebServerRequest *request) {
     MatchState regex;
     JsonDocument document;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
-    std::map<String, int> *logs = listLong();
+    std::map < String, int >*logs = listLong();
 
     if(!request->hasHeader("Accept")) return;
     header = request->getHeader("Accept");
@@ -43,22 +43,22 @@ void RESTlogs::logsRequest(AsyncWebServerRequest *request) {
 
     if(regex.Match("application/json")) {
         response = request->beginResponseStream("application/json");
-        for(auto log:(*logs)) document[log.first] = log.second;
+      for(auto log:(*logs)) document[log.first] = log.second;
         serializeJson(document, *response);
         request->send(response);
     } else {
         response = request->beginResponseStream("text/html");
-        for(auto log:(*logs)) response->println(log.first + " " + String(log.second));
+      for(auto log:(*logs)) response->println(log.first + " " + String(log.second));
         request->send(response);
     }
 
     (*logs).clear();
 }
 
-std::map<String, int>*RESTlogs::listLong(void) {
+std::map < String, int >*REST::Logs::listLong(void) {
     File root, entry, directory, file;
     MatchState regex;
-    std::map<String, int> *logs = new std::map<String, int>;
+    std::map < String, int >*logs = new std::map < String, int >;
 
     root = SD.open("/");
     while(entry = root.openNextFile()) {

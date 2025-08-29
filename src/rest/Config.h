@@ -42,7 +42,7 @@ namespace REST {
         void request(AsyncWebServerRequest * request);
 
       private:
-        Utils utils;
+         Utils utils;
     };
 }
 #endif

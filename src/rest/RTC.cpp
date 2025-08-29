@@ -27,8 +27,7 @@ REST::RTC::RTC() {
 
 void REST::RTC::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/rtc$", HTTP_GET | HTTP_PUT, std::bind(&RTC::request, this, std::placeholders::_1), NULL,
-              std::bind(&RTC::body, this, std::placeholders::_1, std::placeholders::_2,
-                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+              std::bind(&RTC::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
 void REST::RTC::request(AsyncWebServerRequest *request) {
@@ -90,4 +89,3 @@ void REST::RTC::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, 
     if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
     request->send(200);
 }
-

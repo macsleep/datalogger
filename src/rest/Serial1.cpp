@@ -26,7 +26,7 @@ REST::Serial1::Serial1() {
 }
 
 void REST::Serial1::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/serial1$", HTTP_GET|HTTP_PUT, std::bind(&Serial1::request, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/serial1$", HTTP_GET | HTTP_PUT, std::bind(&Serial1::request, this, std::placeholders::_1));
 
 }
 
@@ -61,4 +61,3 @@ void REST::Serial1::request(AsyncWebServerRequest *request) {
          break;
     }
 }
-

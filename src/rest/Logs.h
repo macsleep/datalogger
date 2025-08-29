@@ -45,5 +45,4 @@ namespace REST {
          std::map < String, int >*listLong();
     };
 }
-
 #endif

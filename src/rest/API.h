@@ -47,16 +47,16 @@ namespace REST {
         API();
         void begin(AsyncWebServer * httpd);
 
-        RTC * restRTC;
-        Timer * restTimer;
-        Logs * restLogs;
-        Logfile * restLogfile;
-        Firmware * restFirmware;
-        System * restSystem;
-        Modbus * restModbus;
-        Value * restValue;
-        Config * restConfig;
-        Serial1 * restSerial1;
+        RTC *restRTC;
+        Timer *restTimer;
+        Logs *restLogs;
+        Logfile *restLogfile;
+        Firmware *restFirmware;
+        System *restSystem;
+        Modbus *restModbus;
+        Value *restValue;
+        Config *restConfig;
+        Serial1 *restSerial1;
 
       private:
     };

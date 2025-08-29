@@ -43,4 +43,3 @@ void REST::Modbus::request(AsyncWebServerRequest *request) {
 
     request->send(response);
 }
-

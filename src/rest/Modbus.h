@@ -44,5 +44,4 @@ namespace REST {
       private:
     };
 }
-
 #endif

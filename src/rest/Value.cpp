@@ -39,4 +39,3 @@ void REST::Value::request(AsyncWebServerRequest *request) {
         request->send(200, "text/plain", value);
     } else request->send(400);
 }
-

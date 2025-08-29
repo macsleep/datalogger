@@ -26,7 +26,7 @@ REST::Config::Config() {
 }
 
 void REST::Config::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", HTTP_GET|HTTP_PUT, std::bind(&Config::request, this, std::placeholders::_1), NULL, NULL);
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", HTTP_GET | HTTP_PUT, std::bind(&Config::request, this, std::placeholders::_1), NULL, NULL);
 }
 
 void REST::Config::request(AsyncWebServerRequest *request) {
@@ -82,4 +82,3 @@ void REST::Config::request(AsyncWebServerRequest *request) {
          break;
     }
 }
-

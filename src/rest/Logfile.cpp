@@ -20,19 +20,19 @@
   this software.
  */
 
-#include "LogFile.h"
+#include "Logfile.h"
 
-REST::LogFile::LogFile() {
+REST::Logfile::Logfile() {
 }
 
-void REST::LogFile::begin(AsyncWebServer *httpd) {
+void REST::Logfile::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET | HTTP_DELETE | HTTP_POST,
-              std::bind(&LogFile::request, this, std::placeholders::_1),
-              std::bind(&LogFile::upload, this, std::placeholders::_1, std::placeholders::_2,
+              std::bind(&Logfile::request, this, std::placeholders::_1),
+              std::bind(&Logfile::upload, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
 }
 
-void REST::LogFile::request(AsyncWebServerRequest *request) {
+void REST::Logfile::request(AsyncWebServerRequest *request) {
     String file;
 
     switch (request->method()) {
@@ -64,7 +64,7 @@ void REST::LogFile::request(AsyncWebServerRequest *request) {
     }
 }
 
-void REST::LogFile::upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+void REST::Logfile::upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
 
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
         return request->requestAuthentication();

@@ -20,40 +20,23 @@
   this software.
  */
 
-#include "API.h"
+#include "Value.h"
 
-REST::API::API() {
+REST::Value::Value() {
 }
 
-void REST::API::begin(AsyncWebServer *httpd) {
-    restRTC = new REST::RTC();
-    restRTC->begin(httpd);
+void REST::Value::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)$", HTTP_GET, std::bind(&Value::request, this, std::placeholders::_1));
+}
 
-    restTimer = new REST::Timer();
-    restTimer->begin(httpd);
+void REST::Value::request(AsyncWebServerRequest *request) {
+    ModbusConfig config;
 
-    restLogs = new REST::Logs();
-    restLogs->begin(httpd);
+    int n = request->pathArg(0).toInt();
 
-    restLogfile = new REST::Logfile();
-    restLogfile->begin(httpd);
-
-    restFirmware = new REST::Firmware();
-    restFirmware->begin(httpd);
-
-    restSystem = new REST::System();
-    restSystem->begin(httpd);
-
-    restModbus = new REST::Modbus();
-    restModbus->begin(httpd);
-
-    restValue = new REST::Value();
-    restValue->begin(httpd);
-
-    restConfig = new REST::Config();
-    restConfig->begin(httpd);
-
-    restSerial1 = new REST::Serial1();
-    restSerial1->begin(httpd);
+    if(settings.getModbusConfig(n, &config)) {
+        String value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+        request->send(200, "text/plain", value);
+    } else request->send(400);
 }
 

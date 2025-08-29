@@ -20,40 +20,27 @@
   this software.
  */
 
-#include "API.h"
+#include "Modbus.h"
 
-REST::API::API() {
+REST::Modbus::Modbus() {
 }
 
-void REST::API::begin(AsyncWebServer *httpd) {
-    restRTC = new REST::RTC();
-    restRTC->begin(httpd);
+void REST::Modbus::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&Modbus::request, this, std::placeholders::_1));
+}
 
-    restTimer = new REST::Timer();
-    restTimer->begin(httpd);
+void REST::Modbus::request(AsyncWebServerRequest *request) {
+    ModbusConfig config;
+    AsyncResponseStream *response;
 
-    restLogs = new REST::Logs();
-    restLogs->begin(httpd);
+    response = request->beginResponseStream("text/html");
 
-    restLogfile = new REST::Logfile();
-    restLogfile->begin(httpd);
+    int i = 0;
+    while(settings.getModbusConfig(i, &config)) {
+        response->println(String(i));
+        i++;
+    }
 
-    restFirmware = new REST::Firmware();
-    restFirmware->begin(httpd);
-
-    restSystem = new REST::System();
-    restSystem->begin(httpd);
-
-    restModbus = new REST::Modbus();
-    restModbus->begin(httpd);
-
-    restValue = new REST::Value();
-    restValue->begin(httpd);
-
-    restConfig = new REST::Config();
-    restConfig->begin(httpd);
-
-    restSerial1 = new REST::Serial1();
-    restSerial1->begin(httpd);
+    request->send(response);
 }
 

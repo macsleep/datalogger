@@ -30,15 +30,16 @@
 #include <ESPAsyncWebServer.h>
 #include <HardwareSerial.h>
 #include "Settings.h"
-#include "Utils.h"
-#include "rest/Rtc.h"
+#include "rest/RTC.h"
 #include "rest/Timer.h"
 #include "rest/Logs.h"
-#include "rest/LogFile.h"
+#include "rest/Logfile.h"
 #include "rest/Firmware.h"
-
-extern Finder energyMeter;;
-extern Settings settings;
+#include "rest/System.h"
+#include "rest/Modbus.h"
+#include "rest/Value.h"
+#include "rest/Config.h"
+#include "rest/Serial1.h"
 
 namespace REST {
     class API {
@@ -46,19 +47,18 @@ namespace REST {
         API();
         void begin(AsyncWebServer * httpd);
 
-        void systemConfig(AsyncWebServerRequest * request);
-        void modbus(AsyncWebServerRequest * request);
-        void modbusValue(AsyncWebServerRequest * request);
-        void modbusConfig(AsyncWebServerRequest * request);
-        void serial1Config(AsyncWebServerRequest * request);
+        RTC * restRTC;
+        Timer * restTimer;
+        Logs * restLogs;
+        Logfile * restLogfile;
+        Firmware * restFirmware;
+        System * restSystem;
+        Modbus * restModbus;
+        Value * restValue;
+        Config * restConfig;
+        Serial1 * restSerial1;
 
       private:
-         REST::Rtc restRtc;
-         REST::Timer restTimer;
-         REST::Logs restLogs;
-         REST::LogFile restLogFile;
-         REST::Firmware restFirmware;
-        Utils utils;
     };
 }
 #endif

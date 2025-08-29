@@ -20,40 +20,28 @@
   this software.
  */
 
-#include "API.h"
+#ifndef LOGFILE_H
+#define LOGFILE_H
 
-REST::API::API() {
+#include <Arduino.h>
+#include <SD.h>
+#include <Regexp.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
+#include "Settings.h"
+
+extern Settings settings;
+
+namespace REST {
+    class Logfile {
+      public:
+        Logfile();
+        void begin(AsyncWebServer * httpd);
+        void request(AsyncWebServerRequest * request);
+        void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
+
+      private:
+    };
 }
-
-void REST::API::begin(AsyncWebServer *httpd) {
-    restRTC = new REST::RTC();
-    restRTC->begin(httpd);
-
-    restTimer = new REST::Timer();
-    restTimer->begin(httpd);
-
-    restLogs = new REST::Logs();
-    restLogs->begin(httpd);
-
-    restLogfile = new REST::Logfile();
-    restLogfile->begin(httpd);
-
-    restFirmware = new REST::Firmware();
-    restFirmware->begin(httpd);
-
-    restSystem = new REST::System();
-    restSystem->begin(httpd);
-
-    restModbus = new REST::Modbus();
-    restModbus->begin(httpd);
-
-    restValue = new REST::Value();
-    restValue->begin(httpd);
-
-    restConfig = new REST::Config();
-    restConfig->begin(httpd);
-
-    restSerial1 = new REST::Serial1();
-    restSerial1->begin(httpd);
-}
-
+#endif

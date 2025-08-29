@@ -20,18 +20,18 @@
   this software.
  */
 
-#include "Rtc.h"
+#include "RTC.h"
 
-REST::Rtc::Rtc() {
+REST::RTC::RTC() {
 }
 
-void REST::Rtc::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/rtc$", HTTP_GET | HTTP_PUT, std::bind(&Rtc::request, this, std::placeholders::_1), NULL,
-              std::bind(&Rtc::body, this, std::placeholders::_1, std::placeholders::_2,
+void REST::RTC::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/rtc$", HTTP_GET | HTTP_PUT, std::bind(&RTC::request, this, std::placeholders::_1), NULL,
+              std::bind(&RTC::body, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
-void REST::Rtc::request(AsyncWebServerRequest *request) {
+void REST::RTC::request(AsyncWebServerRequest *request) {
     String value;
     bool ok = false;
     uint32_t epoch;
@@ -85,7 +85,7 @@ void REST::Rtc::request(AsyncWebServerRequest *request) {
     }
 }
 
-void REST::Rtc::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+void REST::RTC::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
     if(!index) request->_tempObject = malloc(total);
     if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
     request->send(200);

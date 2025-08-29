@@ -20,11 +20,11 @@
   this software.
  */
 
-#ifndef LOGFILE_H
-#define LOGFILE_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
 #include <Arduino.h>
-#include <SD.h>
+#include <RTClib.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -34,12 +34,12 @@
 extern Settings settings;
 
 namespace REST {
-    class LogFile {
+    class System {
       public:
-        LogFile();
+        System();
         void begin(AsyncWebServer * httpd);
         void request(AsyncWebServerRequest * request);
-        void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
+        void body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
 
       private:
     };

@@ -20,8 +20,8 @@
   this software.
  */
 
-#ifndef FUL_H
-#define FUL_H
+#ifndef API_H
+#define API_H
 
 #include <Arduino.h>
 #include <SD.h>
@@ -35,29 +35,30 @@
 #include "rest/Timer.h"
 #include "rest/Logs.h"
 #include "rest/LogFile.h"
+#include "rest/Firmware.h"
 
 extern Finder energyMeter;;
 extern Settings settings;
 
-class RESTful {
-  public:
-    RESTful();
-    void begin(AsyncWebServer * httpd);
-    void firmwareVersion(AsyncWebServerRequest * request);
-    void firmwareUpload(AsyncWebServerRequest * request);
-    void firmwareUploadChunks(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
-    void systemConfig(AsyncWebServerRequest * request);
-    void modbus(AsyncWebServerRequest * request);
-    void modbusValue(AsyncWebServerRequest * request);
-    void modbusConfig(AsyncWebServerRequest * request);
-    void serial1Config(AsyncWebServerRequest * request);
+namespace REST {
+    class API {
+      public:
+        API();
+        void begin(AsyncWebServer * httpd);
 
-  private:
-    REST::Rtc restRtc;
-    REST::Timer restTimer;
-    REST::Logs restLogs;
-    REST::LogFile restLogFile;
-    Utils utils;
-};
+        void systemConfig(AsyncWebServerRequest * request);
+        void modbus(AsyncWebServerRequest * request);
+        void modbusValue(AsyncWebServerRequest * request);
+        void modbusConfig(AsyncWebServerRequest * request);
+        void serial1Config(AsyncWebServerRequest * request);
 
+      private:
+         REST::Rtc restRtc;
+         REST::Timer restTimer;
+         REST::Logs restLogs;
+         REST::LogFile restLogFile;
+         REST::Firmware restFirmware;
+        Utils utils;
+    };
+}
 #endif

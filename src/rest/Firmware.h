@@ -20,28 +20,26 @@
   this software.
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef FIRMWARE_H
+#define FIRMWARE_H
 
 #include <Arduino.h>
-#include <RTClib.h>
+#include <SD.h>
 #include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
-#include "Timer_PFC8563.h"
 
-extern Timer_PFC8563 timer;
 extern Settings settings;
 
 namespace REST {
-    class Timer {
+    class Firmware {
       public:
-        Timer();
+        Firmware();
         void begin(AsyncWebServer * httpd);
         void request(AsyncWebServerRequest * request);
-        void body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total);
+        void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
 
       private:
     };

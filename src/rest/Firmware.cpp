@@ -20,38 +20,28 @@
   this software.
  */
 
-#include "LogFile.h"
+#include "Firmware.h"
 
-REST::LogFile::LogFile() {
+REST::Firmware::Firmware() {
 }
 
-void REST::LogFile::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])([0-9][0-9][0-9][0-9])$", HTTP_GET | HTTP_DELETE | HTTP_POST,
-              std::bind(&LogFile::request, this, std::placeholders::_1),
-              std::bind(&LogFile::upload, this, std::placeholders::_1, std::placeholders::_2,
+void REST::Firmware::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/firmware$", HTTP_GET | HTTP_POST,
+              std::bind(&REST::Firmware::request, this, std::placeholders::_1),
+              std::bind(&REST::Firmware::upload, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
 }
 
-void REST::LogFile::request(AsyncWebServerRequest *request) {
+void REST::Firmware::request(AsyncWebServerRequest *request) {
     String file;
+    String version = "???";
 
     switch (request->method()) {
      case HTTP_GET:
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
-             request->send(SD, file, "text/plain");
-         } else request->send(400);
-         break;
-
-     case HTTP_DELETE:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
-
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
-             SD.remove(file);
-             request->send(200);
-         } else request->send(400);
+#ifdef GIT_HASH
+         version = GIT_HASH;
+#endif
+         request->send(200, "text/plain", version);
          break;
 
      case HTTP_POST:
@@ -64,16 +54,13 @@ void REST::LogFile::request(AsyncWebServerRequest *request) {
     }
 }
 
-void REST::LogFile::upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
 
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
         return request->requestAuthentication();
 
     if(!index) {
-        String file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-        if(SD.exists(file)) {
-            request->_tempFile = SD.open(file, "w");
-        }
+        request->_tempFile = SD.open("/firmware.bin", "w");
     }
 
     if(len) {
@@ -83,4 +70,5 @@ void REST::LogFile::upload(AsyncWebServerRequest *request, String filename, size
     if(final) {
         request->_tempFile.close();
     }
+
 }

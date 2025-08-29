@@ -29,7 +29,7 @@
 #include <ESPAsyncWebServer.h>
 #include <ESPmDNS.h>
 #include "Timer_PFC8563.h"
-#include "RESTful.h"
+#include "rest/API.h"
 #include "Settings.h"
 #include "Finder.h"
 
@@ -46,7 +46,7 @@ Timer_PFC8563 timer;
 AsyncWebServer *httpd;
 ModbusMaster modbus;
 Finder energyMeter;
-RESTful restAPI;
+REST::API restAPI;
 Settings settings;
 
 RTC_DATA_ATTR bool enableWifi;

@@ -20,74 +20,31 @@
   this software.
  */
 
-#include "RESTful.h"
+#include "API.h"
 
-RESTful::RESTful() {
+REST::API::API() {
 }
 
-void RESTful::begin(AsyncWebServer *httpd) {
-    // rtc
+void REST::API::begin(AsyncWebServer *httpd) {
     restRtc.begin(httpd);
-
-    // timer, sheduler
     restTimer.begin(httpd);
-
-    // logs
     restLogs.begin(httpd);
-
-    // log file
     restLogFile.begin(httpd);
-
-    // ota firmware
-    httpd->on("^\\/api\\/firmware$", HTTP_GET, std::bind(&RESTful::firmwareVersion, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/firmware$", HTTP_POST,
-              std::bind(&RESTful::firmwareUpload, this, std::placeholders::_1),
-              std::bind(&RESTful::firmwareUploadChunks, this, std::placeholders::_1, std::placeholders::_2,
-                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
+    restFirmware.begin(httpd);
 
     // system settings
-    httpd->on("^\\/api\\/system$", std::bind(&RESTful::systemConfig, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/system$", std::bind(&REST::API::systemConfig, this, std::placeholders::_1));
 
     // modbus registers
-    httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&RESTful::modbus, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)$", std::bind(&RESTful::modbusValue, this, std::placeholders::_1));
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&RESTful::modbusConfig, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&REST::API::modbus, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)$", std::bind(&REST::API::modbusValue, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", std::bind(&REST::API::modbusConfig, this, std::placeholders::_1));
 
     // serial configuration
-    httpd->on("^\\/api\\/serial1$", std::bind(&RESTful::serial1Config, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/serial1$", std::bind(&REST::API::serial1Config, this, std::placeholders::_1));
 }
 
-void RESTful::firmwareVersion(AsyncWebServerRequest *request) {
-    String version = "???";
-
-#ifdef GIT_HASH
-    version = GIT_HASH;
-#endif
-    request->send(200, "text/plain", version);
-}
-
-void RESTful::firmwareUpload(AsyncWebServerRequest *request) {
-    request->send(200);
-}
-
-void RESTful::firmwareUploadChunks(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
-    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-        return request->requestAuthentication();
-
-    if(!index) {
-        request->_tempFile = SD.open("/firmware.bin", "w");
-    }
-
-    if(len) {
-        request->_tempFile.write(data, len);
-    }
-
-    if(final) {
-        request->_tempFile.close();
-    }
-}
-
-void RESTful::systemConfig(AsyncWebServerRequest *request) {
+void REST::API::systemConfig(AsyncWebServerRequest *request) {
     int i;
     String value = "";
 
@@ -135,7 +92,7 @@ void RESTful::systemConfig(AsyncWebServerRequest *request) {
     }
 }
 
-void RESTful::modbus(AsyncWebServerRequest *request) {
+void REST::API::modbus(AsyncWebServerRequest *request) {
     int i;
     ModbusConfig config;
     AsyncResponseStream *response;
@@ -151,7 +108,7 @@ void RESTful::modbus(AsyncWebServerRequest *request) {
     request->send(response);
 }
 
-void RESTful::modbusValue(AsyncWebServerRequest *request) {
+void REST::API::modbusValue(AsyncWebServerRequest *request) {
     int n, status;
     ModbusConfig config;
     String value = "";
@@ -174,7 +131,7 @@ void RESTful::modbusValue(AsyncWebServerRequest *request) {
     }
 }
 
-void RESTful::modbusConfig(AsyncWebServerRequest *request) {
+void REST::API::modbusConfig(AsyncWebServerRequest *request) {
     int n, i, status;
     ModbusConfig config;
     String value = "";
@@ -229,7 +186,7 @@ void RESTful::modbusConfig(AsyncWebServerRequest *request) {
 }
 
 
-void RESTful::serial1Config(AsyncWebServerRequest *request) {
+void REST::API::serial1Config(AsyncWebServerRequest *request) {
     int i;
     String value = "";
 

@@ -26,9 +26,9 @@ REST::Timer::Timer() {
 }
 
 void REST::Timer::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/timer$", HTTP_GET | HTTP_PUT,
-              std::bind(&Timer::request, this, std::placeholders::_1), NULL,
-              std::bind(&Timer::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+    httpd->on("^\\/api\\/timer$", HTTP_GET | HTTP_PUT, std::bind(&Timer::request, this, std::placeholders::_1), NULL,
+              std::bind(&Timer::body, this, std::placeholders::_1, std::placeholders::_2,
+                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
 void REST::Timer::request(AsyncWebServerRequest *request) {
@@ -99,3 +99,4 @@ void REST::Timer::body(AsyncWebServerRequest *request, uint8_t *data, size_t len
     if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
     request->send(200);
 }
+

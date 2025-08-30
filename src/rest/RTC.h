@@ -23,11 +23,12 @@
 #ifndef RTC_H
 #define RTC_H
 
+#include <regex>
 #include <Arduino.h>
 #include <RTClib.h>
-#include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include "AsyncJson.h"
 #include <ArduinoJson.h>
 #include "Settings.h"
 

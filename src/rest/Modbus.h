@@ -23,10 +23,10 @@
 #ifndef MODBUS_H
 #define MODBUS_H
 
+#include <regex>
 #include <Arduino.h>
 #include <RTClib.h>
 #include <SD.h>
-#include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>

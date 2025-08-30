@@ -23,13 +23,10 @@
 #ifndef API_H
 #define API_H
 
+#include <regex>
 #include <Arduino.h>
-#include <SD.h>
-#include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <HardwareSerial.h>
-#include "Settings.h"
 #include "rest/RTC.h"
 #include "rest/Timer.h"
 #include "rest/Logs.h"

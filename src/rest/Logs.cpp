@@ -30,18 +30,21 @@ void REST::Logs::begin(AsyncWebServer *httpd) {
 }
 
 void REST::Logs::request(AsyncWebServerRequest *request) {
-    MatchState regex;
+    bool json = false;
     JsonDocument document;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
     std::map < String, int >*logs = listLong();
 
-    if(!request->hasHeader("Accept")) return;
-    header = request->getHeader("Accept");
-    regex.Target((char *) header->value().c_str());
+    if(request->hasHeader("Accept")) {
+        header = request->getHeader("Accept");
+        if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+            json = true;
+        }
+    }
 
-    if(regex.Match("application/json")) {
+    if(json) {
         response = request->beginResponseStream("application/json");
       for(auto log:(*logs)) document[log.first] = log.second;
         serializeJson(document, *response);
@@ -57,17 +60,14 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
 
 std::map < String, int >*REST::Logs::listLong(void) {
     File root, entry, directory, file;
-    MatchState regex;
     std::map < String, int >*logs = new std::map < String, int >;
 
     root = SD.open("/");
     while(entry = root.openNextFile()) {
-        regex.Target((char *) entry.name());
-        if(entry.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
+        if(entry.isDirectory() && std::regex_match(entry.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
             directory = SD.open("/" + String(entry.name()));
             while(file = directory.openNextFile()) {
-                regex.Target((char *) file.name());
-                if(!file.isDirectory() && regex.Match("^[0-9][0-9][0-9][0-9]$")) {
+                if(!file.isDirectory() && std::regex_match(file.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
                     (*logs)[String(directory.name()) + String(file.name())] = file.size();
                 }
                 file.close();

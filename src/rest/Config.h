@@ -23,9 +23,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <regex>
 #include <Arduino.h>
 #include <RTClib.h>
-#include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>

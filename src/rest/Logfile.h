@@ -23,9 +23,9 @@
 #ifndef LOGFILE_H
 #define LOGFILE_H
 
+#include <regex>
 #include <Arduino.h>
 #include <SD.h>
-#include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>

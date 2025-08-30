@@ -31,26 +31,29 @@ void REST::RTC::begin(AsyncWebServer *httpd) {
 }
 
 void REST::RTC::request(AsyncWebServerRequest *request) {
-    String value;
     bool ok = false;
     uint32_t epoch;
-    MatchState regex;
     JsonDocument document;
     DeserializationError error;
     const AsyncWebHeader *header;
+    AsyncResponseStream *response;
 
     switch (request->method()) {
      case HTTP_GET:
          epoch = rtc.now().unixtime();
 
-         if(!request->hasHeader("Accept")) return;
-         header = request->getHeader("Accept");
-         regex.Target((char *) header->value().c_str());
+         if(request->hasHeader("Accept")) {
+             header = request->getHeader("Accept");
+             if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                 ok = true;
+             }
+         }
 
-         if(regex.Match("application/json")) {
+         if(ok) {
+             response = request->beginResponseStream("application/json");
              document["epoch"] = epoch;
-             serializeJson(document, value);
-             request->send(200, "application/json", value.c_str());
+             serializeJson(document, *response);
+             request->send(response);
          } else {
              request->send(200, "text/plain", String(epoch).c_str());
          }
@@ -85,7 +88,11 @@ void REST::RTC::request(AsyncWebServerRequest *request) {
 }
 
 void REST::RTC::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-    if(!index) request->_tempObject = malloc(total);
-    if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
-    request->send(200);
+    if(!index) {
+        request->_tempObject = malloc(total + 1);
+        bzero(request->_tempObject, total + 1);
+    }
+    if(len && request->_tempObject != NULL) {
+        memcpy((uint8_t *) (request->_tempObject) + index, data, len);
+    }
 }

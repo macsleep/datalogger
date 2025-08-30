@@ -31,32 +31,33 @@ void REST::Timer::begin(AsyncWebServer *httpd) {
 }
 
 void REST::Timer::request(AsyncWebServerRequest *request) {
-    String value;
-    uint8_t minutes;
-    MatchState regex;
-    JsonDocument document;
-    const AsyncWebHeader *header;
-    const AsyncWebParameter *param;
-    DeserializationError error;
     bool ok = false;
+    uint8_t minutes;
+    JsonDocument document;
+    DeserializationError error;
+    const AsyncWebHeader *header;
+    AsyncResponseStream *response;
 
     switch (request->method()) {
      case HTTP_GET:
          minutes = settings.getTimer();
 
-         if(!request->hasHeader("Accept")) return;
-         header = request->getHeader("Accept");
-         regex.Target((char *) header->value().c_str());
+         if(request->hasHeader("Accept")) {
+             header = request->getHeader("Accept");
+             if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                 ok = true;
+             }
+         }
 
-         if(regex.Match("application/json")) {
+         if(ok) {
+             response = request->beginResponseStream("application/json");
              document["minutes"] = minutes;
-             serializeJson(document, value);
-             request->send(200, "application/json", value.c_str());
+             serializeJson(document, *response);
+             request->send(response);
          } else {
              request->send(200, "text/plain", String(minutes).c_str());
          }
          break;
-
 
      case HTTP_PUT:
          if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
@@ -65,14 +66,14 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
          error = deserializeJson(document, (const char *) (request->_tempObject));
          if(error) {
              if(request->hasParam("minutes", true)) {
-                 param = request->getParam("minutes", true);
+                 const AsyncWebParameter *param = request->getParam("minutes", true);
                  if(param->value().toInt() < 0x100) {
                      minutes = param->value().toInt();
                      ok = true;
                  }
              }
          } else {
-             if(document["minutes"].is < uint8_t > ()) {
+             if(document["minutes"].is < uint32_t > ()) {
                  minutes = document["minutes"];
                  ok = true;
              }
@@ -83,7 +84,6 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
              timer.enable(minutes);
              settings.setTimer(minutes);
          }
-
          request->send(200);
          break;
 
@@ -94,7 +94,11 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
 }
 
 void REST::Timer::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-    if(!index) request->_tempObject = malloc(total);
-    if(len) memcpy((uint8_t *) (request->_tempObject) + index, data, len);
-    request->send(200);
+    if(!index) {
+        request->_tempObject = malloc(total + 1);
+        bzero(request->_tempObject, total + 1);
+    }
+    if(len && request->_tempObject != NULL) {
+        memcpy((uint8_t *) (request->_tempObject) + index, data, len);
+    }
 }

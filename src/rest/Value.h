@@ -23,10 +23,8 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <regex>
 #include <Arduino.h>
-#include <RTClib.h>
-#include <SD.h>
-#include <Regexp.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>

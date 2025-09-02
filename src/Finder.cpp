@@ -44,9 +44,9 @@ String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t r
         // device
         modbus->begin(deviceAddress, *Finder::serial);
 
-        switch (functionCode) {
+        switch(functionCode) {
             case 4:
-                switch (valueType) {
+                switch(valueType) {
                     case FinderType::T1:
                         if(functionCode4_T1(registerAddress, &uint16Value)) {
                             value = String(uint16Value);

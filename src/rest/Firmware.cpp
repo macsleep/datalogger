@@ -36,7 +36,7 @@ void REST::Firmware::request(AsyncWebServerRequest *request) {
     String file;
     String version = "???";
 
-    switch (request->method()) {
+    switch(request->method()) {
         case HTTP_GET:
 #ifdef GIT_HASH
             version = GIT_HASH;

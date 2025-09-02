@@ -74,7 +74,8 @@ bool writeLogfile() {
     if(File file = SD.open(path, FILE_APPEND)) {
 
         // timestamp
-        n = snprintf(buffer, sizeof(buffer), "%04d%02d%02d%02d%02d%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
+        n = snprintf(buffer, sizeof(buffer), "%04d%02d%02d%02d%02d%02d",
+                     now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second());
         if(n < 0) return (false);
         line += String(buffer);
 
@@ -180,23 +181,23 @@ void setup() {
     }
 
     // wakeup
-    switch (esp_sleep_get_wakeup_cause()) {
-     case ESP_SLEEP_WAKEUP_EXT1:
-         bitmask = esp_sleep_get_ext1_wakeup_status();
-         if(bitmask & (1ULL << BUTTON)) enableWifi = true;
-         if(bitmask & (1ULL << TIMER)) execJob = true;
-         break;
-     default:
-         execJob = false;
-         enableWifi = false;
+    switch(esp_sleep_get_wakeup_cause()) {
+        case ESP_SLEEP_WAKEUP_EXT1:
+            bitmask = esp_sleep_get_ext1_wakeup_status();
+            if(bitmask & (1ULL << BUTTON)) enableWifi = true;
+            if(bitmask & (1ULL << TIMER)) execJob = true;
+            break;
+        default:
+            execJob = false;
+            enableWifi = false;
 
-         // boot blink
-         digitalWrite(LED_GREEN, HIGH);
-         digitalWrite(LED_YELLOW, HIGH);
-         delay(500);
-         digitalWrite(LED_GREEN, LOW);
-         digitalWrite(LED_YELLOW, LOW);
-         break;
+            // boot blink
+            digitalWrite(LED_GREEN, HIGH);
+            digitalWrite(LED_YELLOW, HIGH);
+            delay(500);
+            digitalWrite(LED_GREEN, LOW);
+            digitalWrite(LED_YELLOW, LOW);
+            break;
     }
 
     if(enableWifi) {
@@ -216,7 +217,7 @@ void setup() {
         httpd = new AsyncWebServer(80);
         restAPI.begin(httpd);
         httpd->onNotFound([](AsyncWebServerRequest * request) {
-                          request->send(404, "text/plain", "Not found");
+            request->send(404, "text/plain", "Not found");
         });
         httpd->begin();
     }

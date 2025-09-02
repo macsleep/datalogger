@@ -28,7 +28,7 @@ Utils::Utils() {
 String Utils::configToString(SerialConfig value) {
     String config;
 
-    switch (value) {
+    switch(value) {
         case SerialConfig::SERIAL_8N1:
             config = "8N1";
             break;
@@ -98,7 +98,7 @@ SerialConfig Utils::stringToConfig(String value) {
 String Utils::typeToString(FinderType value) {
     String type;
 
-    switch (value) {
+    switch(value) {
         case FinderType::T1:
             type = "T1";
             break;

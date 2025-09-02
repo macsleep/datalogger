@@ -34,7 +34,7 @@ void REST::Serial1::request(AsyncWebServerRequest *request) {
     int i;
     String value = "";
 
-    switch (request->method()) {
+    switch(request->method()) {
         case HTTP_GET:
             value = "baud=" + String(settings.getSerial1Baud()) + "&";
             value = value + "config=" + utils.configToString((SerialConfig) settings.getSerial1Config());

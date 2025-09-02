@@ -40,7 +40,7 @@ void REST::System::request(AsyncWebServerRequest *request) {
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
-    switch (request->method()) {
+    switch(request->method()) {
         case HTTP_GET:
 
             if(request->hasHeader("Accept")) {
@@ -71,7 +71,7 @@ void REST::System::request(AsyncWebServerRequest *request) {
             if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
                 return request->requestAuthentication();
 
-            error = deserializeJson(document, (const char *) (request->_tempObject));
+            error = deserializeJson(document, (const char *)(request->_tempObject));
             if(error) {
                 if(request->hasParam("wifiSSID", true)) {
                     settings.setWifiSSID(request->getParam("wifiSSID", true)->value());
@@ -115,7 +115,7 @@ void REST::System::body(AsyncWebServerRequest *request, uint8_t *data, size_t le
         bzero(request->_tempObject, total + 1);
     }
     if(len && request->_tempObject != NULL) {
-        memcpy((uint8_t *) (request->_tempObject) + index, data, len);
+        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
     }
 }
 

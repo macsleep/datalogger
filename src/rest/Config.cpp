@@ -44,7 +44,7 @@ void REST::Config::request(AsyncWebServerRequest *request) {
     int i = request->pathArg(0).toInt();
     ok = settings.getModbusConfig(i, &config);
 
-    switch (request->method()) {
+    switch(request->method()) {
         case HTTP_GET:
 
             if(request->hasHeader("Accept")) {
@@ -79,7 +79,7 @@ void REST::Config::request(AsyncWebServerRequest *request) {
             if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
                 return request->requestAuthentication();
 
-            error = deserializeJson(document, (const char *) (request->_tempObject));
+            error = deserializeJson(document, (const char *)(request->_tempObject));
             if(error) {
                 if(request->hasParam("deviceAddress", true)) {
                     config.deviceAddress = request->getParam("deviceAddress", true)->value().toInt();
@@ -126,7 +126,7 @@ void REST::Config::body(AsyncWebServerRequest *request, uint8_t *data, size_t le
         bzero(request->_tempObject, total + 1);
     }
     if(len && request->_tempObject != NULL) {
-        memcpy((uint8_t *) (request->_tempObject) + index, data, len);
+        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
     }
 }
 

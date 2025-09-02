@@ -35,7 +35,7 @@ void REST::Logfile::begin(AsyncWebServer *httpd) {
 void REST::Logfile::request(AsyncWebServerRequest *request) {
     String file;
 
-    switch (request->method()) {
+    switch(request->method()) {
         case HTTP_GET:
             file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
             if(SD.exists(file)) {

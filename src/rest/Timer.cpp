@@ -38,7 +38,7 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
-    switch (request->method()) {
+    switch(request->method()) {
         case HTTP_GET:
             minutes = settings.getTimer();
 
@@ -63,7 +63,7 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
             if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
                 return request->requestAuthentication();
 
-            error = deserializeJson(document, (const char *) (request->_tempObject));
+            error = deserializeJson(document, (const char *)(request->_tempObject));
             if(error) {
                 if(request->hasParam("minutes", true)) {
                     const AsyncWebParameter *param = request->getParam("minutes", true);
@@ -99,6 +99,6 @@ void REST::Timer::body(AsyncWebServerRequest *request, uint8_t *data, size_t len
         bzero(request->_tempObject, total + 1);
     }
     if(len && request->_tempObject != NULL) {
-        memcpy((uint8_t *) (request->_tempObject) + index, data, len);
+        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
     }
 }

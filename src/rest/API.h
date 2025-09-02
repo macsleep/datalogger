@@ -44,6 +44,7 @@ namespace REST {
         API();
         void begin(AsyncWebServer * httpd);
 
+      private:
         RTC *restRTC;
         Timer *restTimer;
         Logs *restLogs;
@@ -54,8 +55,6 @@ namespace REST {
         Value *restValue;
         Config *restConfig;
         Serial1 *restSerial1;
-
-      private:
     };
 }
 #endif

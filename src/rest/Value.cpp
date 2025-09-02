@@ -30,12 +30,31 @@ void REST::Value::begin(AsyncWebServer *httpd) {
 }
 
 void REST::Value::request(AsyncWebServerRequest *request) {
+    String value = "";
+    bool json = false;
+    JsonDocument document;
+    const AsyncWebHeader *header;
+    AsyncResponseStream *response;
     ModbusConfig config;
 
-    int n = request->pathArg(0).toInt();
+    int i = request->pathArg(0).toInt();
+    if(settings.getModbusConfig(i, &config)) {
+        value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+    }
 
-    if(settings.getModbusConfig(n, &config)) {
-        String value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+    if(request->hasHeader("Accept")) {
+        header = request->getHeader("Accept");
+        if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+            json = true;
+        }
+    }
+
+    if(json) {
+        response = request->beginResponseStream("application/json");
+        document["value"] = value;
+        serializeJson(document, *response);
+        request->send(response);
+    } else {
         request->send(200, "text/plain", value);
-    } else request->send(400);
+    }
 }

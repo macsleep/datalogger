@@ -23,15 +23,14 @@
 #ifndef LOGS_H
 #define LOGS_H
 
-#include <regex>
 #include <Arduino.h>
-#include <RTClib.h>
-#include <SD.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
+#include "Utils.h"
 
+extern Utils utils;
 extern Settings settings;
 
 namespace REST {
@@ -42,7 +41,6 @@ namespace REST {
         void request(AsyncWebServerRequest * request);
 
       private:
-         std::map < String, int >*listLong();
     };
 }
 #endif

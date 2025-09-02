@@ -129,3 +129,27 @@ FinderType Utils::stringToType(String value) {
 
     return (type);
 }
+
+std::map<String, int>* Utils::listLong(void) {
+    File root, entry, directory, file;
+    std::map < String, int >*logs = new std::map < String, int >;
+
+    root = SD.open("/");
+    while(entry = root.openNextFile()) {
+        if(entry.isDirectory() && std::regex_match(entry.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
+            directory = SD.open("/" + String(entry.name()));
+            while(file = directory.openNextFile()) {
+                if(!file.isDirectory() && std::regex_match(file.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
+                    (*logs)[String(directory.name()) + String(file.name())] = file.size();
+                }
+                file.close();
+            }
+            directory.close();
+        }
+        entry.close();
+    }
+    root.close();
+
+    return (logs);
+}
+

@@ -35,7 +35,7 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
-    std::map < String, int >*logs = listLong();
+    std::map < String, int >*logs = utils.listLong();
 
     if(request->hasHeader("Accept")) {
         header = request->getHeader("Accept");
@@ -58,25 +58,3 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
     (*logs).clear();
 }
 
-std::map < String, int >*REST::Logs::listLong(void) {
-    File root, entry, directory, file;
-    std::map < String, int >*logs = new std::map < String, int >;
-
-    root = SD.open("/");
-    while(entry = root.openNextFile()) {
-        if(entry.isDirectory() && std::regex_match(entry.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
-            directory = SD.open("/" + String(entry.name()));
-            while(file = directory.openNextFile()) {
-                if(!file.isDirectory() && std::regex_match(file.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
-                    (*logs)[String(directory.name()) + String(file.name())] = file.size();
-                }
-                file.close();
-            }
-            directory.close();
-        }
-        entry.close();
-    }
-    root.close();
-
-    return (logs);
-}

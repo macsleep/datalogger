@@ -23,7 +23,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <map>
+#include <regex>
 #include <Arduino.h>
+#include <SD.h>
 #include <HardwareSerial.h>
 
 enum class FinderType { FOO, T1, T2, T3, T_float };
@@ -35,6 +38,7 @@ class Utils {
     SerialConfig stringToConfig(String value);
     String typeToString(FinderType value);
     FinderType stringToType(String value);
+    std::map<String, int>* listLong(void);
 
   private:
 };

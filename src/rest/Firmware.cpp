@@ -37,20 +37,20 @@ void REST::Firmware::request(AsyncWebServerRequest *request) {
     String version = "???";
 
     switch (request->method()) {
-     case HTTP_GET:
+        case HTTP_GET:
 #ifdef GIT_HASH
-         version = GIT_HASH;
+            version = GIT_HASH;
 #endif
-         request->send(200, "text/plain", version);
-         break;
+            request->send(200, "text/plain", version);
+            break;
 
-     case HTTP_POST:
-         request->send(200);
-         break;
+        case HTTP_POST:
+            request->send(200);
+            break;
 
-     default:
-         request->send(400);
-         break;
+        default:
+            request->send(400);
+            break;
     }
 }
 

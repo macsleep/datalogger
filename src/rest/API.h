@@ -40,21 +40,21 @@
 
 namespace REST {
     class API {
-      public:
-        API();
-        void begin(AsyncWebServer * httpd);
+        public:
+            API();
+            void begin(AsyncWebServer * httpd);
 
-      private:
-        RTC *restRTC;
-        Timer *restTimer;
-        Logs *restLogs;
-        Logfile *restLogfile;
-        Firmware *restFirmware;
-        System *restSystem;
-        Modbus *restModbus;
-        Value *restValue;
-        Config *restConfig;
-        Serial1 *restSerial1;
+        private:
+            RTC *restRTC;
+            Timer *restTimer;
+            Logs *restLogs;
+            Logfile *restLogfile;
+            Firmware *restFirmware;
+            System *restSystem;
+            Modbus *restModbus;
+            Value *restValue;
+            Config *restConfig;
+            Serial1 *restSerial1;
     };
 }
 #endif

@@ -35,13 +35,13 @@ extern Settings settings;
 
 namespace REST {
     class Firmware {
-      public:
-        Firmware();
-        void begin(AsyncWebServer * httpd);
-        void request(AsyncWebServerRequest * request);
-        void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
+        public:
+            Firmware();
+            void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
+            void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
 
-      private:
+        private:
     };
 }
 #endif

@@ -35,12 +35,12 @@ extern Settings settings;
 
 namespace REST {
     class Logs {
-      public:
-        Logs();
-        void begin(AsyncWebServer * httpd);
-        void request(AsyncWebServerRequest * request);
+        public:
+            Logs();
+            void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
 
-      private:
+        private:
     };
 }
 #endif

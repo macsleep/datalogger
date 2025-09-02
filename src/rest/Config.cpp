@@ -45,78 +45,78 @@ void REST::Config::request(AsyncWebServerRequest *request) {
     ok = settings.getModbusConfig(i, &config);
 
     switch (request->method()) {
-     case HTTP_GET:
+        case HTTP_GET:
 
-         if(request->hasHeader("Accept")) {
-             header = request->getHeader("Accept");
-             if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
-                 json = true;
-             }
-         }
+            if(request->hasHeader("Accept")) {
+                header = request->getHeader("Accept");
+                if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                    json = true;
+                }
+            }
 
-         if(json) {
-             if(ok) {
-                 response = request->beginResponseStream("application/json");
-                 document["deviceAddress"] = config.deviceAddress;
-                 document["functionCode"] = config.functionCode;
-                 document["registerAddress"] = config.registerAddress;
-                 document["valueType"] = utils.typeToString(config.valueType);
-                 serializeJson(document, *response);
-                 request->send(response);
-             } else request->send(400);
-         } else {
-             if(ok) {
-                 value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
-                 value = value + "functionCode=" + String(config.functionCode) + "&";
-                 value = value + "registerAddress=" + String(config.registerAddress) + "&";
-                 value = value + "valueType=" + utils.typeToString(config.valueType);
-                 request->send(200, "application/x-www-form-urlencoded", value);
-             } else request->send(400);
-         }
-         break;
+            if(json) {
+                if(ok) {
+                    response = request->beginResponseStream("application/json");
+                    document["deviceAddress"] = config.deviceAddress;
+                    document["functionCode"] = config.functionCode;
+                    document["registerAddress"] = config.registerAddress;
+                    document["valueType"] = utils.typeToString(config.valueType);
+                    serializeJson(document, *response);
+                    request->send(response);
+                } else request->send(400);
+            } else {
+                if(ok) {
+                    value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
+                    value = value + "functionCode=" + String(config.functionCode) + "&";
+                    value = value + "registerAddress=" + String(config.registerAddress) + "&";
+                    value = value + "valueType=" + utils.typeToString(config.valueType);
+                    request->send(200, "application/x-www-form-urlencoded", value);
+                } else request->send(400);
+            }
+            break;
 
-     case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
+        case HTTP_PUT:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
 
-         error = deserializeJson(document, (const char *) (request->_tempObject));
-         if(error) {
-             if(request->hasParam("deviceAddress", true)) {
-                 config.deviceAddress = request->getParam("deviceAddress", true)->value().toInt();
-             }
-             if(request->hasParam("functionCode", true)) {
-                 config.functionCode = request->getParam("functionCode", true)->value().toInt();
-             }
-             if(request->hasParam("registerAddress", true)) {
-                 config.registerAddress = request->getParam("registerAddress", true)->value().toInt();
-             }
-             if(request->hasParam("valueType", true)) {
-                 config.valueType = utils.stringToType(request->getParam("valueType", true)->value());
-             }
-         } else {
-             if(document["deviceAddress"].is<uint8_t>()) {
-                 config.deviceAddress = document["deviceAddress"];
-             }
-             if(document["functionCode"].is<uint8_t>()) {
-                 config.functionCode = document["functionCode"];
-             }
-             if(document["registerAddress"].is<uint16_t>()) {
-                 config.registerAddress = document["registerAddress"];
-             }
-             if(document["valueType"].is<String>()) {
-                 config.valueType = utils.stringToType(document["valueType"]);
-             }
-         }
+            error = deserializeJson(document, (const char *) (request->_tempObject));
+            if(error) {
+                if(request->hasParam("deviceAddress", true)) {
+                    config.deviceAddress = request->getParam("deviceAddress", true)->value().toInt();
+                }
+                if(request->hasParam("functionCode", true)) {
+                    config.functionCode = request->getParam("functionCode", true)->value().toInt();
+                }
+                if(request->hasParam("registerAddress", true)) {
+                    config.registerAddress = request->getParam("registerAddress", true)->value().toInt();
+                }
+                if(request->hasParam("valueType", true)) {
+                    config.valueType = utils.stringToType(request->getParam("valueType", true)->value());
+                }
+            } else {
+                if(document["deviceAddress"].is<uint8_t>()) {
+                    config.deviceAddress = document["deviceAddress"];
+                }
+                if(document["functionCode"].is<uint8_t>()) {
+                    config.functionCode = document["functionCode"];
+                }
+                if(document["registerAddress"].is<uint16_t>()) {
+                    config.registerAddress = document["registerAddress"];
+                }
+                if(document["valueType"].is<String>()) {
+                    config.valueType = utils.stringToType(document["valueType"]);
+                }
+            }
 
-         if(ok) {
-             settings.setModbusConfig(i, &config);
-             request->send(200);
-         } else request->send(400);
-         break;
+            if(ok) {
+                settings.setModbusConfig(i, &config);
+                request->send(200);
+            } else request->send(400);
+            break;
 
-     default:
-         request->send(400);
-         break;
+        default:
+            request->send(400);
+            break;
     }
 }
 

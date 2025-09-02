@@ -32,15 +32,15 @@
 enum class FinderType { FOO, T1, T2, T3, T_float };
 
 class Utils {
-  public:
-    Utils();
-    String configToString(SerialConfig value);
-    SerialConfig stringToConfig(String value);
-    String typeToString(FinderType value);
-    FinderType stringToType(String value);
-    std::map<String, int>* listLong(void);
+    public:
+        Utils();
+        String configToString(SerialConfig value);
+        SerialConfig stringToConfig(String value);
+        String typeToString(FinderType value);
+        FinderType stringToType(String value);
+        std::map<String, int>* listLong(void);
 
-  private:
+    private:
 };
 
 #endif

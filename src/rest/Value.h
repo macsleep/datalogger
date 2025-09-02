@@ -35,12 +35,12 @@ extern Finder energyMeter;;
 
 namespace REST {
     class Value {
-      public:
-        Value();
-        void begin(AsyncWebServer * httpd);
-        void request(AsyncWebServerRequest * request);
+        public:
+            Value();
+            void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
 
-      private:
+        private:
     };
 }
 #endif

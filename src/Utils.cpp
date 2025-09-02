@@ -29,47 +29,47 @@ String Utils::configToString(SerialConfig value) {
     String config;
 
     switch (value) {
-     case SerialConfig::SERIAL_8N1:
-         config = "8N1";
-         break;
-     case SerialConfig::SERIAL_8N2:
-         config = "8N2";
-         break;
-     case SerialConfig::SERIAL_8E1:
-         config = "8E1";
-         break;
-     case SerialConfig::SERIAL_8E2:
-         config = "8E2";
-         break;
-     case SerialConfig::SERIAL_8O1:
-         config = "8O1";
-         break;
-     case SerialConfig::SERIAL_8O2:
-         config = "8O2";
-         break;
+        case SerialConfig::SERIAL_8N1:
+            config = "8N1";
+            break;
+        case SerialConfig::SERIAL_8N2:
+            config = "8N2";
+            break;
+        case SerialConfig::SERIAL_8E1:
+            config = "8E1";
+            break;
+        case SerialConfig::SERIAL_8E2:
+            config = "8E2";
+            break;
+        case SerialConfig::SERIAL_8O1:
+            config = "8O1";
+            break;
+        case SerialConfig::SERIAL_8O2:
+            config = "8O2";
+            break;
 
-     case SerialConfig::SERIAL_7N1:
-         config = "7N1";
-         break;
-     case SerialConfig::SERIAL_7N2:
-         config = "7N2";
-         break;
-     case SerialConfig::SERIAL_7E1:
-         config = "7E1";
-         break;
-     case SerialConfig::SERIAL_7E2:
-         config = "7E2";
-         break;
-     case SerialConfig::SERIAL_7O1:
-         config = "7O1";
-         break;
-     case SerialConfig::SERIAL_7O2:
-         config = "7O2";
-         break;
+        case SerialConfig::SERIAL_7N1:
+            config = "7N1";
+            break;
+        case SerialConfig::SERIAL_7N2:
+            config = "7N2";
+            break;
+        case SerialConfig::SERIAL_7E1:
+            config = "7E1";
+            break;
+        case SerialConfig::SERIAL_7E2:
+            config = "7E2";
+            break;
+        case SerialConfig::SERIAL_7O1:
+            config = "7O1";
+            break;
+        case SerialConfig::SERIAL_7O2:
+            config = "7O2";
+            break;
 
-     default:
-         config = "8N1";
-         break;
+        default:
+            config = "8N1";
+            break;
     }
 
     return (config);
@@ -99,21 +99,21 @@ String Utils::typeToString(FinderType value) {
     String type;
 
     switch (value) {
-     case FinderType::T1:
-         type = "T1";
-         break;
-     case FinderType::T2:
-         type = "T2";
-         break;
-     case FinderType::T3:
-         type = "T3";
-         break;
-     case FinderType::T_float:
-         type = "T_float";
-         break;
-     default:
-         type = "FOO";
-         break;
+        case FinderType::T1:
+            type = "T1";
+            break;
+        case FinderType::T2:
+            type = "T2";
+            break;
+        case FinderType::T3:
+            type = "T3";
+            break;
+        case FinderType::T_float:
+            type = "T_float";
+            break;
+        default:
+            type = "FOO";
+            break;
     }
 
     return (type);
@@ -132,7 +132,7 @@ FinderType Utils::stringToType(String value) {
 
 std::map<String, int>* Utils::listLong(void) {
     File root, entry, directory, file;
-    std::map < String, int >*logs = new std::map < String, int >;
+    std::map<String, int>* logs = new std::map < String, int >;
 
     root = SD.open("/");
     while(entry = root.openNextFile()) {

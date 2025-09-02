@@ -34,13 +34,13 @@ extern Settings settings;
 
 namespace REST {
     class System {
-      public:
-        System();
-        void begin(AsyncWebServer * httpd);
-        void request(AsyncWebServerRequest * request);
-        void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
+        public:
+            System();
+            void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
+            void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
-      private:
+        private:
     };
 }
 #endif

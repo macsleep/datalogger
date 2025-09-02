@@ -34,12 +34,12 @@ extern Settings settings;
 
 namespace REST {
     class Modbus {
-      public:
-        Modbus();
-        void begin(AsyncWebServer * httpd);
-        void request(AsyncWebServerRequest * request);
+        public:
+            Modbus();
+            void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
 
-      private:
+        private:
     };
 }
 #endif

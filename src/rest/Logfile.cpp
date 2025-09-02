@@ -36,31 +36,31 @@ void REST::Logfile::request(AsyncWebServerRequest *request) {
     String file;
 
     switch (request->method()) {
-     case HTTP_GET:
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
-             request->send(SD, file, "text/plain");
-         } else request->send(400);
-         break;
+        case HTTP_GET:
+            file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+            if(SD.exists(file)) {
+                request->send(SD, file, "text/plain");
+            } else request->send(400);
+            break;
 
-     case HTTP_DELETE:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
+        case HTTP_DELETE:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
 
-         file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-         if(SD.exists(file)) {
-             SD.remove(file);
-             request->send(200);
-         } else request->send(400);
-         break;
+            file = "/" + request->pathArg(0) + "/" + request->pathArg(1);
+            if(SD.exists(file)) {
+                SD.remove(file);
+                request->send(200);
+            } else request->send(400);
+            break;
 
-     case HTTP_POST:
-         request->send(200);
-         break;
+        case HTTP_POST:
+            request->send(200);
+            break;
 
-     default:
-         request->send(400);
-         break;
+        default:
+            request->send(400);
+            break;
     }
 }
 

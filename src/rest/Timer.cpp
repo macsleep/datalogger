@@ -39,57 +39,57 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
     AsyncResponseStream *response;
 
     switch (request->method()) {
-     case HTTP_GET:
-         minutes = settings.getTimer();
+        case HTTP_GET:
+            minutes = settings.getTimer();
 
-         if(request->hasHeader("Accept")) {
-             header = request->getHeader("Accept");
-             if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
-                 ok = true;
-             }
-         }
+            if(request->hasHeader("Accept")) {
+                header = request->getHeader("Accept");
+                if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                    ok = true;
+                }
+            }
 
-         if(ok) {
-             response = request->beginResponseStream("application/json");
-             document["minutes"] = minutes;
-             serializeJson(document, *response);
-             request->send(response);
-         } else {
-             request->send(200, "text/plain", String(minutes).c_str());
-         }
-         break;
+            if(ok) {
+                response = request->beginResponseStream("application/json");
+                document["minutes"] = minutes;
+                serializeJson(document, *response);
+                request->send(response);
+            } else {
+                request->send(200, "text/plain", String(minutes).c_str());
+            }
+            break;
 
-     case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
+        case HTTP_PUT:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
 
-         error = deserializeJson(document, (const char *) (request->_tempObject));
-         if(error) {
-             if(request->hasParam("minutes", true)) {
-                 const AsyncWebParameter *param = request->getParam("minutes", true);
-                 if(param->value().toInt() < 0x100) {
-                     minutes = param->value().toInt();
-                     ok = true;
-                 }
-             }
-         } else {
-             if(document["minutes"].is < uint32_t > ()) {
-                 minutes = document["minutes"];
-                 ok = true;
-             }
-         }
+            error = deserializeJson(document, (const char *) (request->_tempObject));
+            if(error) {
+                if(request->hasParam("minutes", true)) {
+                    const AsyncWebParameter *param = request->getParam("minutes", true);
+                    if(param->value().toInt() < 0x100) {
+                        minutes = param->value().toInt();
+                        ok = true;
+                    }
+                }
+            } else {
+                if(document["minutes"].is < uint32_t > ()) {
+                    minutes = document["minutes"];
+                    ok = true;
+                }
+            }
 
-         if(ok) {
-             if(timer.isEnabled()) timer.disable();
-             timer.enable(minutes);
-             settings.setTimer(minutes);
-         }
-         request->send(200);
-         break;
+            if(ok) {
+                if(timer.isEnabled()) timer.disable();
+                timer.enable(minutes);
+                settings.setTimer(minutes);
+            }
+            request->send(200);
+            break;
 
-     default:
-         request->send(400);
-         break;
+        default:
+            request->send(400);
+            break;
     }
 }
 

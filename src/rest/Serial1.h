@@ -37,12 +37,12 @@ extern Utils utils;
 
 namespace REST {
     class Serial1 {
-      public:
-        Serial1();
-        void begin(AsyncWebServer * httpd);
-        void request(AsyncWebServerRequest * request);
+        public:
+            Serial1();
+            void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
 
-      private:
+        private:
     };
 }
 #endif

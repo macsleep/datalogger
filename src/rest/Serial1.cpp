@@ -35,29 +35,29 @@ void REST::Serial1::request(AsyncWebServerRequest *request) {
     String value = "";
 
     switch (request->method()) {
-     case HTTP_GET:
-         value = "baud=" + String(settings.getSerial1Baud()) + "&";
-         value = value + "config=" + utils.configToString((SerialConfig) settings.getSerial1Config());
-         request->send(200, "application/x-www-form-urlencoded", value);
-         break;
+        case HTTP_GET:
+            value = "baud=" + String(settings.getSerial1Baud()) + "&";
+            value = value + "config=" + utils.configToString((SerialConfig) settings.getSerial1Config());
+            request->send(200, "application/x-www-form-urlencoded", value);
+            break;
 
-     case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
+        case HTTP_PUT:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
 
-         for(i = 0; i < request->params(); i++) {
-             if(request->getParam(i)->name().equals("baud")) {
-                 settings.setSerial1Baud(request->getParam(i)->value().toInt());
-             }
-             if(request->getParam(i)->name().equals("config")) {
-                 settings.setSerial1Config(utils.stringToConfig(request->getParam(i)->value()));
-             }
-         }
-         request->send(200);
-         break;
+            for(i = 0; i < request->params(); i++) {
+                if(request->getParam(i)->name().equals("baud")) {
+                    settings.setSerial1Baud(request->getParam(i)->value().toInt());
+                }
+                if(request->getParam(i)->name().equals("config")) {
+                    settings.setSerial1Config(utils.stringToConfig(request->getParam(i)->value()));
+                }
+            }
+            request->send(200);
+            break;
 
-     default:
-         request->send(400);
-         break;
+        default:
+            request->send(400);
+            break;
     }
 }

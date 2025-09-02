@@ -34,15 +34,15 @@
 #define PCF8563_TIMER 0x0f
 
 class Timer_PFC8563 {
-  public:
-    Timer_PFC8563();
-    void enable(uint8_t value);
-    bool isEnabled();
-    void disable();
+    public:
+        Timer_PFC8563();
+        void enable(uint8_t value);
+        bool isEnabled();
+        void disable();
 
-  private:
-    void clkoutEnable();
-    void clkoutDisable();
+    private:
+        void clkoutEnable();
+        void clkoutDisable();
 };
 
 #endif

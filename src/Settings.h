@@ -41,29 +41,29 @@ typedef struct {
 } ModbusConfig;
 
 class Settings {
-  public:
-    Settings();
+    public:
+        Settings();
 
-    void reset(void);
-    String getWifiSSID(void);
-    void setWifiSSID(String value);
-    String getWifiPassword(void);
-    void setWifiPassword(String value);
-    String getHttpUser(void);
-    void setHttpUser(String value);
-    String getHttpPassword(void);
-    void setHttpPassword(String value);
-    uint8_t getTimer(void);
-    void setTimer(uint8_t value);
-    bool getModbusConfig(uint8_t n, ModbusConfig * config);
-    bool setModbusConfig(uint8_t n, ModbusConfig * config);
-    unsigned long getSerial1Baud(void);
-    void setSerial1Baud(unsigned long value);
-    uint32_t getSerial1Config(void);
-    void setSerial1Config(uint32_t value);
+        void reset(void);
+        String getWifiSSID(void);
+        void setWifiSSID(String value);
+        String getWifiPassword(void);
+        void setWifiPassword(String value);
+        String getHttpUser(void);
+        void setHttpUser(String value);
+        String getHttpPassword(void);
+        void setHttpPassword(String value);
+        uint8_t getTimer(void);
+        void setTimer(uint8_t value);
+        bool getModbusConfig(uint8_t n, ModbusConfig * config);
+        bool setModbusConfig(uint8_t n, ModbusConfig * config);
+        unsigned long getSerial1Baud(void);
+        void setSerial1Baud(unsigned long value);
+        uint32_t getSerial1Config(void);
+        void setSerial1Config(uint32_t value);
 
-  private:
-    Preferences preferences;
+    private:
+        Preferences preferences;
 };
 
 #endif

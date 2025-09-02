@@ -41,71 +41,71 @@ void REST::System::request(AsyncWebServerRequest *request) {
     AsyncResponseStream *response;
 
     switch (request->method()) {
-     case HTTP_GET:
+        case HTTP_GET:
 
-         if(request->hasHeader("Accept")) {
-             header = request->getHeader("Accept");
-             if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
-                 ok = true;
-             }
-         }
+            if(request->hasHeader("Accept")) {
+                header = request->getHeader("Accept");
+                if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                    ok = true;
+                }
+            }
 
-         if(ok) {
-             response = request->beginResponseStream("application/json");
-             document["wifiSSID"] = settings.getWifiSSID();
-             document["wifiPassword"] = settings.getWifiPassword();
-             document["httpUser"] = settings.getHttpUser();
-             document["httpPassword"] = settings.getHttpPassword();
-             serializeJson(document, *response);
-             request->send(response);
-         } else {
-             value = value + "wifiSSID=" + settings.getWifiSSID() + "&";
-             value = value + "wifiPassword=" + settings.getWifiPassword() + "&";
-             value = value + "httpUser=" + settings.getHttpUser() + "&";
-             value = value + "httpPassword=" + settings.getHttpPassword();
-             request->send(200, "application/x-www-form-urlencoded", value);
-         }
-         break;
+            if(ok) {
+                response = request->beginResponseStream("application/json");
+                document["wifiSSID"] = settings.getWifiSSID();
+                document["wifiPassword"] = settings.getWifiPassword();
+                document["httpUser"] = settings.getHttpUser();
+                document["httpPassword"] = settings.getHttpPassword();
+                serializeJson(document, *response);
+                request->send(response);
+            } else {
+                value = value + "wifiSSID=" + settings.getWifiSSID() + "&";
+                value = value + "wifiPassword=" + settings.getWifiPassword() + "&";
+                value = value + "httpUser=" + settings.getHttpUser() + "&";
+                value = value + "httpPassword=" + settings.getHttpPassword();
+                request->send(200, "application/x-www-form-urlencoded", value);
+            }
+            break;
 
-     case HTTP_PUT:
-         if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
-             return request->requestAuthentication();
+        case HTTP_PUT:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
 
-         error = deserializeJson(document, (const char *) (request->_tempObject));
-         if(error) {
-             if(request->hasParam("wifiSSID", true)) {
-                 settings.setWifiSSID(request->getParam("wifiSSID", true)->value());
-             }
-             if(request->hasParam("wifiPassword", true)) {
-                 settings.setWifiSSID(request->getParam("wifiPassword", true)->value());
-             }
-             if(request->hasParam("httpUser", true)) {
-                 settings.setWifiSSID(request->getParam("httpUser", true)->value());
-             }
-             if(request->hasParam("httpPassword", true)) {
-                 settings.setWifiSSID(request->getParam("httpPassword", true)->value());
-             }
-         } else {
-             if(document["wifiSSID"].is<String>()) {
-                 settings.setWifiSSID(document["wifiSSID"]);
-             }
-             if(document["wifiPassword"].is<String>()) {
-                 settings.setWifiPassword(document["wifiPassword"]);
-             }
-             if(document["httpUser"].is<String>()) {
-                 settings.setHttpUser(document["httpUser"]);
-             }
-             if(document["httpPassword"].is<String>()) {
-                 settings.setHttpPassword(document["httpPassword"]);
-             }
-         }
+            error = deserializeJson(document, (const char *) (request->_tempObject));
+            if(error) {
+                if(request->hasParam("wifiSSID", true)) {
+                    settings.setWifiSSID(request->getParam("wifiSSID", true)->value());
+                }
+                if(request->hasParam("wifiPassword", true)) {
+                    settings.setWifiSSID(request->getParam("wifiPassword", true)->value());
+                }
+                if(request->hasParam("httpUser", true)) {
+                    settings.setWifiSSID(request->getParam("httpUser", true)->value());
+                }
+                if(request->hasParam("httpPassword", true)) {
+                    settings.setWifiSSID(request->getParam("httpPassword", true)->value());
+                }
+            } else {
+                if(document["wifiSSID"].is<String>()) {
+                    settings.setWifiSSID(document["wifiSSID"]);
+                }
+                if(document["wifiPassword"].is<String>()) {
+                    settings.setWifiPassword(document["wifiPassword"]);
+                }
+                if(document["httpUser"].is<String>()) {
+                    settings.setHttpUser(document["httpUser"]);
+                }
+                if(document["httpPassword"].is<String>()) {
+                    settings.setHttpPassword(document["httpPassword"]);
+                }
+            }
 
-         request->send(200);
-         break;
+            request->send(200);
+            break;
 
-     default:
-         request->send(400);
-         break;
+        default:
+            request->send(400);
+            break;
     }
 }
 

@@ -26,55 +26,92 @@ REST::Config::Config() {
 }
 
 void REST::Config::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", HTTP_GET | HTTP_PUT, std::bind(&Config::request, this, std::placeholders::_1), NULL, NULL);
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/config$", HTTP_GET | HTTP_PUT,
+              std::bind(&Config::request, this, std::placeholders::_1), NULL,
+              std::bind(&Config::body, this, std::placeholders::_1, std::placeholders::_2,
+                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 
 void REST::Config::request(AsyncWebServerRequest *request) {
-    int n, i, status;
-    ModbusConfig config;
     String value = "";
+    bool json = false, ok;
+    JsonDocument document;
+    DeserializationError error;
+    const AsyncWebHeader *header;
+    AsyncResponseStream *response;
+    ModbusConfig config;
 
-    n = request->pathArg(0).toInt();
+    int i = request->pathArg(0).toInt();
+    ok = settings.getModbusConfig(i, &config);
 
     switch (request->method()) {
      case HTTP_GET:
-         status = 400;
-         if(settings.getModbusConfig(n, &config)) {
-             value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
-             value = value + "functionCode=" + String(config.functionCode) + "&";
-             value = value + "registerAddress=" + String(config.registerAddress) + "&";
-             value = value + "valueType=" + utils.typeToString(config.valueType);
-             status = 200;
+
+         if(request->hasHeader("Accept")) {
+             header = request->getHeader("Accept");
+             if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                 json = true;
+             }
          }
-         request->send(status, "application/x-www-form-urlencoded", value);
+
+         if(json) {
+             if(ok) {
+                 response = request->beginResponseStream("application/json");
+                 document["deviceAddress"] = config.deviceAddress;
+                 document["functionCode"] = config.functionCode;
+                 document["registerAddress"] = config.registerAddress;
+                 document["valueType"] = utils.typeToString(config.valueType);
+                 serializeJson(document, *response);
+                 request->send(response);
+             } else request->send(400);
+         } else {
+             if(ok) {
+                 value = value + "deviceAddress=" + String(config.deviceAddress) + "&";
+                 value = value + "functionCode=" + String(config.functionCode) + "&";
+                 value = value + "registerAddress=" + String(config.registerAddress) + "&";
+                 value = value + "valueType=" + utils.typeToString(config.valueType);
+                 request->send(200, "application/x-www-form-urlencoded", value);
+             } else request->send(400);
+         }
          break;
 
      case HTTP_PUT:
          if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
              return request->requestAuthentication();
 
-         status = 400;
-         if(settings.getModbusConfig(n, &config)) {
-             for(i = 0; i < request->params(); i++) {
-                 if(request->getParam(i)->name().equals("deviceAddress")) {
-                     config.deviceAddress = request->getParam(i)->value().toInt();
-                 }
-                 if(request->getParam(i)->name().equals("functionCode")) {
-                     config.functionCode = request->getParam(i)->value().toInt();
-                 }
-                 if(request->getParam(i)->name().equals("registerAddress")) {
-                     config.registerAddress = request->getParam(i)->value().toInt();
-                 }
-                 if(request->getParam(i)->name().equals("valueType")) {
-                     config.valueType = utils.stringToType(request->getParam(i)->value());
-                 }
+         error = deserializeJson(document, (const char *) (request->_tempObject));
+         if(error) {
+             if(request->hasParam("deviceAddress", true)) {
+                 config.deviceAddress = request->getParam("deviceAddress", true)->value().toInt();
              }
-             if(request->params()) {
-                 settings.setModbusConfig(n, &config);
-                 status = 200;
+             if(request->hasParam("functionCode", true)) {
+                 config.functionCode = request->getParam("functionCode", true)->value().toInt();
+             }
+             if(request->hasParam("registerAddress", true)) {
+                 config.registerAddress = request->getParam("registerAddress", true)->value().toInt();
+             }
+             if(request->hasParam("valueType", true)) {
+                 config.valueType = utils.stringToType(request->getParam("valueType", true)->value());
+             }
+         } else {
+             if(document["deviceAddress"].is<uint8_t>()) {
+                 config.deviceAddress = document["deviceAddress"];
+             }
+             if(document["functionCode"].is<uint8_t>()) {
+                 config.functionCode = document["functionCode"];
+             }
+             if(document["registerAddress"].is<uint16_t>()) {
+                 config.registerAddress = document["registerAddress"];
+             }
+             if(document["valueType"].is<String>()) {
+                 config.valueType = utils.stringToType(document["valueType"]);
              }
          }
-         request->send(status);
+
+         if(ok) {
+             settings.setModbusConfig(i, &config);
+             request->send(200);
+         } else request->send(400);
          break;
 
      default:
@@ -82,3 +119,14 @@ void REST::Config::request(AsyncWebServerRequest *request) {
          break;
     }
 }
+
+void REST::Config::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    if(!index) {
+        request->_tempObject = malloc(total + 1);
+        bzero(request->_tempObject, total + 1);
+    }
+    if(len && request->_tempObject != NULL) {
+        memcpy((uint8_t *) (request->_tempObject) + index, data, len);
+    }
+}
+

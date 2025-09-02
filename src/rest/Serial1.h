@@ -33,6 +33,7 @@
 #include "Settings.h"
 
 extern Settings settings;
+extern Utils utils;
 
 namespace REST {
     class Serial1 {
@@ -42,7 +43,6 @@ namespace REST {
         void request(AsyncWebServerRequest * request);
 
       private:
-         Utils utils;
     };
 }
 #endif

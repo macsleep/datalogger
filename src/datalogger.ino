@@ -32,6 +32,7 @@
 #include "rest/API.h"
 #include "Settings.h"
 #include "Finder.h"
+#include "Utils.h"
 
 #define LED_GREEN GPIO_NUM_4
 #define LED_YELLOW GPIO_NUM_5
@@ -48,6 +49,7 @@ ModbusMaster modbus;
 Finder energyMeter;
 REST::API restAPI;
 Settings settings;
+Utils utils;
 
 RTC_DATA_ATTR bool enableWifi;
 RTC_DATA_ATTR bool execJob;

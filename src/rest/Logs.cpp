@@ -46,12 +46,12 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
 
     if(json) {
         response = request->beginResponseStream("application/json");
-      for(auto log:(*logs)) document[log.first] = log.second;
+        for(auto log:(*logs)) document[log.first] = log.second;
         serializeJson(document, *response);
         request->send(response);
     } else {
         response = request->beginResponseStream("text/html");
-      for(auto log:(*logs)) response->println(log.first + " " + String(log.second));
+        for(auto log:(*logs)) response->println(log.first + " " + String(log.second));
         request->send(response);
     }
 

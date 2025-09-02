@@ -30,16 +30,37 @@ void REST::Modbus::begin(AsyncWebServer *httpd) {
 }
 
 void REST::Modbus::request(AsyncWebServerRequest *request) {
-    ModbusConfig config;
+    int i;
+    bool json = false;
+    JsonDocument document;
+    const AsyncWebHeader *header;
     AsyncResponseStream *response;
+    ModbusConfig config;
 
-    response = request->beginResponseStream("text/html");
-
-    int i = 0;
-    while(settings.getModbusConfig(i, &config)) {
-        response->println(String(i));
-        i++;
+    if(request->hasHeader("Accept")) {
+        header = request->getHeader("Accept");
+        if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+            json = true;
+        }
     }
 
-    request->send(response);
+    if(json) {
+        response = request->beginResponseStream("application/json");
+        JsonArray array = document.to < JsonArray > ();
+        i = 0;
+        while(settings.getModbusConfig(i, &config)) {
+            array.add(i);
+            i++;
+        }
+        serializeJson(document, *response);
+        request->send(response);
+    } else {
+        response = request->beginResponseStream("text/html");
+        i = 0;
+        while(settings.getModbusConfig(i, &config)) {
+            response->println(String(i));
+            i++;
+        }
+        request->send(response);
+    }
 }

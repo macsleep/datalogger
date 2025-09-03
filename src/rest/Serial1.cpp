@@ -26,9 +26,10 @@ REST::Serial1::Serial1() {
 }
 
 void REST::Serial1::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/serial1$", HTTP_GET | HTTP_PUT, std::bind(&Serial1::request, this, std::placeholders::_1));
-
+    httpd->on("^\\/api\\/serial1$", HTTP_GET | HTTP_PUT, std::bind(&Serial1::request, this, std::placeholders::_1), NULL,
+              std::bind(&Serial1::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
+
 void REST::Serial1::request(AsyncWebServerRequest *request) {
     String value = "";
     bool json = false;

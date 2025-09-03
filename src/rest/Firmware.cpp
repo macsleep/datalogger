@@ -33,15 +33,33 @@ void REST::Firmware::begin(AsyncWebServer *httpd) {
 }
 
 void REST::Firmware::request(AsyncWebServerRequest *request) {
-    String file;
     String version = "???";
+    bool json = false;
+    JsonDocument document;
+    const AsyncWebHeader *header;
+    AsyncResponseStream *response;
+
+#ifdef GIT_HASH
+    version = GIT_HASH;
+#endif
 
     switch(request->method()) {
         case HTTP_GET:
-#ifdef GIT_HASH
-            version = GIT_HASH;
-#endif
-            request->send(200, "text/plain", version);
+            if(request->hasHeader("Accept")) {
+                header = request->getHeader("Accept");
+                if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+                    json = true;
+                }
+            }
+
+            if(json) {
+                response = request->beginResponseStream("application/json");
+                document["version"] = version;
+                serializeJson(document, *response);
+                request->send(response);
+            } else {
+                request->send(200, "text/plain", version);
+            }
             break;
 
         case HTTP_POST:
@@ -70,5 +88,5 @@ void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, siz
     if(final) {
         request->_tempFile.close();
     }
-
 }
+

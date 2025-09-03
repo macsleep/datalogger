@@ -32,8 +32,8 @@
 #include "Settings.h"
 #include "Timer_PFC8563.h"
 
-extern Timer_PFC8563 timer;
 extern Settings settings;
+extern Timer_PFC8563 timer;
 
 namespace REST {
     class Timer {

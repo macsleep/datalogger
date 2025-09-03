@@ -25,15 +25,14 @@
 
 #include <regex>
 #include <Arduino.h>
-#include <RTClib.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Utils.h"
 #include "Settings.h"
 
-extern Settings settings;
 extern Utils utils;
+extern Settings settings;
 
 namespace REST {
     class Config {

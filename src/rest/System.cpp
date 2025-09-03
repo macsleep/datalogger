@@ -34,7 +34,7 @@ void REST::System::begin(AsyncWebServer *httpd) {
 
 void REST::System::request(AsyncWebServerRequest *request) {
     String value = "";
-    bool ok = false;
+    bool json = false;
     JsonDocument document;
     DeserializationError error;
     const AsyncWebHeader *header;
@@ -46,11 +46,11 @@ void REST::System::request(AsyncWebServerRequest *request) {
             if(request->hasHeader("Accept")) {
                 header = request->getHeader("Accept");
                 if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
-                    ok = true;
+                    json = true;
                 }
             }
 
-            if(ok) {
+            if(json) {
                 response = request->beginResponseStream("application/json");
                 document["wifiSSID"] = settings.getWifiSSID();
                 document["wifiPassword"] = settings.getWifiPassword();

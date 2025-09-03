@@ -31,7 +31,7 @@ void REST::Timer::begin(AsyncWebServer *httpd) {
 }
 
 void REST::Timer::request(AsyncWebServerRequest *request) {
-    bool ok = false;
+    bool json = false, ok = false;
     uint8_t minutes;
     JsonDocument document;
     DeserializationError error;
@@ -45,11 +45,11 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
             if(request->hasHeader("Accept")) {
                 header = request->getHeader("Accept");
                 if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
-                    ok = true;
+                    json = true;
                 }
             }
 
-            if(ok) {
+            if(json) {
                 response = request->beginResponseStream("application/json");
                 document["minutes"] = minutes;
                 serializeJson(document, *response);

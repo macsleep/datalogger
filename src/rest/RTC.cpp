@@ -31,7 +31,7 @@ void REST::RTC::begin(AsyncWebServer *httpd) {
 }
 
 void REST::RTC::request(AsyncWebServerRequest *request) {
-    bool ok = false;
+    bool json = false, ok = false;
     uint32_t epoch;
     JsonDocument document;
     DeserializationError error;
@@ -45,11 +45,11 @@ void REST::RTC::request(AsyncWebServerRequest *request) {
             if(request->hasHeader("Accept")) {
                 header = request->getHeader("Accept");
                 if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
-                    ok = true;
+                    json = true;
                 }
             }
 
-            if(ok) {
+            if(json) {
                 response = request->beginResponseStream("application/json");
                 document["epoch"] = epoch;
                 serializeJson(document, *response);

@@ -25,15 +25,14 @@
 
 #include <regex>
 #include <Arduino.h>
-#include <RTClib.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Utils.h"
 #include "Settings.h"
 
-extern Settings settings;
 extern Utils utils;
+extern Settings settings;
 
 namespace REST {
     class Serial1 {
@@ -41,6 +40,7 @@ namespace REST {
             Serial1();
             void begin(AsyncWebServer * httpd);
             void request(AsyncWebServerRequest * request);
+            void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
         private:
     };

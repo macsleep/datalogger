@@ -44,7 +44,7 @@ void REST::Value::request(AsyncWebServerRequest *request) {
 
     if(request->hasHeader("Accept")) {
         header = request->getHeader("Accept");
-        if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {
+        if(std::regex_search(header->value().c_str(), std::regex("application/json"))) {
             json = true;
         }
     }

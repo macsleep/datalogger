@@ -54,7 +54,7 @@ String Settings::getWifiSSID(void) {
     String ssid = String(buffer);
 
     preferences.begin(SYSTEMNAME, RO_MODE);
-    String value = preferences.getString("wifiSSID", ssid);
+    String value = preferences.getString("wifiSSID", ssid.c_str());
     preferences.end();
     return (value);
 }

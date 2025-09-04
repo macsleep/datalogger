@@ -76,13 +76,13 @@ void REST::System::request(AsyncWebServerRequest *request) {
                     settings.setWifiSSID(request->getParam("wifiSSID", true)->value());
                 }
                 if(request->hasParam("wifiPassword", true)) {
-                    settings.setWifiSSID(request->getParam("wifiPassword", true)->value());
+                    settings.setWifiPassword(request->getParam("wifiPassword", true)->value());
                 }
                 if(request->hasParam("httpUser", true)) {
-                    settings.setWifiSSID(request->getParam("httpUser", true)->value());
+                    settings.setHttpUser(request->getParam("httpUser", true)->value());
                 }
                 if(request->hasParam("httpPassword", true)) {
-                    settings.setWifiSSID(request->getParam("httpPassword", true)->value());
+                    settings.setHttpPassword(request->getParam("httpPassword", true)->value());
                 }
             } else {
                 if(document["wifiSSID"].is<String>()) {

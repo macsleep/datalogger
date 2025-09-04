@@ -46,7 +46,7 @@ void REST::Modbus::request(AsyncWebServerRequest *request) {
 
     if(json) {
         response = request->beginResponseStream("application/json");
-        JsonArray array = document.to < JsonArray > ();
+        JsonArray array = document.to<JsonArray>();
         i = 0;
         while(settings.getModbusConfig(i, &config)) {
             array.add(i);

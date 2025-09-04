@@ -73,7 +73,7 @@ void REST::Timer::request(AsyncWebServerRequest *request) {
                     }
                 }
             } else {
-                if(document["minutes"].is < uint32_t > ()) {
+                if(document["minutes"].is<uint32_t>()) {
                     minutes = document["minutes"];
                     ok = true;
                 }

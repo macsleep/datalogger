@@ -35,7 +35,7 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
-    std::map < String, int >*logs = utils.listLong();
+    std::map<String, int> *logs = utils.listLong();
 
     if(request->hasHeader("Accept")) {
         header = request->getHeader("Accept");

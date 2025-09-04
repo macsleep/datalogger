@@ -71,7 +71,7 @@ void REST::RTC::request(AsyncWebServerRequest *request) {
                     ok = true;
                 }
             } else {
-                if(document["epoch"].is < uint32_t > ()) {
+                if(document["epoch"].is<uint32_t>()) {
                     epoch = document["epoch"];
                     ok = true;
                 }

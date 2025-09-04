@@ -73,7 +73,6 @@ void REST::Firmware::request(AsyncWebServerRequest *request) {
 }
 
 void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
-
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
         return request->requestAuthentication();
 

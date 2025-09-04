@@ -26,13 +26,6 @@ REST::API::API() {
 }
 
 void REST::API::begin(AsyncWebServer *httpd) {
-    basicAuth.setUsername("admin");
-    basicAuth.setPassword("admin");
-    basicAuth.setRealm("Datalogger");
-    basicAuth.setAuthFailureMessage("Authentication failed");
-    basicAuth.setAuthType(AsyncAuthType::AUTH_BASIC);
-    basicAuth.generateHash();
-
     restRTC = new REST::RTC();
     restRTC->begin(httpd);
 

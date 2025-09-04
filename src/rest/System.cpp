@@ -42,7 +42,6 @@ void REST::System::request(AsyncWebServerRequest *request) {
 
     switch(request->method()) {
         case HTTP_GET:
-
             if(request->hasHeader("Accept")) {
                 header = request->getHeader("Accept");
                 if(std::regex_match(header->value().c_str(), std::regex("application/json"))) {

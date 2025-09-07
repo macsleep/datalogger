@@ -42,6 +42,9 @@ void REST::System::request(AsyncWebServerRequest *request) {
 
     switch(request->method()) {
         case HTTP_GET:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
+
             if(request->hasHeader("Accept")) {
                 header = request->getHeader("Accept");
                 if(std::regex_search(header->value().c_str(), std::regex("application/json"))) {

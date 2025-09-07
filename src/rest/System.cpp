@@ -105,6 +105,11 @@ void REST::System::request(AsyncWebServerRequest *request) {
             request->send(200);
             break;
 
+        case HTTP_DELETE:
+            settings.reset();
+            request->send(200);
+            break;
+
         default:
             request->send(400);
             break;

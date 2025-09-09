@@ -143,6 +143,9 @@ std::map<String, int>* Utils::listLong(void) {
                     (*logs)[String(directory.name()) + String(file.name())] = file.size();
                 }
                 file.close();
+
+                // not pretty
+                esp_task_wdt_reset();
             }
             directory.close();
         }

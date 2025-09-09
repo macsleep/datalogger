@@ -28,6 +28,7 @@
 #include <Arduino.h>
 #include <SD.h>
 #include <HardwareSerial.h>
+#include <esp_task_wdt.h>
 
 enum class FinderType { FOO, T1, T2, T3, T_float };
 

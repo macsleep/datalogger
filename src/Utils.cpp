@@ -132,14 +132,15 @@ FinderType Utils::stringToType(String value) {
 
 std::map<String, int>* Utils::listLong(void) {
     File root, entry, directory, file;
+    const std::regex regular("^[0-9][0-9][0-9][0-9]$");
     std::map<String, int>* logs = new std::map < String, int >;
 
     root = SD.open("/");
     while(entry = root.openNextFile()) {
-        if(entry.isDirectory() && std::regex_match(entry.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
+        if(entry.isDirectory() && std::regex_match(entry.name(), regular)) {
             directory = SD.open("/" + String(entry.name()));
             while(file = directory.openNextFile()) {
-                if(!file.isDirectory() && std::regex_match(file.name(), std::regex("^[0-9][0-9][0-9][0-9]$"))) {
+                if(!file.isDirectory() && std::regex_match(file.name(), regular)) {
                     (*logs)[String(directory.name()) + String(file.name())] = file.size();
                 }
                 file.close();

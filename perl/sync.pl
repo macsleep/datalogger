@@ -3,13 +3,13 @@
 #
 # 11.5.2025 JS
 # 
-# This script downloads the log files stored on the SD card of the
-# data logger. It compares the size of local and remote log files
-# and only downloads files that are larger (or don't yet exist).
-# Log files are organised by year. For each year a directory is
-# created. Each log file in the directory is named after the month
-# and day of the month it was created (e.g. 0403 would be the 3.
-# of April). 
+# This script downloads the log files stored on the SD card
+# of the data logger. It compares the size of local and remote
+# log files and only downloads files that are larger (or don't
+# yet exist). Log files are organised by year, month and day.
+# For each year and month a directory is created. Each log file
+# in the directory is named after the day of the month it was
+# created. Example: 2025/03/21
 #
 
 use strict;
@@ -21,7 +21,7 @@ use LWP::UserAgent;
 
 my $user = "admin";
 my $password = "admin";
-my $url = 'http://10.0.0.1/api/logs';
+my $url = 'http://datalogger.local/api/logs';
 my $timeout = 10;
 
 my %opts;

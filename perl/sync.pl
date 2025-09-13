@@ -21,50 +21,49 @@ use LWP::UserAgent;
 
 my $user = "admin";
 my $password = "admin";
-my $url = 'http://datalogger.local/api/logs';
+my $url = 'http://10.0.0.1/api/logs';
 my $timeout = 10;
 
 my %opts;
 if(!getopts('dy:', \%opts)) {
-	printf("syntax: $0 -d -y <year>\n");
-	printf("  -d	: dry run, don't actually get any files\n");
-	printf("  -y <year> : only get files for a certain year\n");
-	exit 1;
-}
-defined $opts{'y'} and $url .= "?year=" . $opts{'y'};
-
-sub logs_list {
-	my $request = HTTP::Request->new('GET', $url);
-	my $useragent = LWP::UserAgent->new();
-	$useragent->timeout($timeout);
-	my $response = $useragent->simple_request($request);
-	$response->is_success or die(Dumper($response->status_line()));
-	my @data = split(/\r\n/, $response->decoded_content);
-	return \@data;
+    printf("syntax: $0 -d\n");
+    printf("  -d    : dry run, don't actually get any files\n");
+    exit 1;
 }
 
 sub logs_get {
-	my $log = @_ ? shift : "0";
-	my $destination = @_ ? shift : "0";
+    my $path = @_ ? shift : "";
 
-	my $request = HTTP::Request->new('GET', $url . "/" . $log);
-	my $useragent = LWP::UserAgent->new();
-	$useragent->timeout($timeout);
-	my $response = $useragent->simple_request($request, $destination);
-	$response->is_success or die(Dumper($response->status_line()));
+    my $request = HTTP::Request->new('GET', $url . $path);
+    my $useragent = LWP::UserAgent->new();
+    $useragent->timeout($timeout);
+    my $response = $useragent->simple_request($request);
+    $response->is_success or die(Dumper($response->status_line()));
+    my @data = split(/\r\n/, $response->decoded_content);
+    return @data;
 }
 
-foreach (@{logs_list()}) {
-	my ($log, $size) = split;
-	my $file = substr($log, 4, 4);
-	my $directory = substr($log, 0, 4);
-	$opts{'d'} or -e $directory or -d $directory or mkdir $directory;
-	my $destination = $directory . "/" . $file;
-	my $fsize = -f $destination ? -s $destination : 0;
-	if($fsize < $size) {
-		print $destination . "\n";
-		$opts{'d'} or logs_get($log, $destination);
-	}
+foreach my $year (logs_get()) {
+    foreach my $month (logs_get("/" . $year)) {
+        foreach my $day (logs_get("/" . $year . "/" . $month)) {
+            my ($file, $size) = split(/ /, $day);
+            my $path = $year;
+            $opts{'d'} or -e $path or -d $path or mkdir $path;
+            $path = $year . "/" . $month;
+            $opts{'d'} or -e $path or -d $path or mkdir $path;
+            $path = $year . "/" . $month . "/" . $file;
+            my $fsize = -f $path ? -s $path : 0;
+            if($fsize < $size) {
+                print $path . "\n";
+                next if $opts{'d'};
+                my $request = HTTP::Request->new('GET', $url . "/" . $path);
+                my $useragent = LWP::UserAgent->new();
+                $useragent->timeout($timeout);
+                my $response = $useragent->simple_request($request, $path);
+                $response->is_success or die(Dumper($response->status_line()));
+            }
+        }
+    }
 }
 
 exit 0;

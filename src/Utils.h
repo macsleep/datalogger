@@ -23,6 +23,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <set>
 #include <map>
 #include <regex>
 #include <Arduino.h>
@@ -39,7 +40,8 @@ class Utils {
         SerialConfig stringToConfig(String value);
         String typeToString(FinderType value);
         FinderType stringToType(String value);
-        std::map<String, int>* listLong(void);
+        std::set<String>* listDirs(String path, const std::regex re);
+        std::map<String, int>* listFiles(String path, const std::regex re);
 
     private:
 };

@@ -20,22 +20,23 @@
   this software.
  */
 
-#include "Logs.h"
+#include "Year.h"
 
-REST::Logs::Logs() {
+REST::Year::Year() {
 }
 
-void REST::Logs::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&Logs::request, this, std::placeholders::_1));
+void REST::Year::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])$", HTTP_GET, std::bind(&Year::request, this, std::placeholders::_1));
 }
 
-void REST::Logs::request(AsyncWebServerRequest *request) {
+void REST::Year::request(AsyncWebServerRequest *request) {
     bool json = false;
     JsonDocument document;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
-    std::set<String> *years = utils.listDirs("/", std::regex("^[0-9][0-9][0-9][0-9]$"));
+    String path = "/" + request->pathArg(0);
+    std::set<String> *months = utils.listDirs(path, std::regex("^[0-9][0-9]$"));
 
     if(request->hasHeader("Accept")) {
         header = request->getHeader("Accept");
@@ -47,15 +48,15 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
     if(json) {
         response = request->beginResponseStream("application/json");
         JsonArray array = document.to<JsonArray>();
-        for(auto year:(*years)) array.add(year);
+        for(auto month:(*months)) array.add(month);
         serializeJson(document, *response);
         request->send(response);
     } else {
         response = request->beginResponseStream("text/html");
-        for(auto year:(*years)) response->println(year);
+        for(auto month:(*months)) response->println(month);
         request->send(response);
     }
 
-    (*years).clear();
+    (*months).clear();
 }
 

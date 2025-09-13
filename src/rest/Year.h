@@ -20,26 +20,25 @@
   this software.
  */
 
-#ifndef LOGFILE_H
-#define LOGFILE_H
+#ifndef YEAR_H
+#define YEAR_H
 
-#include <regex>
 #include <Arduino.h>
-#include <SD.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include "Settings.h"
+#include "Utils.h"
 
+extern Utils utils;
 extern Settings settings;
 
 namespace REST {
-    class Logfile {
+    class Year {
         public:
-            Logfile();
+            Year();
             void begin(AsyncWebServer * httpd);
             void request(AsyncWebServerRequest * request);
-            void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
 
         private:
     };

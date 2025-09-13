@@ -130,30 +130,35 @@ FinderType Utils::stringToType(String value) {
     return (type);
 }
 
-std::map<String, int>* Utils::listLong(void) {
-    File root, entry, directory, file;
-    const std::regex regular("^[0-9][0-9][0-9][0-9]$");
-    std::map<String, int>* logs = new std::map < String, int >;
+std::set<String>* Utils::listDirs(String path, const std::regex re) {
+    File directory, entry;
+    std::set<String>* list = new std::set<String>;
 
-    root = SD.open("/");
-    while(entry = root.openNextFile()) {
-        if(entry.isDirectory() && std::regex_match(entry.name(), regular)) {
-            directory = SD.open("/" + String(entry.name()));
-            while(file = directory.openNextFile()) {
-                if(!file.isDirectory() && std::regex_match(file.name(), regular)) {
-                    (*logs)[String(directory.name()) + String(file.name())] = file.size();
-                }
-                file.close();
-
-                // not pretty
-                esp_task_wdt_reset();
-            }
-            directory.close();
+    directory = SD.open(path);
+    while(entry = directory.openNextFile()) {
+        if(entry.isDirectory() && std::regex_match(entry.name(), re)) {
+            list->insert(String(entry.name()));
         }
         entry.close();
     }
-    root.close();
+    directory.close();
 
-    return (logs);
+    return(list);
+}
+
+std::map<String, int>* Utils::listFiles(String path, const std::regex re) {
+    File directory, entry;
+    std::map<String, int>* list = new std::map<String, int>;
+
+    directory = SD.open(path);
+    while(entry = directory.openNextFile()) {
+        if(!entry.isDirectory() && std::regex_match(entry.name(), re)) {
+            (*list)[String(entry.name())] = entry.size();
+        }
+        entry.close();
+    }
+    directory.close();
+
+    return (list);
 }
 

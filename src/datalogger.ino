@@ -64,12 +64,16 @@ bool writeLogfile() {
     // rtc
     DateTime now = rtc.now();
 
-    // directory
+    // year directory
     sprintf(path, "/%04d", now.year());
     if(!SD.exists(path)) SD.mkdir(path);
 
+    // month directory
+    sprintf(path, "/%04d/%02d", now.year(), now.month());
+    if(!SD.exists(path)) SD.mkdir(path);
+
     // file
-    n = snprintf(path, sizeof(path), "/%04d/%02d%02d", now.year(), now.month(), now.day());
+    n = snprintf(path, sizeof(path), "/%04d/%02d/%02d", now.year(), now.month(), now.day());
     if(n < 0) return (false);
     if(File file = SD.open(path, FILE_APPEND)) {
 
@@ -83,10 +87,8 @@ bool writeLogfile() {
         i = 0;
         while(settings.getModbusConfig(i++, &config)) {
             if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) continue;
-            String value = energyMeter.getModbus(config.deviceAddress,
-                                                 config.functionCode,
-                                                 config.registerAddress,
-                                                 config.valueType);
+            String value = energyMeter.getModbus(config.deviceAddress, config.functionCode,
+                                                 config.registerAddress, config.valueType);
             if(value.length() > 0) line += " " + value;
         }
 

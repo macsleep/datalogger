@@ -35,8 +35,14 @@ void REST::API::begin(AsyncWebServer *httpd) {
     restLogs = new REST::Logs();
     restLogs->begin(httpd);
 
-    restLogfile = new REST::Logfile();
-    restLogfile->begin(httpd);
+    restYear = new REST::Year();
+    restYear->begin(httpd);
+
+    restMonth = new REST::Month();
+    restMonth->begin(httpd);
+
+    restDay = new REST::Day();
+    restDay->begin(httpd);
 
     restFirmware = new REST::Firmware();
     restFirmware->begin(httpd);

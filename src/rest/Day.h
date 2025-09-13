@@ -20,45 +20,28 @@
   this software.
  */
 
-#ifndef API_H
-#define API_H
+#ifndef DAY_H
+#define DAY_H
 
 #include <regex>
 #include <Arduino.h>
+#include <SD.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include "rest/RTC.h"
-#include "rest/Timer.h"
-#include "rest/Logs.h"
-#include "rest/Year.h"
-#include "rest/Month.h"
-#include "rest/Day.h"
-#include "rest/Firmware.h"
-#include "rest/System.h"
-#include "rest/Modbus.h"
-#include "rest/Value.h"
-#include "rest/Config.h"
-#include "rest/Serial1.h"
+#include <ArduinoJson.h>
+#include "Settings.h"
+
+extern Settings settings;
 
 namespace REST {
-    class API {
+    class Day {
         public:
-            API();
+            Day();
             void begin(AsyncWebServer * httpd);
+            void request(AsyncWebServerRequest * request);
+            void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
 
         private:
-            RTC *restRTC;
-            Timer *restTimer;
-            Logs *restLogs;
-            Year *restYear;
-            Month *restMonth;
-            Day *restDay;
-            Firmware *restFirmware;
-            System *restSystem;
-            Modbus *restModbus;
-            Value *restValue;
-            Config *restConfig;
-            Serial1 *restSerial1;
     };
 }
 #endif

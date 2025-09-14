@@ -25,9 +25,10 @@ my $url = 'http://datalogger.local/api/logs';
 my $timeout = 10;
 
 my %opts;
-if(!getopts('dy:', \%opts)) {
-    printf("syntax: $0 -d\n");
+if(!getopts('hdy:', \%opts) or $opts{'h'}) {
+    printf("syntax: $0 -d -y <year>\n");
     printf("  -d  : dry run, don't actually get any files\n");
+    printf("  -y  : only sync files for that year\n");
     exit 1;
 }
 
@@ -44,14 +45,15 @@ sub logs_get {
 }
 
 foreach my $year (logs_get("")) {
+    $opts{'y'} and $opts{'y'} eq $year or next;
     foreach my $month (logs_get("/" . $year)) {
-        foreach my $day (logs_get("/" . $year . "/" . $month)) {
-            my ($file, $size) = split(/ /, $day);
+        foreach (logs_get("/" . $year . "/" . $month)) {
+            my ($day, $size) = split / /;
             my $path = $year;
             $opts{'d'} or -e $path or -d $path or mkdir $path;
             $path = $year . "/" . $month;
             $opts{'d'} or -e $path or -d $path or mkdir $path;
-            $path = $year . "/" . $month . "/" . $file;
+            $path = $year . "/" . $month . "/" . $day;
             my $fsize = -f $path ? -s $path : 0;
             if($fsize < $size) {
                 print $path . "\n";

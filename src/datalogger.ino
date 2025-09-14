@@ -65,11 +65,11 @@ bool writeLogfile() {
     DateTime now = rtc.now();
 
     // year directory
-    sprintf(path, "/%04d", now.year());
+    snprintf(path, sizeof(path), "/%04d", now.year());
     if(!SD.exists(path)) SD.mkdir(path);
 
     // month directory
-    sprintf(path, "/%04d/%02d", now.year(), now.month());
+    snprintf(path, sizeof(path), "/%04d/%02d", now.year(), now.month());
     if(!SD.exists(path)) SD.mkdir(path);
 
     // file

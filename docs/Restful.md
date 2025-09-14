@@ -31,20 +31,35 @@ curl -u "admin:admin" -X PUT -d "minutes=5" http://datalogger.local/api/timer
 </pre>
 
 ## Logs
-To get a list of all log files stored on the SD card the following GET returns a list of file ids and their size:
+To get access to the log files have to first query the available years:
 <pre>
 curl http://datalogger.local/api/logs
-20250202 16395
-20250203 22488
-20250204 22953
-.
-.
-.
+2025
 </pre>
 
-Downloading a log file is a simple GET on the file id:
+From there you can check the available months in that year:
 <pre>
-curl http://datalogger.local/api/logs/20250421
+curl http://datalogger.local/api/logs/2025
+04
+05
+06
+</pre>
+
+And lastly you list the daily log files with their file size:
+<pre>
+http://datalogger.local/api/logs/2025/04
+01 62351
+02 63082
+03 63171
+04 62853
+.
+.
+.
+</pre> 
+
+Downloading a log file is a simple GET on the file:
+<pre>
+curl http://datalogger.local/api/logs/2025/04/21
 20250421000000 54505 1221119 237 555788 0.2
 20250421000100 54505 1221119 237 555791 0.2
 20250421000200 54505 1221119 237 555793 0.3
@@ -55,12 +70,12 @@ curl http://datalogger.local/api/logs/20250421
 
 Uploading to an existing log file is a POST:
 <pre>
-curl -u "admin:admin" -F "file=@20250421" http://datalogger.local/api/logs/20250421
+curl -u "admin:admin" -F "file=@21" http://datalogger.local/api/logs/2025/04/21
 </pre>  
 
-and deleting the log file is a DELETE on the following URL:
+And deleting a log file is a DELETE with authentication:
 <pre>
-curl -u "admin:admin" -X DELETE http://datalogger.local/api/logs/20250421
+curl -u "admin:admin" -X DELETE http://datalogger.local/api/logs/2025/04/21
 </pre>
 
 ## System

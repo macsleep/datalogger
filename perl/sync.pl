@@ -45,7 +45,7 @@ sub logs_get {
 }
 
 foreach my $year (logs_get("")) {
-    $opts{'y'} and $opts{'y'} eq $year or next;
+    next if $opts{'y'} and $opts{'y'} ne $year;
     foreach my $month (logs_get("/" . $year)) {
         foreach (logs_get("/" . $year . "/" . $month)) {
             my ($day, $size) = split / /;

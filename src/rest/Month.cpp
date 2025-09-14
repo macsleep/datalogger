@@ -26,7 +26,7 @@ REST::Month::Month() {
 }
 
 void REST::Month::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])\\/([0-9][0-9])$", HTTP_GET,
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])\\/([0-9][0-9])$", HTTP_GET | HTTP_DELETE,
               std::bind(&Month::request, this, std::placeholders::_1));
 }
 
@@ -35,29 +35,46 @@ void REST::Month::request(AsyncWebServerRequest *request) {
     JsonDocument document;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
-
     String path = "/" + request->pathArg(0) + "/" + request->pathArg(1);
-    std::map<String, int> *days = utils.listFiles(path, std::regex("^[0-9][0-9]$"));
+    std::map<String, int> *days;
 
-    if(request->hasHeader("Accept")) {
-        header = request->getHeader("Accept");
-        if(std::regex_search(header->value().c_str(), std::regex("application/json"))) {
-            json = true;
-        }
+    switch(request->method()) {
+        case HTTP_GET:
+            days = utils.listFiles(path, std::regex("^[0-9][0-9]$"));
+
+            if(request->hasHeader("Accept")) {
+                header = request->getHeader("Accept");
+                if(std::regex_search(header->value().c_str(), std::regex("application/json"))) {
+                    json = true;
+                }
+            }
+
+            if(json) {
+                response = request->beginResponseStream("application/json");
+                for(auto day:(*days)) document[day.first] = day.second;
+                serializeJson(document, *response);
+                request->send(response);
+            } else {
+                response = request->beginResponseStream("text/html");
+                for(auto day:(*days)) response->println(day.first + " " + day.second);
+                request->send(response);
+            }
+
+            (*days).clear();
+            break;
+
+        case HTTP_DELETE:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
+
+            if(SD.exists(path) && SD.rmdir(path)) {
+                request->send(200);
+            } else request->send(400);
+            break;
+
+        default:
+            request->send(400);
+            break;
     }
-
-    if(json) {
-        response = request->beginResponseStream("application/json");
-        for(auto day:(*days)) document[day.first] = day.second;
-        serializeJson(document, *response);
-        request->send(response);
-    } else {
-        response = request->beginResponseStream("text/html");
-        for(auto day:(*days)) response->println(day.first + " " + day.second);
-        request->send(response);
-    }
-
-    (*days).clear();
-
 }
 

@@ -26,7 +26,8 @@ REST::Year::Year() {
 }
 
 void REST::Year::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])$", HTTP_GET, std::bind(&Year::request, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])$", HTTP_GET | HTTP_DELETE,
+              std::bind(&Year::request, this, std::placeholders::_1));
 }
 
 void REST::Year::request(AsyncWebServerRequest *request) {
@@ -34,29 +35,47 @@ void REST::Year::request(AsyncWebServerRequest *request) {
     JsonDocument document;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
-
     String path = "/" + request->pathArg(0);
-    std::set<String> *months = utils.listDirs(path, std::regex("^[0-9][0-9]$"));
+    std::set<String> *months;
 
-    if(request->hasHeader("Accept")) {
-        header = request->getHeader("Accept");
-        if(std::regex_search(header->value().c_str(), std::regex("application/json"))) {
-            json = true;
-        }
+    switch(request->method()) {
+        case HTTP_GET:
+            months = utils.listDirs(path, std::regex("^[0-9][0-9]$"));
+
+            if(request->hasHeader("Accept")) {
+                header = request->getHeader("Accept");
+                if(std::regex_search(header->value().c_str(), std::regex("application/json"))) {
+                    json = true;
+                }
+            }
+
+            if(json) {
+                response = request->beginResponseStream("application/json");
+                JsonArray array = document.to<JsonArray>();
+                for(auto month:(*months)) array.add(month);
+                serializeJson(document, *response);
+                request->send(response);
+            } else {
+                response = request->beginResponseStream("text/html");
+                for(auto month:(*months)) response->println(month);
+                request->send(response);
+            }
+
+            (*months).clear();
+            break;
+
+        case HTTP_DELETE:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
+
+            if(SD.exists(path) && SD.rmdir(path)) {
+                request->send(200);
+            } else request->send(400);
+            break;
+
+        default:
+            request->send(400);
+            break;
     }
-
-    if(json) {
-        response = request->beginResponseStream("application/json");
-        JsonArray array = document.to<JsonArray>();
-        for(auto month:(*months)) array.add(month);
-        serializeJson(document, *response);
-        request->send(response);
-    } else {
-        response = request->beginResponseStream("text/html");
-        for(auto month:(*months)) response->println(month);
-        request->send(response);
-    }
-
-    (*months).clear();
 }
 

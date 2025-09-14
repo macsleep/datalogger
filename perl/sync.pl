@@ -27,7 +27,7 @@ my $timeout = 10;
 my %opts;
 if(!getopts('dy:', \%opts)) {
     printf("syntax: $0 -d\n");
-    printf("  -d    : dry run, don't actually get any files\n");
+    printf("  -d  : dry run, don't actually get any files\n");
     exit 1;
 }
 

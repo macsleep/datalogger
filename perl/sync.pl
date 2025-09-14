@@ -43,7 +43,7 @@ sub logs_get {
     return @data;
 }
 
-foreach my $year (logs_get()) {
+foreach my $year (logs_get("")) {
     foreach my $month (logs_get("/" . $year)) {
         foreach my $day (logs_get("/" . $year . "/" . $month)) {
             my ($file, $size) = split(/ /, $day);

@@ -46,8 +46,9 @@ void REST::Logs::request(AsyncWebServerRequest *request) {
 
     if(json) {
         response = request->beginResponseStream("application/json");
-        JsonArray array = document.to<JsonArray>();
+        JsonArray array = document["years"].to<JsonArray>();
         for(auto year:(*years)) array.add(year);
+        document.shrinkToFit();
         serializeJson(document, *response);
         request->send(response);
     } else {

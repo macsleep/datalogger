@@ -51,7 +51,9 @@ void REST::Month::request(AsyncWebServerRequest *request) {
 
             if(json) {
                 response = request->beginResponseStream("application/json");
-                for(auto day:(*days)) document[day.first] = day.second;
+                JsonObject objects = document["days"].to<JsonObject>();
+                for(auto day:(*days)) objects[day.first] = day.second;
+                document.shrinkToFit();
                 serializeJson(document, *response);
                 request->send(response);
             } else {

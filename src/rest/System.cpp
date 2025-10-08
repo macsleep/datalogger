@@ -26,7 +26,7 @@ REST::System::System() {
 }
 
 void REST::System::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/system$", HTTP_GET | HTTP_PUT | HTTP_DELETE,
+    httpd->on("^\\/api\\/system\\/?$", HTTP_GET | HTTP_PUT | HTTP_DELETE,
               std::bind(&System::request, this, std::placeholders::_1), NULL,
               std::bind(&System::body, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));

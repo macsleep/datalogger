@@ -26,7 +26,7 @@ REST::Firmware::Firmware() {
 }
 
 void REST::Firmware::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/firmware$", HTTP_GET | HTTP_POST,
+    httpd->on("^\\/api\\/firmware\\/?$", HTTP_GET | HTTP_POST,
               std::bind(&REST::Firmware::request, this, std::placeholders::_1),
               std::bind(&REST::Firmware::upload, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));

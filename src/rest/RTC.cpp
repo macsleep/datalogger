@@ -26,7 +26,7 @@ REST::RTC::RTC() {
 }
 
 void REST::RTC::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/rtc$", HTTP_GET | HTTP_PUT, std::bind(&RTC::request, this, std::placeholders::_1), NULL,
+    httpd->on("^\\/api\\/rtc\\/?$", HTTP_GET | HTTP_PUT, std::bind(&RTC::request, this, std::placeholders::_1), NULL,
               std::bind(&RTC::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
 }
 

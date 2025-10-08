@@ -26,7 +26,7 @@ REST::Day::Day() {
 }
 
 void REST::Day::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])\\/([0-9][0-9])\\/([0-9][0-9])$", HTTP_GET | HTTP_DELETE | HTTP_POST,
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])\\/([0-9][0-9])\\/([0-9][0-9])\\/?$", HTTP_GET | HTTP_DELETE | HTTP_POST,
               std::bind(&Day::request, this, std::placeholders::_1),
               std::bind(&Day::upload, this, std::placeholders::_1, std::placeholders::_2,
                         std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));

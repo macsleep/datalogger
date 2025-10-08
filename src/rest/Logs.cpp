@@ -26,7 +26,7 @@ REST::Logs::Logs() {
 }
 
 void REST::Logs::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs$", HTTP_GET, std::bind(&Logs::request, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/logs\\/?$", HTTP_GET, std::bind(&Logs::request, this, std::placeholders::_1));
 }
 
 void REST::Logs::request(AsyncWebServerRequest *request) {

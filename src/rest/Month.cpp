@@ -26,7 +26,7 @@ REST::Month::Month() {
 }
 
 void REST::Month::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])\\/([0-9][0-9])$", HTTP_GET | HTTP_DELETE,
+    httpd->on("^\\/api\\/logs\\/([0-9][0-9][0-9][0-9])\\/([0-9][0-9])\\/?$", HTTP_GET | HTTP_DELETE,
               std::bind(&Month::request, this, std::placeholders::_1));
 }
 

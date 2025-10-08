@@ -26,7 +26,7 @@ REST::Modbus::Modbus() {
 }
 
 void REST::Modbus::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/modbus$", HTTP_GET, std::bind(&Modbus::request, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/?$", HTTP_GET, std::bind(&Modbus::request, this, std::placeholders::_1));
 }
 
 void REST::Modbus::request(AsyncWebServerRequest *request) {

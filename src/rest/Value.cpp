@@ -26,7 +26,7 @@ REST::Value::Value() {
 }
 
 void REST::Value::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/modbus\\/([0-9]+)$", HTTP_GET, std::bind(&Value::request, this, std::placeholders::_1));
+    httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/?$", HTTP_GET, std::bind(&Value::request, this, std::placeholders::_1));
 }
 
 void REST::Value::request(AsyncWebServerRequest *request) {

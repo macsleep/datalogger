@@ -54,7 +54,8 @@ void REST::Month::request(AsyncWebServerRequest *request) {
                 JsonArray array = document["days"].to<JsonArray>();
                 for(auto day:(*days)) {
                     JsonObject object = array.add<JsonObject>();
-                    object[day.first] = day.second;
+                    object["file"] = day.first;
+                    object["size"] = day.second;
                 }
                 document.shrinkToFit();
                 serializeJson(document, *response);

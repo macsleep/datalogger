@@ -23,6 +23,8 @@
 #include <Arduino.h>
 #include <RTClib.h>
 #include <SD.h>
+#include <FS.h>
+#include <SPIFFS.h>
 #include <Update.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -149,6 +151,7 @@ void setup() {
     // peripheral
     ok &= rtc.begin();
     ok &= SD.begin();
+    ok &= SPIFFS.begin();
     if(!ok) {
         // sleep
         bitmask = (1ULL << BUTTON);
@@ -218,6 +221,7 @@ void setup() {
         // http
         httpd = new AsyncWebServer(80);
         restAPI.begin(httpd);
+        httpd->serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
         httpd->onNotFound([](AsyncWebServerRequest * request) {
             request->send(404, "text/plain", "Not found");
         });

@@ -7,4 +7,6 @@ clean:
 	pio run -t clean
 erase:
 	pio run -t erase
+fs:
+	pio run -t uploadfs
 

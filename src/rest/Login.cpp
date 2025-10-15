@@ -26,23 +26,13 @@ REST::Login::Login() {
 }
 
 void REST::Login::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/login\\/?$", HTTP_POST, std::bind(&Login::request, this, std::placeholders::_1), NULL,
-              std::bind(&REST::Login::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+    httpd->on("^\\/api\\/login\\/?$", HTTP_POST, std::bind(&Login::request, this, std::placeholders::_1), NULL, NULL);
 }
 
 void REST::Login::request(AsyncWebServerRequest *request) {
     if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
         return request->requestAuthentication();
-    request->send(200);
-}
 
-void REST::Login::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-    if(!index) {
-        request->_tempObject = malloc(total + 1);
-        bzero(request->_tempObject, total + 1);
-    }
-    if(len && request->_tempObject != NULL) {
-        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
-    }
+    request->send(200);
 }
 

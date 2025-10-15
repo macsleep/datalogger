@@ -61,4 +61,7 @@ void REST::API::begin(AsyncWebServer *httpd) {
 
     restSerial1 = new REST::Serial1();
     restSerial1->begin(httpd);
+
+    restLogin = new REST::Login();
+    restLogin->begin(httpd);
 }

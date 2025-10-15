@@ -20,47 +20,29 @@
   this software.
  */
 
-#ifndef API_H
-#define API_H
+#include "Login.h"
 
-#include <regex>
-#include <Arduino.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include "rest/RTC.h"
-#include "rest/Timer.h"
-#include "rest/Logs.h"
-#include "rest/Year.h"
-#include "rest/Month.h"
-#include "rest/Day.h"
-#include "rest/Firmware.h"
-#include "rest/System.h"
-#include "rest/Modbus.h"
-#include "rest/Value.h"
-#include "rest/Config.h"
-#include "rest/Serial1.h"
-#include "rest/Login.h"
-
-namespace REST {
-    class API {
-        public:
-            API();
-            void begin(AsyncWebServer * httpd);
-
-        private:
-            RTC *restRTC;
-            Timer *restTimer;
-            Logs *restLogs;
-            Year *restYear;
-            Month *restMonth;
-            Day *restDay;
-            Firmware *restFirmware;
-            System *restSystem;
-            Modbus *restModbus;
-            Value *restValue;
-            Config *restConfig;
-            Serial1 *restSerial1;
-            Login *restLogin;
-    };
+REST::Login::Login() {
 }
-#endif
+
+void REST::Login::begin(AsyncWebServer *httpd) {
+    httpd->on("^\\/api\\/login\\/?$", HTTP_POST, std::bind(&Login::request, this, std::placeholders::_1), NULL,
+              std::bind(&REST::Login::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+}
+
+void REST::Login::request(AsyncWebServerRequest *request) {
+    if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+        return request->requestAuthentication();
+    request->send(200);
+}
+
+void REST::Login::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    if(!index) {
+        request->_tempObject = malloc(total + 1);
+        bzero(request->_tempObject, total + 1);
+    }
+    if(len && request->_tempObject != NULL) {
+        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
+    }
+}
+

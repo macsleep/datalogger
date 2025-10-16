@@ -10,15 +10,16 @@
 
 <body>
     <div id="app">
-        <header>
+        <div>
             <h2>Data Logger</h2>
-        </header>
+            <button id="loginButton" :disabled="authenticated" @click="doLogin">Login</button>
+        </div>
+        <div>
 
-        <section>
-        </section>
-
-        <footer>
-        </footer>
+        </div>
+        <div>
+            <p>Firmware Version: {{ firmwareVersion }}</p>
+        </div>
     </div>
 
     <!-- vendor -->

@@ -10,16 +10,86 @@
 
 <body>
     <div id="app">
-        <div>
-            <h2>Data Logger</h2>
-            <button id="loginButton" :disabled="authenticated" @click="doLogin">Login</button>
-        </div>
-        <div>
-
-        </div>
-        <div>
-            <p>Firmware Version: {{ firmwareVersion }}</p>
-        </div>
+        <table border=0 cellpadding=0 width=100%>
+            <tr>
+                <td>
+                    <table border=0 cellpadding=0 width=100%>
+                        <tr>
+                            <td width="20%" align=center>
+                                <!-- empty -->
+                            </td>
+                            <td width="60%" align=center>
+                                <h2>Data Logger</h2>
+                            </td>
+                            <td width="20%" align=center>
+                                <button id="loginButton" :disabled="authenticated" @click="doLogin">Login</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <hr width="95%">
+                    <table nowrap border=0 cellspacing=10 cellpadding=3>
+                        <tr>
+                            <td nowrap align=right valign=TOP>
+                                <B>Data Logger UTC Time:</B>
+                            </td>
+                            <td nowrap align=left valign=TOP>
+                                {{ dateRTC }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td nowrap align=right valign=TOP>
+                                <B>Browser UTC Time:</B>
+                            </td>
+                            <td nowrap align=left valign=TOP>
+                                {{ dateBrowser }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=2 align=center valign=TOP>
+                                <button id="syncButton" :disabled="isDisabled"
+                                    @click="syncronizeDate">Syncronize</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <hr width="95%">
+                    <table nowrap border=0 cellspacing=10 cellpadding=3>
+                        <tr>
+                            <td nowrap align=right valign=TOP>
+                                <B>Timer in Minutes:</B>
+                            </td>
+                            <td nowrap align=left valign=TOP>
+                                <input id="timerInput" type="number" min="0" max="255" v-model.number="timerMinutes">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan=2 align=center valign=TOP>
+                                <button id="setTimer" :disabled="isDisabled" @click="setTimer">Save</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <hr width="95%">
+                    <table border=0 cellpadding=0 width=100%>
+                        <tr>
+                            <td align=center>
+                                <p>Firmware Version: {{ firmware }}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <!-- vendor -->

@@ -1,51 +1,72 @@
 
-axios.defaults.timeout = 60000;
-axios.defaults.baseURL = "http://datalogger.local";
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+import API from './API.js';
+
+const api = new API();
 
 new Vue({
 	el: '#app',
 
 	data() {
+		intervalId: null;
 		return {
+			dateBrowser: null,
+			dateRTC: null,
+			timerMinutes: null,
 			authenticated: false,
-			firmwareVersion: "???",
+			firmware: null,
 		}
 	},
 
 	mounted() {
+		this.intervalId = setInterval(this.getDate, 1000);
 	},
 
 	beforeUnmount() {
+		if (this.intervalId) {
+			clearInterval(this.intervalId);
+		}
 	},
 
 	created() {
-		this.getFirmware();
+		this.getFirmwareVersion();
+		this.getTimer();
 	},
 
 	computed: {
+		isDisabled() {
+			return !this.authenticated
+		}
 	},
 
 	methods: {
-		getFirmware() {
-			axios.get('/api/firmware')
-				.then(response => {
-					this.firmwareVersion = response.data.version;
-				})
-				.catch(error => {
-					console.log(error);
+		getDate() {
+			api.getRTC()
+				.then(data => {
+					this.dateBrowser = new Date().toUTCString();
+					this.dateRTC = new Date(data.epoch * 1000).toUTCString();
 				});
+		},
+
+		syncronizeDate() {
+			let seconds = Math.round(new Date().getTime() / 1000);
+			api.putRTC(seconds);
+		},
+
+		getTimer() {
+			api.getTimer()
+			.then(data => this.timerMinutes = data.minutes);
+		},
+
+		setTimer() {
+			api.putTimer(Number(this.timerMinutes));
+		},
+
+		getFirmwareVersion() {
+			api.getFirmware().then(data => this.firmware = data.version);
 		},
 
 		doLogin() {
-			axios.post('/api/login', null)
-				.then(response => {
-					this.authenticated = true;
-				})
-				.catch(error => {
-					this.authenticated = false;
-				});
+			api.postLogin().then(data => this.authenticated = data);
 		},
-
-	},
+	}
 });

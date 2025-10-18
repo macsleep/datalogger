@@ -2,14 +2,8 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#app {
-    display: inlineflex;
-    background-color: white;
+/*
+th, td {
+    border: 1px solid black;
 }
-
-#app div {
-    background-color: #f1f1f1;
-    margin: 10px;
-    padding: 10px;
-    text-align: center;
-}
+*/

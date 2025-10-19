@@ -71,7 +71,7 @@
                                 <b>Timer in Minutes:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input type="number" min="0" max="255" v-model.number="timerMinutes">
+                                <input type="number" min="0" max="255" v-model="timerMinutes">
                             </td>
                         </tr>
                         <tr>
@@ -93,7 +93,7 @@
                                 <b>WiFi SSID:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" v-model="wifiSSID">
+                                <input :disabled="isDisabled" v-model.trim="wifiSSID">
                             </td>
                         </tr>
                         <tr>
@@ -109,7 +109,7 @@
                                 <b>HTTP User:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" v-model="httpUser">
+                                <input :disabled="isDisabled" v-model.trim="httpUser">
                             </td>
                         </tr>
                         <tr>

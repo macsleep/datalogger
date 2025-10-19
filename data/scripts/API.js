@@ -46,6 +46,41 @@ class API {
 			})
 	}
 
+	getSystem() {
+		return axios.get('/api/system')
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			})
+	}
+
+	putSystem(wifiSSID, wifiPassword, httpUser, httpPassword) {
+		return axios.put('/api/system', {
+				wifiSSID: wifiSSID,
+				wifiPassword: wifiPassword,
+				httpUser: httpUser,
+				httpPassword: httpPassword,
+			})
+			.then(response => {
+				console.log(response);
+			})
+			.catch(error => {
+				console.log(error);
+			})
+	}
+
+	deleteSystem() {
+		return axios.delete('/api/system')
+			.then(response => {
+				console.log(response);
+			})
+			.catch(error => {
+				console.log(error);
+			})
+	}
+
 	getFirmware() {
 		return axios.get('/api/firmware')
 			.then(response => {

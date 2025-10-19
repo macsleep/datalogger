@@ -31,7 +31,7 @@ curl -u "admin:admin" -X PUT -d "minutes=5" http://datalogger.local/api/timer
 </pre>
 
 ## Logs
-To get access to the log files have to first query the available years:
+To get access to the log files you have to first query the available years:
 <pre>
 curl http://datalogger.local/api/logs
 2025
@@ -45,7 +45,7 @@ curl http://datalogger.local/api/logs/2025
 06
 </pre>
 
-And lastly you list the daily log files with their file size:
+And lastly you can list the daily log files with their file size:
 <pre>
 http://datalogger.local/api/logs/2025/04
 01 62351

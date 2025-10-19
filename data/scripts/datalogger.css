@@ -2,8 +2,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/*
 th, td {
-    border: 1px solid black;
+    border: 0px solid black;
+    white-space: nowrap;
 }
-*/

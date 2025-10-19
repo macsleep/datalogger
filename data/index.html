@@ -10,46 +10,50 @@
 
 <body>
     <div id="app">
-        <table border=0 cellpadding=0 width=100%>
+        <table border="0" cellpadding="0" width="100%">
+
+            <!-- header -->
             <tr>
                 <td>
-                    <table border=0 cellpadding=0 width=100%>
+                    <table border="0" cellpadding="0" width="100%">
                         <tr>
-                            <td width="20%" align=center>
+                            <td width="20%" align="center">
                                 <!-- empty -->
                             </td>
-                            <td width="60%" align=center>
+                            <td width="60%" align="center">
                                 <h2>Data Logger</h2>
                             </td>
-                            <td width="20%" align=center>
+                            <td width="20%" align="center">
                                 <button id="loginButton" :disabled="authenticated" @click="doLogin">Login</button>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
+
+            <!-- date time -->
             <tr>
                 <td align="center">
                     <hr width="95%">
-                    <table nowrap border=0 cellspacing=10 cellpadding=3>
+                    <table border="0" cellspacing="10" cellpadding="3">
                         <tr>
-                            <td nowrap align=right valign=TOP>
-                                <B>Data Logger UTC Time:</B>
+                            <td align="right" valign="top">
+                                <b>Data Logger UTC Time:</b>
                             </td>
-                            <td nowrap align=left valign=TOP>
+                            <td align="left" valign="top">
                                 {{ dateRTC }}
                             </td>
                         </tr>
                         <tr>
-                            <td nowrap align=right valign=TOP>
-                                <B>Browser UTC Time:</B>
+                            <td align="right" valign="top">
+                                <b>Browser UTC Time:</b>
                             </td>
-                            <td nowrap align=left valign=TOP>
+                            <td align="left" valign="top">
                                 {{ dateBrowser }}
                             </td>
                         </tr>
                         <tr>
-                            <td colspan=2 align=center valign=TOP>
+                            <td colspan="2" align="center" valign="top">
                                 <button id="syncButton" :disabled="isDisabled"
                                     @click="syncronizeDate">Syncronize</button>
                             </td>
@@ -57,38 +61,89 @@
                     </table>
                 </td>
             </tr>
+
+            <!-- timer scheduler -->
             <tr>
                 <td align="center">
                     <hr width="95%">
-                    <table nowrap border=0 cellspacing=10 cellpadding=3>
+                    <table border="0" cellspacing="10" cellpadding="3">
                         <tr>
-                            <td nowrap align=right valign=TOP>
-                                <B>Timer in Minutes:</B>
+                            <td align="right" valign="top">
+                                <b>Timer in Minutes:</b>
                             </td>
-                            <td nowrap align=left valign=TOP>
+                            <td align="left" valign="top">
                                 <input id="timerInput" type="number" min="0" max="255" v-model.number="timerMinutes">
                             </td>
                         </tr>
                         <tr>
-                            <td colspan=2 align=center valign=TOP>
+                            <td colspan="2" align="center" valign="top">
                                 <button id="setTimer" :disabled="isDisabled" @click="setTimer">Save</button>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
+
+            <!-- system settings -->
+            <tr>
+                <td align="center">
+                    <hr width="95%">
+                    <table border="0" cellspacing="10" cellpadding="3">
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>WiFi SSID:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input :disabled="isDisabled" id="wifiSSID" v-model.number="wifiSSID">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>WiFi Password:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input :disabled="isDisabled" id="wifiPassword" v-model.number="wifiPassword" type="password">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>HTTP User:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input :disabled="isDisabled" id="httpUser" v-model.number="httpUser">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>HTTP Password:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input :disabled="isDisabled" id="httpPassword" v-model.number="httpPassword" type="password">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center" valign="top">
+                                <button :disabled="isDisabled" @click="setSystemSettings">Save</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!-- footer -->
             <tr>
                 <td>
                     <hr width="95%">
-                    <table border=0 cellpadding=0 width=100%>
+                    <table border="0" cellpadding="0" width=100%>
                         <tr>
-                            <td align=center>
+                            <td align="center">
                                 <p>Firmware Version: {{ firmware }}</p>
                             </td>
                         </tr>
                     </table>
                 </td>
             </tr>
+
         </table>
     </div>
 
@@ -96,7 +151,7 @@
     <script type="module" src="/vendor/axios.min.js"></script>
     <script type="module" src="/vendor/vue.min.js"></script>
 
-    <!-- app -->
+    <!-- application -->
     <script type="module" src="/scripts/app.js"></script>
 </body>
 

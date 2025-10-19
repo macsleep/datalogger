@@ -12,6 +12,10 @@ new Vue({
 			dateBrowser: null,
 			dateRTC: null,
 			timerMinutes: null,
+			wifiSSID: null,
+			wifiPassword: null,
+			httpUser: null,
+			httpPassword: null,
 			authenticated: false,
 			firmware: null,
 		}
@@ -38,6 +42,12 @@ new Vue({
 		}
 	},
 
+	watch: {
+		authenticated(newValue, oldValue) {
+			if (newValue) this.getSystemSettings();
+		}
+	},
+
 	methods: {
 		getDate() {
 			api.getRTC()
@@ -54,19 +64,35 @@ new Vue({
 
 		getTimer() {
 			api.getTimer()
-			.then(data => this.timerMinutes = data.minutes);
+				.then(data => this.timerMinutes = data.minutes);
 		},
 
 		setTimer() {
 			api.putTimer(Number(this.timerMinutes));
 		},
 
+		getSystemSettings() {
+			api.getSystem()
+				.then(data => {
+					this.wifiSSID = data.wifiSSID;
+					this.wifiPassword = data.wifiPassword;
+					this.httpUser = data.httpUser;
+					this.httpPassword = data.httpPassword;
+				})
+		},
+
+		setSystemSettings() {
+			api.putSystem(this.wifiSSID, this.wifiPassword, this.httpUser, this.httpPassword);
+		},
+
 		getFirmwareVersion() {
-			api.getFirmware().then(data => this.firmware = data.version);
+			api.getFirmware()
+				.then(data => this.firmware = data.version);
 		},
 
 		doLogin() {
-			api.postLogin().then(data => this.authenticated = data);
+			api.postLogin()
+				.then(data => this.authenticated = data);
 		},
 	}
 });

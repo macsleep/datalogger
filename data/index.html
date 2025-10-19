@@ -24,7 +24,7 @@
                                 <h2>Data Logger</h2>
                             </td>
                             <td width="20%" align="center">
-                                <button id="loginButton" :disabled="authenticated" @click="doLogin">Login</button>
+                                <button :disabled="authenticated" @click="doLogin">Login</button>
                             </td>
                         </tr>
                     </table>
@@ -54,8 +54,7 @@
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button id="syncButton" :disabled="isDisabled"
-                                    @click="syncronizeDate">Syncronize</button>
+                                <button :disabled="isDisabled" @click="syncronizeDate">Syncronize</button>
                             </td>
                         </tr>
                     </table>
@@ -72,12 +71,12 @@
                                 <b>Timer in Minutes:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input id="timerInput" type="number" min="0" max="255" v-model.number="timerMinutes">
+                                <input type="number" min="0" max="255" v-model.number="timerMinutes">
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button id="setTimer" :disabled="isDisabled" @click="setTimer">Save</button>
+                                <button :disabled="isDisabled" @click="setTimer">Save</button>
                             </td>
                         </tr>
                     </table>
@@ -94,7 +93,7 @@
                                 <b>WiFi SSID:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" id="wifiSSID" v-model.number="wifiSSID">
+                                <input :disabled="isDisabled" v-model="wifiSSID">
                             </td>
                         </tr>
                         <tr>
@@ -102,7 +101,7 @@
                                 <b>WiFi Password:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" id="wifiPassword" v-model.number="wifiPassword" type="password">
+                                <input :disabled="isDisabled" v-model="wifiPassword" type="password">
                             </td>
                         </tr>
                         <tr>
@@ -110,7 +109,7 @@
                                 <b>HTTP User:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" id="httpUser" v-model.number="httpUser">
+                                <input :disabled="isDisabled" v-model="httpUser">
                             </td>
                         </tr>
                         <tr>
@@ -118,7 +117,7 @@
                                 <b>HTTP Password:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" id="httpPassword" v-model.number="httpPassword" type="password">
+                                <input :disabled="isDisabled" v-model="httpPassword" type="password">
                             </td>
                         </tr>
                         <tr>

@@ -8,6 +8,7 @@ new Vue({
 
 	data() {
 		intervalId: null;
+
 		return {
 			dateBrowser: null,
 			dateRTC: null,
@@ -78,7 +79,7 @@ new Vue({
 					this.wifiPassword = data.wifiPassword;
 					this.httpUser = data.httpUser;
 					this.httpPassword = data.httpPassword;
-				})
+				});
 		},
 
 		setSystemSettings() {

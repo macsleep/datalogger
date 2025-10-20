@@ -7,9 +7,10 @@ new Vue({
 	el: '#app',
 
 	data() {
-		intervalId: null;
-
 		return {
+			intervalId: null,
+			authenticated: false,
+
 			dateBrowser: null,
 			dateRTC: null,
 			timerMinutes: null,
@@ -17,7 +18,8 @@ new Vue({
 			wifiPassword: null,
 			httpUser: null,
 			httpPassword: null,
-			authenticated: false,
+			serial1Baud: null,
+			serial1Config: null,
 			firmware: null,
 		}
 	},
@@ -33,8 +35,9 @@ new Vue({
 	},
 
 	created() {
-		this.getFirmwareVersion();
 		this.getTimer();
+		this.getSerial1Settings();
+		this.getFirmwareVersion();
 	},
 
 	computed: {
@@ -46,7 +49,7 @@ new Vue({
 	watch: {
 		authenticated(newValue, oldValue) {
 			if (newValue) this.getSystemSettings();
-		}
+		},
 	},
 
 	methods: {
@@ -69,7 +72,8 @@ new Vue({
 		},
 
 		setTimer() {
-			api.putTimer(Number(this.timerMinutes));
+			api.putTimer(Number(this.timerMinutes))
+				.then(this.getTimer());
 		},
 
 		getSystemSettings() {
@@ -83,7 +87,21 @@ new Vue({
 		},
 
 		setSystemSettings() {
-			api.putSystem(this.wifiSSID, this.wifiPassword, this.httpUser, this.httpPassword);
+			api.putSystem(this.wifiSSID, this.wifiPassword, this.httpUser, this.httpPassword)
+				.then(this.getSystemSettings());
+		},
+
+		getSerial1Settings() {
+			api.getSerial1()
+				.then(data => {
+					this.serial1Baud = data.baud;
+					this.serial1Config = data.config;
+				});
+		},
+
+		setSerial1Settings() {
+			api.putSerial1(Number(this.serial1Baud), this.serial1Config)
+				.then(this.getSerial1Settings());
 		},
 
 		getFirmwareVersion() {

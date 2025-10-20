@@ -71,6 +71,29 @@ class API {
 			})
 	}
 
+	getSerial1() {
+		return axios.get('/api/serial1')
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			})
+	}
+
+	putSerial1(baud, config) {
+		return axios.put('/api/serial1', {
+				baud: baud,
+				config: config,
+			})
+			.then(response => {
+				console.log(response);
+			})
+			.catch(error => {
+				console.log(error);
+			})
+	}
+
 	deleteSystem() {
 		return axios.delete('/api/system')
 			.then(response => {

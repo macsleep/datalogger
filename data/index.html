@@ -129,6 +129,36 @@
                 </td>
             </tr>
 
+            <!-- serial1 settings -->
+            <tr>
+                <td align="center">
+                    <hr width="95%">
+                    <table border="0" cellspacing="10" cellpadding="3">
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Baud Rate:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input type="number" v-model.trim="serial1Baud">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Data Bits, Partity, Stop Bits:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input v-model="serial1Config">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center" valign="top">
+                                <button :disabled="isDisabled" @click="setSerial1Settings">Save</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
             <!-- footer -->
             <tr>
                 <td>

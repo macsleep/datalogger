@@ -100,7 +100,7 @@ new Vue({
 		},
 
 		setSerial1Settings() {
-			api.putSerial1(Number(this.serial1Baud), this.serial1Config)
+			api.putSerial1(Number(this.serial1Baud), String(this.serial1Config).toUpperCase())
 				.then(this.getSerial1Settings());
 		},
 
@@ -110,7 +110,7 @@ new Vue({
 		},
 
 		doLogin() {
-			api.postLogin()
+			api.getLogin()
 				.then(data => this.authenticated = data);
 		},
 	}

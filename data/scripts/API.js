@@ -114,8 +114,53 @@ class API {
 			});
 	}
 
-	postLogin() {
-		return axios.post('/api/login', null)
+	getModbus() {
+		return axios.get('/api/modbus')
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
+	getConfig(slot) {
+		return axios.get('/api/modbus/' + slot + 'config')
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
+	putConfig(slot, deviceAddress, functionCode, registerAddress, valueType) {
+		return axios.put('/api/modbus/' + slot + 'config', {
+				deviceAddress: deviceAddress,
+				functionCode: functionCode,
+				registerAddress: registerAddress,
+				valueType: valueType,
+			})
+			.then(response => {
+				console.log(response);
+			})
+			.catch(error => {
+				console.log(error);
+			})
+	}
+
+	getValue(slot) {
+		return axios.get('/api/modbus/' + slot)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
+	getLogin() {
+		return axios.get('/api/login')
 			.then(response => {
 				return true;
 			})

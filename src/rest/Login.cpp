@@ -26,7 +26,7 @@ REST::Login::Login() {
 }
 
 void REST::Login::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/login\\/?$", HTTP_POST, std::bind(&Login::request, this, std::placeholders::_1), NULL, NULL);
+    httpd->on("^\\/api\\/login\\/?$", HTTP_GET, std::bind(&Login::request, this, std::placeholders::_1), NULL, NULL);
 }
 
 void REST::Login::request(AsyncWebServerRequest *request) {

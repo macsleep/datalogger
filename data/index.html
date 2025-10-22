@@ -96,6 +96,53 @@
                 </td>
             </tr>
 
+            <!-- log files -->
+            <tr>
+                <td align="center">
+                    <table>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Log Files:</b>
+                            </td>
+                            <td align="center" valign="top">
+                                <select @change="getMonths" v-model="logs.selectedYear">
+                                    <option value="" disabled>Select Year</option>
+                                    <option v-for="year in logs.years">
+                                        {{ year }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td align="center" valign="top">
+                                <select @change="getDays" v-model="logs.selectedMonth">
+                                    <option value="" disabled>Select Month</option>
+                                    <option v-for="month in logs.months">
+                                        {{ month }}
+                                    </option>
+                                </select>
+                            </td>
+                            <td align="center" valign="top">
+                                <select @change="showLogfile" v-model="logs.selectedDay">
+                                    <option value="" disabled>Select Day</option>
+                                    <option v-for="day in logs.days">
+                                        {{ day }}
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="left" valign="top">
+                                <pre>{{ logs.file }}</pre>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <hr width="95%">
+                </td>
+            </tr>
+
             <!-- system settings -->
             <tr>
                 <td align="center">
@@ -152,7 +199,7 @@
                     <table border="0" cellspacing="10" cellpadding="3">
                         <tr>
                             <td align="right" valign="top">
-                                <b>Modbus Configuration:</b>
+                                <b>Modbus:</b>
                             </td>
                             <td align="left" valign="top">
                                 <select @change="getConfig" v-model="config.slot">

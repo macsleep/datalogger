@@ -14,6 +14,15 @@ new Vue({
 			dateBrowser: null,
 			dateRTC: null,
 			timerMinutes: null,
+			logs: {
+				years: null,
+				selectedYear: null,
+				months: null,
+				selectedMonth: null,
+				days: null,
+				selectedDay: null,
+				file: null,
+			},
 			wifiSSID: null,
 			wifiPassword: null,
 			httpUser: null,
@@ -45,6 +54,7 @@ new Vue({
 
 	created() {
 		this.getTimer();
+		this.getYears();
 		this.getModbus();
 		this.getSerial1Settings();
 		this.getFirmwareVersion();
@@ -84,6 +94,37 @@ new Vue({
 		setTimer() {
 			api.putTimer(Number(this.timerMinutes))
 				.then(this.getTimer());
+		},
+
+		getYears() {
+			api.getYears()
+				.then(data => {
+					this.logs.years = data.years;
+				});
+		},
+
+		getMonths() {
+			api.getMonths(this.logs.selectedYear)
+				.then(data => {
+					this.logs.months = data.months;
+				});
+		},
+
+		getDays() {
+			api.getDays(this.logs.selectedYear, this.logs.selectedMonth)
+				.then(data => {
+					this.logs.days = new Array();
+					data.days.forEach(day => {
+						this.logs.days.push(day.file);
+					});
+				});
+		},
+
+		showLogfile() {
+			api.getLogfile(this.logs.selectedYear, this.logs.selectedMonth, this.logs.selectedDay)
+				.then(data => {
+					this.logs.file = data;
+				});
 		},
 
 		getSystemSettings() {

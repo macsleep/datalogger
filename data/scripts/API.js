@@ -46,6 +46,49 @@ class API {
 			})
 	}
 
+	getYears() {
+		return axios.get('/api/logs')
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
+	getMonths(year) {
+		const url = '/api/logs/' + year;
+		return axios.get(url)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
+	getDays(year, month) {
+		const url = '/api/logs/' + year + '/' + month;
+		return axios.get(url)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
+	getLogfile(year, month, day) {
+		const url = '/api/logs/' + year + '/' + month + '/' + day;
+		return axios.get(url)
+			.then(response => {
+				return response.data;
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
 	getSystem() {
 		return axios.get('/api/system')
 			.then(response => {
@@ -58,11 +101,11 @@ class API {
 
 	putSystem(wifiSSID, wifiPassword, httpUser, httpPassword) {
 		return axios.put('/api/system', {
-				wifiSSID: wifiSSID,
-				wifiPassword: wifiPassword,
-				httpUser: httpUser,
-				httpPassword: httpPassword,
-			})
+			wifiSSID: wifiSSID,
+			wifiPassword: wifiPassword,
+			httpUser: httpUser,
+			httpPassword: httpPassword,
+		})
 			.then(response => {
 				console.log(response);
 			})
@@ -83,9 +126,9 @@ class API {
 
 	putSerial1(baud, config) {
 		return axios.put('/api/serial1', {
-				baud: baud,
-				config: config,
-			})
+			baud: baud,
+			config: config,
+		})
 			.then(response => {
 				console.log(response);
 			})
@@ -136,11 +179,11 @@ class API {
 
 	putConfig(slot, deviceAddress, functionCode, registerAddress, valueType) {
 		return axios.put('/api/modbus/' + slot + '/config', {
-				deviceAddress: deviceAddress,
-				functionCode: functionCode,
-				registerAddress: registerAddress,
-				valueType: valueType,
-			})
+			deviceAddress: deviceAddress,
+			functionCode: functionCode,
+			registerAddress: registerAddress,
+			valueType: valueType,
+		})
 			.then(response => {
 				console.log(response);
 			})

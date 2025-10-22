@@ -7,3 +7,12 @@ th, td {
     border: 0px solid black;
     white-space: nowrap;
 }
+
+pre {
+    width: 480px;
+    height: 160px;
+    padding: 10px;
+    border: 1px solid black;
+    overflow: auto;
+    font-family: monospace;
+}

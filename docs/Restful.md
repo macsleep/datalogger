@@ -150,3 +150,12 @@ And the following PUT changes the configuration of Serial Port 1. Remember to po
 <pre>
 curl -u "admin:admin" -X PUT -d "baud=9600&config=8N1" http://datalogger.local/api/serial1
 </pre>
+
+## Login
+
+To do a HTTP basic authentication you can do a GET on the /api/login URL. The GET does not return any data. It just returns the status 200 if the authentication was successful and otherwise a 401.
+
+<pre>
+curl -D - -u "admin:wrong" http://datalogger.local/api/login 
+HTTP/1.1 401 Unauthorized
+</pre>

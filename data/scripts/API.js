@@ -125,7 +125,7 @@ class API {
 	}
 
 	getConfig(slot) {
-		return axios.get('/api/modbus/' + slot + 'config')
+		return axios.get('/api/modbus/' + slot + '/config')
 			.then(response => {
 				return response.data;
 			})
@@ -135,7 +135,7 @@ class API {
 	}
 
 	putConfig(slot, deviceAddress, functionCode, registerAddress, valueType) {
-		return axios.put('/api/modbus/' + slot + 'config', {
+		return axios.put('/api/modbus/' + slot + '/config', {
 				deviceAddress: deviceAddress,
 				functionCode: functionCode,
 				registerAddress: registerAddress,

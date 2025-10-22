@@ -146,6 +146,77 @@
                 </td>
             </tr>
 
+            <!-- modbus settings -->
+            <tr>
+                <td align="center">
+                    <table border="0" cellspacing="10" cellpadding="3">
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Modbus Configuration:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <select @change="getConfig" v-model="config.slot">
+                                    <option value="" disabled>Select Slot</option>
+                                    <option v-for="slot in modbusSlots">
+                                        {{ slot }}
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Device Address:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input type="number" v-model="config.deviceAddress">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Function Code:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input type="number" v-model="config.functionCode">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Register Address:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input type="number" v-model="config.registerAddress">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <b>Value Type:</b>
+                            </td>
+                            <td align="left" valign="top">
+                                <input v-model.trim="config.valueType">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="top">
+                                <button :disabled="!config.slot" @click="getValue">Test:</button>
+                            </td>
+                            <td align="left" valign="top">
+                                <input v-model.trim="modbusValue" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="center" valign="top">
+                                <button :disabled="isDisabled" @click="setConfig">Save</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <hr width="95%">
+                </td>
+            </tr>
+
             <!-- serial1 settings -->
             <tr>
                 <td align="center">

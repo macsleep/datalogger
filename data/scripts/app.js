@@ -18,6 +18,15 @@ new Vue({
 			wifiPassword: null,
 			httpUser: null,
 			httpPassword: null,
+			modbusSlots: null,
+			config: {
+				slot: null,
+				deviceAddress: null,
+				functionCode: null,
+				registerAddress: null,
+				valueType: null,
+			},
+			modbusValue: null,
 			serial1Baud: null,
 			serial1Config: null,
 			firmware: null,
@@ -36,6 +45,7 @@ new Vue({
 
 	created() {
 		this.getTimer();
+		this.getModbus();
 		this.getSerial1Settings();
 		this.getFirmwareVersion();
 	},
@@ -89,6 +99,41 @@ new Vue({
 		setSystemSettings() {
 			api.putSystem(this.wifiSSID, this.wifiPassword, this.httpUser, this.httpPassword)
 				.then(this.getSystemSettings());
+		},
+
+		getModbus() {
+			api.getModbus()
+				.then(data => {
+					this.modbusSlots = data.slots;
+				});
+		},
+
+		getConfig() {
+			api.getConfig(this.config.slot)
+				.then(data => {
+					this.config.deviceAddress = data.deviceAddress;
+					this.config.functionCode = data.functionCode;
+					this.config.registerAddress = data.registerAddress;
+					this.config.valueType = data.valueType;
+					this.modbusValue = null;
+				});
+		},
+
+		setConfig() {
+			api.putConfig(
+				this.config.slot,
+				Number(this.config.deviceAddress),
+				Number(this.config.functionCode),
+				Number(this.config.registerAddress),
+				this.config.valueType)
+				.then(this.getConfig());
+		},
+
+		getValue() {
+			api.getValue(this.config.slot)
+				.then(data => {
+					this.modbusValue = data.value;
+				})
 		},
 
 		getSerial1Settings() {

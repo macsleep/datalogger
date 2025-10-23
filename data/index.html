@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="/scripts/datalogger.css">
     <noscript>
         <style type="text/css">
-            #app { display: none; }
+            #app {
+                display: none;
+            }
         </style>
         <p>JavaScript disabled</p>
     </noscript>
@@ -30,7 +32,7 @@
                                 <h2>Data Logger</h2>
                             </td>
                             <td width="20%" align="center">
-                                <button :disabled="authenticated" @click="doLogin">Login</button>
+                                <button v-bind:disabled="authenticated" v-on:click="doLogin">Login</button>
                             </td>
                         </tr>
                     </table>
@@ -64,7 +66,7 @@
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button :disabled="isDisabled" @click="syncronizeDate">Syncronize</button>
+                                <button v-bind:disabled="isDisabled" v-on:click="syncronizeDate">Syncronize</button>
                             </td>
                         </tr>
                     </table>
@@ -90,7 +92,7 @@
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button :disabled="isDisabled" @click="setTimer">Save</button>
+                                <button v-bind:disabled="isDisabled" v-on:click="setTimer">Save</button>
                             </td>
                         </tr>
                     </table>
@@ -130,7 +132,7 @@
                                 <select v-on:change="showLogfile" v-model="logs.selectedDay">
                                     <option value="" disabled>Select Day</option>
                                     <option v-for="day in logs.days">
-                                        {{ day }}
+                                        {{ day.file }}
                                     </option>
                                 </select>
                             </td>
@@ -142,13 +144,14 @@
                         </tr>
                         <tr>
                             <td align="center" valign="top">
-                                <button :disabled="!logs.file" v-on:click="showLogfile">Refresh</button>
+                                <button v-bind:disabled="!logs.file" v-on:click="showLogfile">Refresh</button>
                             </td>
                             <td colspan="2" align="center" valign="top">
-                                <button :disabled="!logs.file" v-on:click="saveLogfile">Download</button>
+                                <button v-bind:disabled="!logs.file" v-on:click="saveLogfile">Download</button>
                             </td>
                             <td align="center" valign="top">
-                                <button :disabled="!logs.file || isDisabled" v-on:click="deleteLogfile">Delete</button>
+                                <button v-bind:disabled="!logs.file || isDisabled"
+                                    v-on:click="deleteLogfile">Delete</button>
                             </td>
                         </tr>
                     </table>
@@ -169,7 +172,7 @@
                                 <b>WiFi SSID:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" v-model.trim="wifiSSID">
+                                <input v-bind:disabled="isDisabled" v-model.trim="wifiSSID">
                             </td>
                         </tr>
                         <tr>
@@ -177,7 +180,7 @@
                                 <b>WiFi Password:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" v-model="wifiPassword" type="password">
+                                <input v-bind:disabled="isDisabled" v-model="wifiPassword" type="password">
                             </td>
                         </tr>
                         <tr>
@@ -185,7 +188,7 @@
                                 <b>HTTP User:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" v-model.trim="httpUser">
+                                <input v-bind:disabled="isDisabled" v-model.trim="httpUser">
                             </td>
                         </tr>
                         <tr>
@@ -193,12 +196,12 @@
                                 <b>HTTP Password:</b>
                             </td>
                             <td align="left" valign="top">
-                                <input :disabled="isDisabled" v-model="httpPassword" type="password">
+                                <input v-bind:disabled="isDisabled" v-model="httpPassword" type="password">
                             </td>
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button :disabled="isDisabled" @click="setSystemSettings">Save</button>
+                                <button v-bind:disabled="isDisabled" v-on:click="setSystemSettings">Save</button>
                             </td>
                         </tr>
                     </table>
@@ -261,7 +264,7 @@
                         </tr>
                         <tr>
                             <td align="right" valign="top">
-                                <button :disabled="!config.slot" @click="getValue">Test:</button>
+                                <button v-bind:disabled="!config.slot" v-on:click="getValue">Test:</button>
                             </td>
                             <td align="left" valign="top">
                                 <input v-model.trim="modbusValue" readonly>
@@ -269,7 +272,7 @@
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button :disabled="isDisabled" @click="setConfig">Save</button>
+                                <button v-bind:disabled="isDisabled" v-on:click="setConfig">Save</button>
                             </td>
                         </tr>
                     </table>
@@ -303,7 +306,7 @@
                         </tr>
                         <tr>
                             <td colspan="2" align="center" valign="top">
-                                <button :disabled="isDisabled" @click="setSerial1Settings">Save</button>
+                                <button v-bind:disabled="isDisabled" v-on:click="setSerial1Settings">Save</button>
                             </td>
                         </tr>
                     </table>
@@ -334,7 +337,7 @@
     <script type="module" src="/vendor/axios.min.js"></script>
     <script type="module" src="/vendor/vue.min.js"></script>
 
-   <!-- application -->
+    <!-- application -->
     <script type="module" src="/scripts/app.js"></script>
 </body>
 

@@ -62,7 +62,7 @@ new Vue({
 
 	computed: {
 		isDisabled() {
-			return !this.authenticated
+			return !this.authenticated;
 		}
 	},
 
@@ -115,10 +115,7 @@ new Vue({
 		getDays() {
 			api.getDays(this.logs.selectedYear, this.logs.selectedMonth)
 				.then(data => {
-					this.logs.days = new Array();
-					data.days.forEach(day => {
-						this.logs.days.push(day.file);
-					});
+					this.logs.days = data.days;
 				});
 		},
 

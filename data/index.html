@@ -101,11 +101,11 @@
                 <td align="center">
                     <table>
                         <tr>
-                            <td align="right" valign="top">
-                                <b>Log Files:</b>
+                            <td align="center" valign="top">
+                                <b>Log File:</b>
                             </td>
                             <td align="center" valign="top">
-                                <select @change="getMonths" v-model="logs.selectedYear">
+                                <select v-on:change="getMonths" v-model="logs.selectedYear">
                                     <option value="" disabled>Select Year</option>
                                     <option v-for="year in logs.years">
                                         {{ year }}
@@ -113,7 +113,7 @@
                                 </select>
                             </td>
                             <td align="center" valign="top">
-                                <select @change="getDays" v-model="logs.selectedMonth">
+                                <select v-on:change="getDays" v-model="logs.selectedMonth">
                                     <option value="" disabled>Select Month</option>
                                     <option v-for="month in logs.months">
                                         {{ month }}
@@ -121,7 +121,7 @@
                                 </select>
                             </td>
                             <td align="center" valign="top">
-                                <select @change="showLogfile" v-model="logs.selectedDay">
+                                <select v-on:change="showLogfile" v-model="logs.selectedDay">
                                     <option value="" disabled>Select Day</option>
                                     <option v-for="day in logs.days">
                                         {{ day }}
@@ -132,6 +132,17 @@
                         <tr>
                             <td colspan="4" align="left" valign="top">
                                 <pre>{{ logs.file }}</pre>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="center" valign="top">
+                                <button :disabled="!logs.file" v-on:click="showLogfile">Refresh</button>
+                            </td>
+                            <td colspan="2" align="center" valign="top">
+                                <button :disabled="!logs.file" v-on:click="saveLogfile">Download</button>
+                            </td>
+                            <td align="center" valign="top">
+                                <button :disabled="!logs.file || isDisabled" v-on:click="deleteLogfile">Delete</button>
                             </td>
                         </tr>
                     </table>

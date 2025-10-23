@@ -93,7 +93,9 @@ new Vue({
 
 		setTimer() {
 			api.putTimer(Number(this.timerMinutes))
-				.then(this.getTimer());
+				.then(response => {
+					this.getTimer()
+				});
 		},
 
 		getYears() {
@@ -127,6 +129,25 @@ new Vue({
 				});
 		},
 
+		saveLogfile() {
+			const filename = this.logs.selectedYear + this.logs.selectedMonth + this.logs.selectedDay + ".txt";
+			const blob = new Blob([this.logs.file], { type: 'text/plain' });
+			const link = document.createElement('a');
+
+			link.href = URL.createObjectURL(blob);
+			link.download = filename;
+			link.click();
+			URL.revokeObjectURL(link.href);
+		},
+
+		deleteLogfile() {
+			api.deleteLogfile(this.logs.selectedYear, this.logs.selectedMonth, this.logs.selectedDay)
+				.then(response => {
+					this.getDays();
+					this.logs.file = null;
+				});
+		},
+
 		getSystemSettings() {
 			api.getSystem()
 				.then(data => {
@@ -139,7 +160,9 @@ new Vue({
 
 		setSystemSettings() {
 			api.putSystem(this.wifiSSID, this.wifiPassword, this.httpUser, this.httpPassword)
-				.then(this.getSystemSettings());
+				.then(response => {
+					this.getSystemSettings();
+				});
 		},
 
 		getModbus() {
@@ -167,7 +190,9 @@ new Vue({
 				Number(this.config.functionCode),
 				Number(this.config.registerAddress),
 				this.config.valueType)
-				.then(this.getConfig());
+				.then(response => {
+					rethis.getConfig()
+				});
 		},
 
 		getValue() {
@@ -187,7 +212,9 @@ new Vue({
 
 		setSerial1Settings() {
 			api.putSerial1(Number(this.serial1Baud), String(this.serial1Config).toUpperCase())
-				.then(this.getSerial1Settings());
+				.then(response => {
+					this.getSerial1Settings()
+				});
 		},
 
 		getFirmwareVersion() {

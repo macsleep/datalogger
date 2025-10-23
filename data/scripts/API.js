@@ -89,6 +89,17 @@ class API {
 			});
 	}
 
+	deleteLogfile(year, month, day) {
+		const url = '/api/logs/' + year + '/' + month + '/' + day;
+		return axios.delete(url)
+			.then(response => {
+				console.log(response);
+			})
+			.catch(error => {
+				console.log(error);
+			});
+	}
+
 	getSystem() {
 		return axios.get('/api/system')
 			.then(response => {

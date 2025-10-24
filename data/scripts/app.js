@@ -123,6 +123,11 @@ new Vue({
 			api.getLogfile(this.logs.selectedYear, this.logs.selectedMonth, this.logs.selectedDay)
 				.then(data => {
 					this.logs.file = data;
+					// wait for DOM to update
+					this.$nextTick().then(() => {
+						const logview = document.getElementById('logview');
+						logview.scrollTop = logview.scrollHeight;
+					});
 				});
 		},
 

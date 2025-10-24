@@ -131,7 +131,7 @@
                             <td align="center" valign="top">
                                 <select v-on:change="showLogfile" v-model="logs.selectedDay">
                                     <option value="" disabled>Select Day</option>
-                                    <option v-for="day in logs.days">
+                                    <option v-for="day in logs.days" v-bind:key="day.file">
                                         {{ day.file }}
                                     </option>
                                 </select>

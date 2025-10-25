@@ -151,7 +151,6 @@ void setup() {
     // peripheral
     ok &= rtc.begin();
     ok &= SD.begin();
-    ok &= SPIFFS.begin();
     if(!ok) {
         // sleep
         bitmask = (1ULL << BUTTON);
@@ -221,7 +220,9 @@ void setup() {
         // http
         httpd = new AsyncWebServer(80);
         restAPI.begin(httpd);
-        httpd->serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+        if(SPIFFS.begin()) {
+            httpd->serveStatic("/", SPIFFS, "/").setDefaultFile("index.html");
+        }
         httpd->onNotFound([](AsyncWebServerRequest * request) {
             request->send(404, "text/plain", "Not found");
         });
@@ -243,7 +244,7 @@ void loop() {
 
     if(!enableWifi) {
         // stop Wifi
-        WiFi.softAPdisconnect(true);
+        WiFi.mode(WIFI_OFF);
 
         // debounce button
         delay(500);

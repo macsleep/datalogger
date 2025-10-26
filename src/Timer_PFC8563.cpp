@@ -50,7 +50,7 @@ void Timer_PFC8563::enable(uint8_t value) {
     Wire.write(value);          // timer value
     Wire.endTransmission();
 
-    // timer control status 2
+    // control status 2
     Wire.beginTransmission(PCF8563_ADDRESS);
     Wire.write(PCF8563_CONTROL_STATUS_2);
     Wire.endTransmission();
@@ -84,6 +84,20 @@ bool Timer_PFC8563::isEnabled() {
 
 void Timer_PFC8563::disable(void) {
     uint8_t data;
+
+    // control status 2
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_CONTROL_STATUS_2);
+    Wire.endTransmission();
+
+    Wire.requestFrom(PCF8563_ADDRESS, 1);
+    data = Wire.read();
+    bitClear(data, 2);          // TF
+
+    Wire.beginTransmission(PCF8563_ADDRESS);
+    Wire.write(PCF8563_CONTROL_STATUS_2);
+    Wire.write(data);
+    Wire.endTransmission();
 
     // timer control
     Wire.beginTransmission(PCF8563_ADDRESS);

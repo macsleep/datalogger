@@ -26,16 +26,19 @@ REST::Firmware::Firmware() {
 }
 
 void REST::Firmware::begin(AsyncWebServer *httpd) {
-    httpd->on("^\\/api\\/firmware\\/?$", HTTP_GET | HTTP_POST,
+    httpd->on("^\\/api\\/firmware\\/?$", HTTP_GET | HTTP_POST | HTTP_PUT,
               std::bind(&REST::Firmware::request, this, std::placeholders::_1),
               std::bind(&REST::Firmware::upload, this, std::placeholders::_1, std::placeholders::_2,
-                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
+                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6),
+              std::bind(&REST::Firmware::body, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
+                        std::placeholders::_4, std::placeholders::_5));
 }
 
 void REST::Firmware::request(AsyncWebServerRequest *request) {
     String version = "???";
     bool json = false;
     JsonDocument document;
+    DeserializationError error;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
 
@@ -66,6 +69,25 @@ void REST::Firmware::request(AsyncWebServerRequest *request) {
             request->send(200);
             break;
 
+        case HTTP_PUT:
+            if(!request->authenticate(settings.getHttpUser().c_str(), settings.getHttpPassword().c_str()))
+                return request->requestAuthentication();
+
+            error = deserializeJson(document, (const char *)(request->_tempObject));
+            if(error) {
+                if(request->hasParam("command", true)) {
+                    const AsyncWebParameter *param = request->getParam("command", true);
+                    utils.setUpdateCommand(param->value().toInt());
+                }
+            } else {
+                if(document["command"].is<int>()) {
+                    utils.setUpdateCommand(document["command"]);
+                }
+            }
+
+            request->send(200);
+            break;
+
         default:
             request->send(400);
             break;
@@ -77,7 +99,8 @@ void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, siz
         return request->requestAuthentication();
 
     if(!index) {
-        request->_tempFile = SD.open("/firmware.bin", "w");
+        utils.setUpdateFilename(filename);
+        request->_tempFile = SD.open("/" + filename, "w");
     }
 
     if(len) {
@@ -86,6 +109,16 @@ void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, siz
 
     if(final) {
         request->_tempFile.close();
+    }
+}
+
+void REST::Firmware::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+    if(!index) {
+        request->_tempObject = malloc(total + 1);
+        bzero(request->_tempObject, total + 1);
+    }
+    if(len && request->_tempObject != NULL) {
+        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
     }
 }
 

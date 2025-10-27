@@ -9,4 +9,6 @@ erase:
 	pio run -t erase
 fs:
 	pio run -t uploadfs
+spiffs:
+	pio run -t buildfs
 

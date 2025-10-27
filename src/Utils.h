@@ -28,8 +28,8 @@
 #include <regex>
 #include <Arduino.h>
 #include <SD.h>
+#include <Update.h>
 #include <HardwareSerial.h>
-#include <esp_task_wdt.h>
 
 enum class FinderType { FOO, T1, T2, T3, T_float };
 
@@ -42,8 +42,14 @@ class Utils {
         FinderType stringToType(String value);
         std::set<String>* listDirs(String path, const std::regex re);
         std::map<String, int>* listFiles(String path, const std::regex re);
+        void setUpdateFilename(String filename);
+        void setUpdateCommand(int command);
+        bool updateAvailable();
+        void update();
 
     private:
+        String updateFilename;
+        int updateCommand;
 };
 
 #endif

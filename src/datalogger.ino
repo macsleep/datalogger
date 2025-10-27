@@ -25,7 +25,6 @@
 #include <SD.h>
 #include <FS.h>
 #include <SPIFFS.h>
-#include <Update.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -110,10 +109,6 @@ void postTransmission() {
     digitalWrite(RS485_DE_RE, LOW);
 }
 
-void progressCallBack(size_t currSize, size_t totalSize) {
-    digitalWrite(LED_YELLOW, !digitalRead(LED_YELLOW));
-}
-
 void IRAM_ATTR isrButton() {
     // debounce button
     if(millis() > 500) {
@@ -167,23 +162,6 @@ void setup() {
     tv.tv_sec = rtc.now().unixtime();
     settimeofday(&tv, NULL);
 
-    // firmware
-    if(SD.exists("/firmware.bin")) {
-        File firmware = SD.open("/firmware.bin");
-        if(firmware) {
-            Update.onProgress(progressCallBack);
-            Update.begin(firmware.size(), U_FLASH);
-            Update.writeStream(firmware);
-            firmware.close();
-        }
-        SD.remove("/firmware.bin");
-        if(Update.end()) {
-            digitalWrite(LED_YELLOW, LOW);
-            delay(500);
-            ESP.restart();
-        }
-    }
-
     // wakeup
     switch(esp_sleep_get_wakeup_cause()) {
         case ESP_SLEEP_WAKEUP_EXT1:
@@ -232,6 +210,10 @@ void setup() {
 
 void loop() {
     uint64_t bitmask;
+
+    if(utils.updateAvailable()) {
+        utils.update();
+    }
 
     if(execJob) {
         execJob = false;

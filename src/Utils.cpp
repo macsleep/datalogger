@@ -23,6 +23,8 @@
 #include "Utils.h"
 
 Utils::Utils() {
+    this->updateFilename ="";
+    this->updateCommand = -1;
 }
 
 String Utils::configToString(SerialConfig value) {
@@ -160,5 +162,38 @@ std::map<String, int>* Utils::listFiles(String path, const std::regex re) {
     directory.close();
 
     return (list);
+}
+
+void Utils::setUpdateFilename(String filename) {
+    this->updateFilename = filename;
+}
+
+void Utils::setUpdateCommand(int command) {
+    this->updateCommand = command;
+}
+
+bool Utils::updateAvailable() {
+    if(this->updateCommand == U_FLASH) return(true);
+    if(this->updateCommand == U_SPIFFS) return(true);
+    return(false);
+}
+
+void Utils::update() {
+    String filename = "/" + this->updateFilename;
+    if(SD.exists(filename)) {
+        File binary = SD.open(filename, "r");
+        if(binary) {
+            Update.begin(binary.size(), this->updateCommand, GPIO_NUM_5);
+            Update.writeStream(binary);
+            binary.close();
+        }
+        SD.remove(filename);
+        if(Update.end()) {
+            delay(500);
+            ESP.restart();
+        }
+    } else {
+        this->updateCommand = -1;
+    }
 }
 

@@ -26,11 +26,14 @@
 #include <regex>
 #include <Arduino.h>
 #include <SD.h>
+#include <Update.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include "Utils.h"
 #include "Settings.h"
 
+extern Utils utils;
 extern Settings settings;
 
 namespace REST {
@@ -40,6 +43,7 @@ namespace REST {
             void begin(AsyncWebServer * httpd);
             void request(AsyncWebServerRequest * request);
             void upload(AsyncWebServerRequest * request, String filename, size_t index, uint8_t * data, size_t len, bool final);
+            void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
         private:
     };

@@ -45,7 +45,7 @@ class Utils {
         void setUpdateFilename(String filename);
         void setUpdateCommand(int command);
         bool updateAvailable();
-        void update();
+        void update(int ledPin = -1);
 
     private:
         String updateFilename;

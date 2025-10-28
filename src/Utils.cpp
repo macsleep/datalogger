@@ -178,12 +178,12 @@ bool Utils::updateAvailable() {
     return(false);
 }
 
-void Utils::update() {
+void Utils::update(int ledPin) {
     String filename = "/" + this->updateFilename;
     if(SD.exists(filename)) {
         File binary = SD.open(filename, "r");
         if(binary) {
-            Update.begin(binary.size(), this->updateCommand, GPIO_NUM_5);
+            Update.begin(binary.size(), this->updateCommand, ledPin);
             Update.writeStream(binary);
             binary.close();
         }

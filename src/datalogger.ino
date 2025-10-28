@@ -212,7 +212,7 @@ void loop() {
     uint64_t bitmask;
 
     if(utils.updateAvailable()) {
-        utils.update();
+        utils.update(LED_YELLOW);
     }
 
     if(execJob) {

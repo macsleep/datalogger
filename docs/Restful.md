@@ -128,9 +128,16 @@ curl http://datalogger.local/api/modbus/0
 </pre>
 
 ## Firmware
-This POST uploads a firmware binary to the SD card to provide an OTA (Over The Air) upgrade capability. The ESP32 will try to install the firmware binary on the SD card as soon as it wakes up from deep sleep (please see the code for details). If the upgrade is successful the ESP32 will reboot. Otherwise it will keep on running with the current firmware.
+To OTA (Over The Air) upgrade the firmware of the data logger you first need to upload a new firmware.bin file to the SD card (POST). The second curl (PUT) starts the actual upgrade. A command value of 0 equals the `U_FLASH` define in Arduinos Update.h header file (you need to let Arduino Update know for which partition this binary is). Once you start the upgade the yellow led will start blinking rapidly and at the end of a successfull upgrade the ESP32 will reboot.
 <pre>
 curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmware
+curl -u "admin:admin" -X PUT -d 'command=0' http://datalogger.local/api/firmware
+</pre>
+
+The procedure for upgrading the web pages in SPIFFS is similar. Generate the spiffs.bin file with a `pio run -t buildfs`. Upload the binary to the SD card. And then start the upgrade with the PUT. A command value of 100 equals the U_SPIFFS define for the SPIFFS partition.
+<pre>
+curl -u "admin:admin" -F "file=@spiffs.bin" http://datalogger.local/api/firmware
+curl -u "admin:admin" -X PUT -d 'command=100' http://datalogger.local/api/firmware
 </pre>
 
 To check the version (GIT hash) currently running on the data logger you can issue the following GET:

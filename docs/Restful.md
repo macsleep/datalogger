@@ -110,10 +110,10 @@ curl http://datalogger.local/api/modbus
 4
 </pre>
 
-A default configuration looks something like this. A device address of 0 and a value type named `FOO` means the configuration is not used.
+A default configuration looks something like this. A device address of 0 and a value type named `NYI` (not yet implemented) means the configuration is not used.
 <pre>
 curl http://datalogger.local/api/modbus/0/config
-deviceAddress=0&functionCode=0&amp;registerAddress=0&valueType=FOO
+deviceAddress=0&functionCode=0&amp;registerAddress=0&valueType=NYI
 </pre>
 
 The following PUT will set a configuration:

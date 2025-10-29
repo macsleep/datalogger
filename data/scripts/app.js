@@ -193,7 +193,7 @@ new Vue({
 				Number(this.config.registerAddress),
 				this.config.valueType)
 				.then(response => {
-					rethis.getConfig()
+					this.getConfig()
 				});
 		},
 

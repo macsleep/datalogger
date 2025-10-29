@@ -61,6 +61,7 @@ bool writeLogfile() {
     char buffer[64];
     String line = "";
     ModbusConfig config;
+    String value;
 
     // rtc
     DateTime now = rtc.now();
@@ -87,10 +88,10 @@ bool writeLogfile() {
         // modbus
         i = 0;
         while(settings.getModbusConfig(i++, &config)) {
-            if(config.deviceAddress == 0 || config.valueType == FinderType::FOO) continue;
-            String value = energyMeter.getModbus(config.deviceAddress, config.functionCode,
-                                                 config.registerAddress, config.valueType);
-            if(value.length() > 0) line += " " + value;
+            if(config.deviceAddress == 0 || config.valueType == FinderType::NYI) continue;
+            bool ok = energyMeter.getModbus(&value, config.deviceAddress, config.functionCode,
+                                            config.registerAddress, config.valueType);
+            line += " " + value;
         }
 
         // write log

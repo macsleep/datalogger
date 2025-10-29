@@ -31,7 +31,7 @@
 #include <Update.h>
 #include <HardwareSerial.h>
 
-enum class FinderType { FOO, T1, T2, T3, T_float };
+enum class FinderType { NYI, T1, T2, T3, T_float };
 
 class Utils {
     public:

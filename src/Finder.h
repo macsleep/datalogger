@@ -27,11 +27,18 @@
 #include <ModbusMaster.h>
 #include "Utils.h"
 
+union Value {
+    float float32;
+    int32_t int32;
+    int16_t int16;
+    uint16_t uint16;
+};
+
 class Finder {
     public:
         Finder();
         void begin(Stream * serial, ModbusMaster * modbus);
-        String getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType);
+        bool getModbus(String * valueString, uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType);
 
     private:
         Stream * serial;

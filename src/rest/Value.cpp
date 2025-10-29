@@ -39,7 +39,7 @@ void REST::Value::request(AsyncWebServerRequest *request) {
 
     int i = request->pathArg(0).toInt();
     if(settings.getModbusConfig(i, &config)) {
-        value = energyMeter.getModbus(config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+        bool ok = energyMeter.getModbus(&value, config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
     }
 
     if(request->hasHeader("Accept")) {

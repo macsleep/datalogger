@@ -32,15 +32,12 @@ void Finder::begin(Stream *serial, ModbusMaster *modbus) {
     Finder::modbus = modbus;
 }
 
-String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType) {
-    String value = "";
-    float floatValue;
-    int32_t int32Value;
-    int16_t int16Value;
-    uint16_t uint16Value;
+bool Finder::getModbus(String *valueString, uint8_t deviceAddress, uint8_t functionCode, uint16_t registerAddress, FinderType valueType) {
+    union Value value;
     char buffer[64];
+    bool ok;
 
-    if(deviceAddress > 0 && valueType != FinderType::FOO) {
+    if(deviceAddress > 0 && valueType != FinderType::NYI) {
         // device
         modbus->begin(deviceAddress, *Finder::serial);
 
@@ -48,41 +45,45 @@ String Finder::getModbus(uint8_t deviceAddress, uint8_t functionCode, uint16_t r
             case 4:
                 switch(valueType) {
                     case FinderType::T1:
-                        if(functionCode4_T1(registerAddress, &uint16Value)) {
-                            value = String(uint16Value);
-                        } else value = "err";
+                        if(ok = functionCode4_T1(registerAddress, &value.uint16)) {
+                            *valueString = String(value.uint16);
+                        } else *valueString = "err";
                         break;
 
                     case FinderType::T2:
-                        if(functionCode4_T2(registerAddress, &int16Value)) {
-                            value = String(int16Value);
-                        } else value = "err";
+                        if(ok = functionCode4_T2(registerAddress, &value.int16)) {
+                            *valueString = String(value.int16);
+                        } else *valueString = "err";
                         break;
 
                     case FinderType::T3:
-                        if(functionCode4_T3(registerAddress, &int32Value)) {
-                            value = String(int32Value);
-                        } else value = "err";
+                        if(ok = functionCode4_T3(registerAddress, &value.int32)) {
+                            *valueString = String(value.int32);
+                        } else *valueString = "err";
                         break;
 
                     case FinderType::T_float:
-                        if(functionCode4_T_float(registerAddress, &floatValue)) {
-                            snprintf(buffer, sizeof(buffer), "%g", floatValue);
-                            value = String(buffer);
-                        } else value = "err";
+                        if(ok = functionCode4_T_float(registerAddress, &value.float32)) {
+                            snprintf(buffer, sizeof(buffer), "%g", value.float32);
+                            *valueString = String(buffer);
+                        } else *valueString = "err";
                         break;
 
                     default:
+                        *valueString = "nyi";
+                        ok = false;
                         break;
                 }
                 break;
 
             default:
+                *valueString = "nyi";
+                ok = false;
                 break;
         }
     }
 
-    return (value);
+    return ok;
 }
 
 bool Finder::functionCode4_T1(uint16_t addr, uint16_t *value) {

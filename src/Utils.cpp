@@ -173,27 +173,34 @@ void Utils::setUpdateCommand(int command) {
 }
 
 bool Utils::updateAvailable() {
-    if(this->updateCommand == U_FLASH) return(true);
-    if(this->updateCommand == U_SPIFFS) return(true);
-    return(false);
+    return (this->updateCommand >= 0) ? true : false;
 }
 
 void Utils::update(int ledPin) {
+    int command;
+
+    // check command
+    if(this->updateCommand != U_FLASH && this->updateCommand != U_SPIFFS) return;
+    command = this->updateCommand;
+    this->updateCommand = -1;
+
+    // check binary
     String filename = "/" + this->updateFilename;
-    if(SD.exists(filename)) {
-        File binary = SD.open(filename, "r");
-        if(binary) {
-            Update.begin(binary.size(), this->updateCommand, ledPin);
-            Update.writeStream(binary);
-            binary.close();
-        }
-        SD.remove(filename);
-        if(Update.end()) {
-            delay(500);
-            ESP.restart();
-        }
-    } else {
-        this->updateCommand = -1;
+    if(!SD.exists(filename)) return;
+    File binary = SD.open(filename, "r");
+    if(!binary || binary.isDirectory()) return;
+
+    // update
+    Update.begin(binary.size(), command, ledPin);
+    Update.writeStream(binary);
+    binary.close();
+    SD.remove(filename);
+    this->updateFilename = "";
+
+    // reboot if success
+    if(Update.end()) {
+        delay(500);
+        ESP.restart();
     }
 }
 

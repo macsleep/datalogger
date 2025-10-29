@@ -99,7 +99,6 @@ void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, siz
         return request->requestAuthentication();
 
     if(!index) {
-        utils.setUpdateFilename(filename);
         request->_tempFile = SD.open("/" + filename, "w");
     }
 
@@ -109,6 +108,7 @@ void REST::Firmware::upload(AsyncWebServerRequest *request, String filename, siz
 
     if(final) {
         request->_tempFile.close();
+        utils.setUpdateFilename(filename);
     }
 }
 

@@ -17,7 +17,9 @@ class API {
 	}
 
 	putRTC(epoch) {
-		return axios.put('/api/rtc', { epoch: epoch })
+		return axios.put('/api/rtc', {
+			...(epoch && { epoch: epoch })
+		})
 			.then(response => {
 				console.log(response);
 			})
@@ -37,7 +39,9 @@ class API {
 	}
 
 	putTimer(minutes) {
-		return axios.put('/api/timer', { minutes: minutes })
+		return axios.put('/api/timer', {
+			...(minutes && { minutes: minutes })
+		})
 			.then(response => {
 				console.log(response);
 			})
@@ -137,8 +141,8 @@ class API {
 
 	putSerial1(baud, config) {
 		return axios.put('/api/serial1', {
-			baud: baud,
-			config: config,
+			...(baud && { baud: baud }),
+			...(config && { config: config }),
 		})
 			.then(response => {
 				console.log(response);
@@ -189,13 +193,12 @@ class API {
 	}
 
 	putConfig(slot, deviceAddress, functionCode, registerAddress, valueType) {
-		const params = {
+		return axios.put('/api/modbus/' + slot + '/config', {
 			...(deviceAddress && { deviceAddress: deviceAddress }),
 			...(functionCode && { functionCode: functionCode }),
 			...(registerAddress && { registerAddress: registerAddress }),
 			...(valueType && { valueType: valueType }),
-		};
-		return axios.put('/api/modbus/' + slot + '/config', params)
+		})
 			.then(response => {
 				console.log(response);
 			})
@@ -205,13 +208,14 @@ class API {
 	}
 
 	getValue(slot, deviceAddress, functionCode, registerAddress, valueType) {
-		const params = {
-			...(deviceAddress && { deviceAddress: deviceAddress }),
-			...(functionCode && { functionCode: functionCode }),
-			...(registerAddress && { registerAddress: registerAddress }),
-			...(valueType && { valueType: valueType }),
-		};
-		return axios.get('/api/modbus/' + slot, { params })
+		return axios.get('/api/modbus/' + slot, {
+			params: {
+				...(deviceAddress && { deviceAddress: deviceAddress }),
+				...(functionCode && { functionCode: functionCode }),
+				...(registerAddress && { registerAddress: registerAddress }),
+				...(valueType && { valueType: valueType }),
+			}
+		})
 			.then(response => {
 				return response.data;
 			})

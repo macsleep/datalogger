@@ -10,7 +10,7 @@ new Vue({
 		return {
 			intervalId: null,
 			authenticated: false,
-
+			// reactive
 			dateBrowser: null,
 			dateRTC: null,
 			timerMinutes: null,
@@ -198,6 +198,7 @@ new Vue({
 		},
 
 		getValue() {
+			this.modbusValue = null;
 			api.getValue(this.config.slot,
 				this.config.deviceAddress,
 				this.config.functionCode,

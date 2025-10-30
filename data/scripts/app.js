@@ -198,7 +198,11 @@ new Vue({
 		},
 
 		getValue() {
-			api.getValue(this.config.slot)
+			api.getValue(this.config.slot,
+				this.config.deviceAddress,
+				this.config.functionCode,
+				this.config.registerAddress,
+				this.config.valueType)
 				.then(data => {
 					this.modbusValue = data.value;
 				})

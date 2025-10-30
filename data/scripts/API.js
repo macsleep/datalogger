@@ -112,10 +112,10 @@ class API {
 
 	putSystem(wifiSSID, wifiPassword, httpUser, httpPassword) {
 		return axios.put('/api/system', {
-			wifiSSID: wifiSSID,
-			wifiPassword: wifiPassword,
-			httpUser: httpUser,
-			httpPassword: httpPassword,
+			...(wifiSSID && { wifiSSID: wifiSSID }),
+			...(wifiPassword && { wifiPassword: wifiPassword }),
+			...(httpUser && { httpUser: httpUser }),
+			...(httpPassword && { httpPassword: httpPassword }),
 		})
 			.then(response => {
 				console.log(response);
@@ -189,12 +189,13 @@ class API {
 	}
 
 	putConfig(slot, deviceAddress, functionCode, registerAddress, valueType) {
-		return axios.put('/api/modbus/' + slot + '/config', {
-			deviceAddress: deviceAddress,
-			functionCode: functionCode,
-			registerAddress: registerAddress,
-			valueType: valueType,
-		})
+		const params = {
+			...(deviceAddress && { deviceAddress: deviceAddress }),
+			...(functionCode && { functionCode: functionCode }),
+			...(registerAddress && { registerAddress: registerAddress }),
+			...(valueType && { valueType: valueType }),
+		};
+		return axios.put('/api/modbus/' + slot + '/config', params)
 			.then(response => {
 				console.log(response);
 			})
@@ -203,8 +204,14 @@ class API {
 			})
 	}
 
-	getValue(slot) {
-		return axios.get('/api/modbus/' + slot)
+	getValue(slot, deviceAddress, functionCode, registerAddress, valueType) {
+		const params = {
+			...(deviceAddress && { deviceAddress: deviceAddress }),
+			...(functionCode && { functionCode: functionCode }),
+			...(registerAddress && { registerAddress: registerAddress }),
+			...(valueType && { valueType: valueType }),
+		};
+		return axios.get('/api/modbus/' + slot, { params })
 			.then(response => {
 				return response.data;
 			})

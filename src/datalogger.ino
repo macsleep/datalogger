@@ -88,7 +88,6 @@ bool writeLogfile() {
         // modbus
         i = 0;
         while(settings.getModbusConfig(i++, &config)) {
-            if(config.deviceAddress == 0 || config.valueType == FinderType::NYI) continue;
             bool ok = energyMeter.getModbus(&value, config.deviceAddress, config.functionCode,
                                             config.registerAddress, config.valueType);
             line += " " + value;

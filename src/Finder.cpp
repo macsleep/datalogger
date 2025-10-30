@@ -37,7 +37,7 @@ bool Finder::getModbus(String *valueString, uint8_t deviceAddress, uint8_t funct
     char buffer[64];
     bool ok;
 
-    if(deviceAddress > 0 && valueType != FinderType::NYI) {
+    if(deviceAddress > 0) {
         // device
         modbus->begin(deviceAddress, *Finder::serial);
 
@@ -81,6 +81,9 @@ bool Finder::getModbus(String *valueString, uint8_t deviceAddress, uint8_t funct
                 ok = false;
                 break;
         }
+    } else {
+        *valueString = "una";
+        ok = false;
     }
 
     return ok;

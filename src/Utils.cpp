@@ -114,7 +114,7 @@ String Utils::typeToString(FinderType value) {
             type = "T_float";
             break;
         default:
-            type = "NYI";
+            type = "nyi";
             break;
     }
 
@@ -122,7 +122,7 @@ String Utils::typeToString(FinderType value) {
 }
 
 FinderType Utils::stringToType(String value) {
-    FinderType type = FinderType::NYI;
+    FinderType type = FinderType::nyi;
 
     if(value.equals("T1")) type = FinderType::T1;
     if(value.equals("T2")) type = FinderType::T2;

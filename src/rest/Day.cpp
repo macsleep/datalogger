@@ -70,7 +70,7 @@ void REST::Day::upload(AsyncWebServerRequest *request, String filename, size_t i
 
     if(!index) {
         if(SD.exists(file)) {
-            request->_tempFile = SD.open(file, "w");
+            request->_tempFile = SD.open(file, FILE_WRITE);
         }
     }
 

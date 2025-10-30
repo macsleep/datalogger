@@ -180,14 +180,14 @@ void Utils::update(int ledPin) {
     int command;
 
     // check command
-    if(this->updateCommand != U_FLASH && this->updateCommand != U_SPIFFS) return;
     command = this->updateCommand;
     this->updateCommand = -1;
+    if(command != U_FLASH && command != U_SPIFFS) return;
 
     // check binary
     String filename = "/" + this->updateFilename;
     if(!SD.exists(filename)) return;
-    File binary = SD.open(filename, "r");
+    File binary = SD.open(filename, FILE_READ);
     if(!binary || binary.isDirectory()) return;
 
     // update

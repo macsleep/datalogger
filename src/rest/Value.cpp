@@ -48,17 +48,17 @@ void REST::Value::request(AsyncWebServerRequest *request) {
     // override values if available
     error = deserializeJson(document, (const char *)(request->_tempObject));
     if(error) {
-        if(request->hasParam("deviceAddress", true)) {
-            config.deviceAddress = request->getParam("deviceAddress", true)->value().toInt();
+        if(request->hasParam("deviceAddress")) {
+            config.deviceAddress = request->getParam("deviceAddress")->value().toInt();
         }
-        if(request->hasParam("functionCode", true)) {
-            config.functionCode = request->getParam("functionCode", true)->value().toInt();
+        if(request->hasParam("functionCode")) {
+            config.functionCode = request->getParam("functionCode")->value().toInt();
         }
-        if(request->hasParam("registerAddress", true)) {
-            config.registerAddress = request->getParam("registerAddress", true)->value().toInt();
+        if(request->hasParam("registerAddress")) {
+            config.registerAddress = request->getParam("registerAddress")->value().toInt();
         }
-        if(request->hasParam("valueType", true)) {
-            config.valueType = utils.stringToType(request->getParam("valueType", true)->value());
+        if(request->hasParam("valueType")) {
+            config.valueType = utils.stringToType(request->getParam("valueType")->value());
         }
     } else {
         if(document["deviceAddress"].is<uint8_t>()) {

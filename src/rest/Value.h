@@ -41,7 +41,6 @@ namespace REST {
             Value();
             void begin(AsyncWebServer * httpd);
             void request(AsyncWebServerRequest * request);
-            void body(AsyncWebServerRequest * request, uint8_t * data, size_t len, size_t index, size_t total);
 
         private:
     };

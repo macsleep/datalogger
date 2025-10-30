@@ -27,16 +27,13 @@ REST::Value::Value() {
 
 void REST::Value::begin(AsyncWebServer *httpd) {
     httpd->on("^\\/api\\/modbus\\/([0-9]+)\\/?$", HTTP_GET,
-              std::bind(&Value::request, this, std::placeholders::_1), NULL,
-              std::bind(&Value::body, this, std::placeholders::_1, std::placeholders::_2,
-                        std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
+              std::bind(&Value::request, this, std::placeholders::_1));
 }
 
 void REST::Value::request(AsyncWebServerRequest *request) {
     String value = "";
     bool json = false;
     JsonDocument document;
-    DeserializationError error;
     const AsyncWebHeader *header;
     AsyncResponseStream *response;
     ModbusConfig config;
@@ -46,33 +43,17 @@ void REST::Value::request(AsyncWebServerRequest *request) {
     settings.getModbusConfig(i, &config);
 
     // override values if available
-    error = deserializeJson(document, (const char *)(request->_tempObject));
-    if(error) {
-        if(request->hasParam("deviceAddress")) {
-            config.deviceAddress = request->getParam("deviceAddress")->value().toInt();
-        }
-        if(request->hasParam("functionCode")) {
-            config.functionCode = request->getParam("functionCode")->value().toInt();
-        }
-        if(request->hasParam("registerAddress")) {
-            config.registerAddress = request->getParam("registerAddress")->value().toInt();
-        }
-        if(request->hasParam("valueType")) {
-            config.valueType = utils.stringToType(request->getParam("valueType")->value());
-        }
-    } else {
-        if(document["deviceAddress"].is<uint8_t>()) {
-            config.deviceAddress = document["deviceAddress"];
-        }
-        if(document["functionCode"].is<uint8_t>()) {
-            config.functionCode = document["functionCode"];
-        }
-        if(document["registerAddress"].is<uint16_t>()) {
-            config.registerAddress = document["registerAddress"];
-        }
-        if(document["valueType"].is<String>()) {
-            config.valueType = utils.stringToType(document["valueType"]);
-        }
+    if(request->hasParam("deviceAddress")) {
+        config.deviceAddress = request->getParam("deviceAddress")->value().toInt();
+    }
+    if(request->hasParam("functionCode")) {
+        config.functionCode = request->getParam("functionCode")->value().toInt();
+    }
+    if(request->hasParam("registerAddress")) {
+        config.registerAddress = request->getParam("registerAddress")->value().toInt();
+    }
+    if(request->hasParam("valueType")) {
+        config.valueType = utils.stringToType(request->getParam("valueType")->value());
     }
 
     bool ok = energyMeter.getModbus(&value, config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
@@ -91,16 +72,6 @@ void REST::Value::request(AsyncWebServerRequest *request) {
         request->send(response);
     } else {
         request->send(200, "text/plain", value);
-    }
-}
-
-void REST::Value::body(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-    if(!index) {
-        request->_tempObject = malloc(total + 1);
-        bzero(request->_tempObject, total + 1);
-    }
-    if(len && request->_tempObject != NULL) {
-        memcpy((uint8_t *)(request->_tempObject) + index, data, len);
     }
 }
 

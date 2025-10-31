@@ -17,9 +17,7 @@ class API {
 	}
 
 	putRTC(epoch) {
-		return axios.put('/api/rtc', {
-			...(epoch && { epoch: epoch })
-		})
+		return axios.put('/api/rtc', { epoch: epoch })
 			.then(response => {
 				console.log(response);
 			})
@@ -39,9 +37,7 @@ class API {
 	}
 
 	putTimer(minutes) {
-		return axios.put('/api/timer', {
-			...(minutes && { minutes: minutes })
-		})
+		return axios.put('/api/timer', { minutes: minutes })
 			.then(response => {
 				console.log(response);
 			})
@@ -116,10 +112,10 @@ class API {
 
 	putSystem(wifiSSID, wifiPassword, httpUser, httpPassword) {
 		return axios.put('/api/system', {
-			...(wifiSSID && { wifiSSID: wifiSSID }),
-			...(wifiPassword && { wifiPassword: wifiPassword }),
-			...(httpUser && { httpUser: httpUser }),
-			...(httpPassword && { httpPassword: httpPassword }),
+			wifiSSID: wifiSSID,
+			wifiPassword: wifiPassword,
+			httpUser: httpUser,
+			httpPassword: httpPassword,
 		})
 			.then(response => {
 				console.log(response);
@@ -141,8 +137,8 @@ class API {
 
 	putSerial1(baud, config) {
 		return axios.put('/api/serial1', {
-			...(baud && { baud: baud }),
-			...(config && { config: config }),
+			baud: baud,
+			config: config,
 		})
 			.then(response => {
 				console.log(response);
@@ -194,10 +190,10 @@ class API {
 
 	putConfig(slot, deviceAddress, functionCode, registerAddress, valueType) {
 		return axios.put('/api/modbus/' + slot + '/config', {
-			...(deviceAddress && { deviceAddress: deviceAddress }),
-			...(functionCode && { functionCode: functionCode }),
-			...(registerAddress && { registerAddress: registerAddress }),
-			...(valueType && { valueType: valueType }),
+			deviceAddress: deviceAddress,
+			functionCode: functionCode,
+			registerAddress: registerAddress,
+			valueType: valueType,
 		})
 			.then(response => {
 				console.log(response);
@@ -210,10 +206,10 @@ class API {
 	getValue(slot, deviceAddress, functionCode, registerAddress, valueType) {
 		return axios.get('/api/modbus/' + slot, {
 			params: {
-				...(deviceAddress && { deviceAddress: deviceAddress }),
-				...(functionCode && { functionCode: functionCode }),
-				...(registerAddress && { registerAddress: registerAddress }),
-				...(valueType && { valueType: valueType }),
+				deviceAddress: deviceAddress,
+				functionCode: functionCode,
+				registerAddress: registerAddress,
+				valueType: valueType,
 			}
 		})
 			.then(response => {

@@ -88,8 +88,8 @@ bool writeLogfile() {
         // modbus
         i = 0;
         while(settings.getModbusConfig(i++, &config)) {
-            bool ok = energyMeter.getModbus(&value, config.deviceAddress, config.functionCode,
-                                            config.registerAddress, config.valueType);
+            energyMeter.getModbus(&value, config.deviceAddress, config.functionCode,
+                                  config.registerAddress, config.valueType);
             line += " " + value;
         }
 

@@ -45,25 +45,25 @@ bool Finder::getModbus(String *valueString, uint8_t deviceAddress, uint8_t funct
             case 4:
                 switch(valueType) {
                     case FinderType::T1:
-                        if(ok = functionCode4_T1(registerAddress, &value.uint16)) {
+                        if((ok = functionCode4_T1(registerAddress, &value.uint16))) {
                             *valueString = String(value.uint16);
                         } else *valueString = "err";
                         break;
 
                     case FinderType::T2:
-                        if(ok = functionCode4_T2(registerAddress, &value.int16)) {
+                        if((ok = functionCode4_T2(registerAddress, &value.int16))) {
                             *valueString = String(value.int16);
                         } else *valueString = "err";
                         break;
 
                     case FinderType::T3:
-                        if(ok = functionCode4_T3(registerAddress, &value.int32)) {
+                        if((ok = functionCode4_T3(registerAddress, &value.int32))) {
                             *valueString = String(value.int32);
                         } else *valueString = "err";
                         break;
 
                     case FinderType::T_float:
-                        if(ok = functionCode4_T_float(registerAddress, &value.float32)) {
+                        if((ok = functionCode4_T_float(registerAddress, &value.float32))) {
                             snprintf(buffer, sizeof(buffer), "%g", value.float32);
                             *valueString = String(buffer);
                         } else *valueString = "err";

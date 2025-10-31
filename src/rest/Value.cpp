@@ -56,7 +56,7 @@ void REST::Value::request(AsyncWebServerRequest *request) {
         config.valueType = utils.stringToType(request->getParam("valueType")->value());
     }
 
-    bool ok = energyMeter.getModbus(&value, config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
+    energyMeter.getModbus(&value, config.deviceAddress, config.functionCode, config.registerAddress, config.valueType);
 
     if(request->hasHeader("Accept")) {
         header = request->getHeader("Accept");

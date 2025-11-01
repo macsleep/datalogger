@@ -128,7 +128,7 @@ curl http://datalogger.local/api/modbus/0
 </pre>
 
 ## Firmware
-To OTA (Over The Air) upgrade the firmware of the data logger you first need to upload a new firmware.bin file to the SD card (POST). The second curl (PUT) starts the actual upgrade. A command value of 0 equals the `U_FLASH` define in Arduinos Update.h header file (you need to let Arduino Update know for which partition this binary is). Once you start the upgade the yellow led will start blinking rapidly and at the end of a successfull upgrade the ESP32 will reboot.
+To OTA (Over The Air) upgrade the firmware of the data logger you first need to upload a new firmware.bin file to the SD card (POST). The second curl (PUT) starts the actual upgrade. A command value of 0 equals the `U_FLASH` define in Arduinos Update.h header file (you need to let Arduino Update know for which partition this binary is). Once you start the upgrade the yellow led will start blinking rapidly and at the end of a successful upgrade the ESP32 will reboot.
 <pre>
 curl -u "admin:admin" -F "file=@firmware.bin" http://datalogger.local/api/firmware
 curl -u "admin:admin" -X PUT -d 'command=0' http://datalogger.local/api/firmware
@@ -164,5 +164,5 @@ To do a HTTP basic authentication you can do a GET on the /api/login URL. The GE
 
 <pre>
 curl -D - -u "admin:wrong" http://datalogger.local/api/login 
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 401 Unauthorised
 </pre>

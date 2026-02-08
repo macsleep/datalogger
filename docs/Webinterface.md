@@ -1,6 +1,6 @@
 # Web Interface
 
-The data logger has a simple web interface located in the SPIFFS partition of the ESP32. To install the web interface issue a `pio run -t buildfs`. The web interface is optional if the REST API is sufficient for you. To access the web interface connect to the WiFi AP (Access Point) and then direct your browser to: **http:://datalogger.local/**
+The data logger has a simple web interface located in the SPIFFS partition of the ESP32. To install the web interface issue a `pio run -t buildfs`. The web interface is optional if the REST API is sufficient for you. To access the web interface connect to the WiFi AP (Access Point) and then direct your browser to: **http://datalogger.local/**
 
 ![Web Interface](images/Webinterface.png)
 
